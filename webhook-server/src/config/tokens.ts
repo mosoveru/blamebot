@@ -1,0 +1,3 @@
+export enum TOKENS {
+  GIT_SERVICE_PARSER = 'GIT_SERVICE_PARSER',
+}

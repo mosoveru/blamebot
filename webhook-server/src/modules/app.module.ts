@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
-import { AppController } from '../controllers/app.controller';
-import { AppService } from '../services/app.service';
+import { WebhookController } from '../controllers/webhookController';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import configuration from '../config/configuration';
+import { GitServiceTypeParserService } from '../services/git-service-type-parser.service';
+import { TOKENS } from '../config/tokens';
 
 type DataBaseType = 'postgres';
 
@@ -27,7 +28,7 @@ type DataBaseType = 'postgres';
       load: [configuration],
     }),
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [WebhookController],
+  providers: [{ provide: TOKENS.GIT_SERVICE_PARSER, useClass: GitServiceTypeParserService }],
 })
 export class AppModule {}
