@@ -3,7 +3,7 @@ import { WebhookController } from '../controllers/webhookController';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import configuration from '../config/configuration';
-import { GitServiceTypeParserService } from '../services/git-service-type-parser.service';
+import { GitServiceTypeParserService } from '../services/git-service-type-parser/git-service-type-parser.service';
 import { TOKENS } from '../config/tokens';
 
 type DataBaseType = 'postgres';

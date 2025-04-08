@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { GitServiceTypeParser } from '../types';
+import { GitServiceTypeParser } from '../../types';
 import { IncomingHttpHeaders } from 'http';
 
 @Injectable()
 export class GitServiceTypeParserService implements GitServiceTypeParser {
-  GIT_SERVICE_HEADERS = new Map([
+  private GIT_SERVICE_HEADERS = new Map([
     ['x-gitlab-event', 'GITLAB'],
     ['x-gitea-event', 'GITEA'],
   ]);
