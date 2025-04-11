@@ -1,13 +1,10 @@
-import { IncomingHttpHeaders } from 'http';
+import { Request } from 'express';
 
-type GitServiceAndEventType = {
+export type GitWebhookRequestPayload = {
   service: string;
   eventType: string;
-};
-
-export interface GitServiceTypeParser {
-  parseGitServiceAndEventType(headers: IncomingHttpHeaders): GitServiceAndEventType | null;
-}
+  eventPayload: any;
+} | null;
 
 /**
  * Сервис, который хранит информацию об инстанцах сервисов гит
@@ -16,9 +13,13 @@ export interface GitServiceTypeParser {
  */
 
 export interface GitNotificationServiceRepository {
-  parseGitNotificationService(serviceType: string): GitNotificationService;
+  parseGitNotificationService(serviceType: string): void;
 }
 
-export interface GitNotificationService {
-  handleGitEvent(eventType: string, eventPayload: any): void;
+export interface NotificationMaker {
+  composeNotification(webhookPayload: GitWebhookRequestPayload): void;
+}
+
+export interface Mediator {
+  notify(eventType: string, eventPayload: any): void;
 }

@@ -1,15 +1,16 @@
-import { Controller, Inject, Post, Req } from '@nestjs/common';
-import { Request } from 'express';
-import { GitServiceTypeParser } from '../types';
-import { TOKENS } from '../config/tokens';
+import { Controller, Inject, Logger, Post } from '@nestjs/common';
+import { GitWebhookRequestPayload, Mediator } from '../types';
+import { TOKENS } from '../constants/tokens';
+import { ServiceType } from '../decorators/service-type';
 
 @Controller('webhook')
 export class WebhookController {
-  constructor(@Inject(TOKENS.GIT_SERVICE_PARSER) private readonly gitServiceParser: GitServiceTypeParser) {}
+  private readonly logger = new Logger(WebhookController.name);
+
+  constructor(@Inject(TOKENS.MEDIATOR) private readonly notificationServiceMediator: Mediator) {}
 
   @Post()
-  printPayload(@Req() req: Request): void {
-    const gitService = this.gitServiceParser.parseGitServiceAndEventType(req.headers);
-    console.log(gitService);
+  printPayload(@ServiceType() service: GitWebhookRequestPayload): void {
+    console.log(service);
   }
 }
