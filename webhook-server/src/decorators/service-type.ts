@@ -1,5 +1,5 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { GitWebhookRequestPayload } from '../types';
+import { GitWebhookServiceType } from '../types';
 
 export const ServiceType = createParamDecorator((data: unknown, ctx: ExecutionContext) => {
   const req = ctx.switchToHttp().getRequest();
@@ -15,7 +15,7 @@ export const ServiceType = createParamDecorator((data: unknown, ctx: ExecutionCo
         service: gitServiceHeaders.get(gitServiceEvent),
         eventType: headers[gitServiceEvent] as string,
         eventPayload: body,
-      } satisfies GitWebhookRequestPayload;
+      } satisfies GitWebhookServiceType;
     }
   }
   return null;

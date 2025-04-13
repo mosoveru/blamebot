@@ -1,16 +1,17 @@
-import { Controller, Inject, Logger, Post } from '@nestjs/common';
-import { GitWebhookRequestPayload, Mediator } from '../types';
-import { TOKENS } from '../constants/tokens';
+import { Controller, Logger, Post } from '@nestjs/common';
+import { GitWebhookServiceName, GitWebhookServiceType } from '../types';
 import { ServiceType } from '../decorators/service-type';
+import { ServiceName } from '../decorators/service-name';
 
 @Controller('webhook')
 export class WebhookController {
   private readonly logger = new Logger(WebhookController.name);
 
-  constructor(@Inject(TOKENS.MEDIATOR) private readonly notificationServiceMediator: Mediator) {}
-
   @Post()
-  printPayload(@ServiceType() service: GitWebhookRequestPayload): void {
-    console.log(service);
+  printPayload(
+    @ServiceType() serviceType: GitWebhookServiceType,
+    @ServiceName() serviceName: GitWebhookServiceName,
+  ): void {
+    console.log(serviceName, serviceType);
   }
 }

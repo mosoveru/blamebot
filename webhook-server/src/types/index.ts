@@ -1,23 +1,15 @@
-import { Request } from 'express';
-
-export type GitWebhookRequestPayload = {
+export type GitWebhookServiceType = {
   service: string;
   eventType: string;
   eventPayload: any;
 } | null;
 
-/**
- * Сервис, который хранит информацию об инстанцах сервисов гит
- * Он по ключу названия сервиса должен отдавать инстанс сервиса уже по обработке
- * События и body запроса
- */
-
-export interface GitNotificationServiceRepository {
-  parseGitNotificationService(serviceType: string): void;
-}
+export type GitWebhookServiceName = {
+  name: string;
+} | null;
 
 export interface NotificationMaker {
-  composeNotification(webhookPayload: GitWebhookRequestPayload): void;
+  composeNotification(webhookPayload: GitWebhookServiceType): void;
 }
 
 export interface Mediator {
