@@ -9,9 +9,9 @@ export class WebhookController {
 
   @Post()
   printPayload(
-    @ServiceType() serviceType: GitWebhookServiceType,
+    @ServiceType() serviceType: GitWebhookServiceType<any>,
     @ServiceName() serviceName: GitWebhookServiceName,
   ): void {
-    console.log(serviceName, serviceType);
+    console.log(JSON.stringify(serviceName, null, 2), JSON.stringify(serviceType, null, 2));
   }
 }
