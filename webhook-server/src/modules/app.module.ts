@@ -3,7 +3,9 @@ import { WebhookController } from '../controllers/webhookController';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import configuration from '../config/configuration';
-import { TOKENS } from '../constants/tokens';
+import { GitRemoteHandlersRepository } from '../repository/git-remote-handlers-repository/git-remote-handlers-repository';
+import { GitLabHandlers } from '../git-remote-handlers/gitlab';
+import { RemoteGitServices } from '../constants/enums';
 
 type DataBaseType = 'postgres';
 
@@ -28,6 +30,15 @@ type DataBaseType = 'postgres';
     }),
   ],
   controllers: [WebhookController],
-  providers: [],
+  providers: [
+    {
+      provide: GitRemoteHandlersRepository,
+      useFactory: () => {
+        const repository = new GitRemoteHandlersRepository();
+        repository.registerHandlers(RemoteGitServices.GITLAB, GitLabHandlers);
+        return repository;
+      },
+    },
+  ],
 })
 export class AppModule {}
