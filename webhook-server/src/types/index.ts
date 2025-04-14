@@ -1,5 +1,7 @@
+import { RemoteGitServices } from '../constants/enums';
+
 export type GitWebhookServiceType<T> = {
-  service: string;
+  service: RemoteGitServices;
   eventType: string;
   eventPayload: T;
 } | null;

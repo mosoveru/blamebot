@@ -6,6 +6,7 @@ import configuration from '../config/configuration';
 import { GitRemoteHandlersRepository } from '../repository/git-remote-handlers-repository/git-remote-handlers-repository';
 import { GitLabHandlers } from '../git-remote-handlers/gitlab';
 import { RemoteGitServices } from '../constants/enums';
+import { ChatEntity } from '../models/chat.entity';
 
 type DataBaseType = 'postgres';
 
@@ -20,8 +21,9 @@ type DataBaseType = 'postgres';
         username: configService.get<string>('DB_USER_LOGIN'),
         password: configService.get<string>('DB_USER_PASSWORD'),
         database: configService.get<string>('DB_NAME'),
-        entities: [],
+        entities: [ChatEntity],
         synchronize: false,
+        retryAttempts: 10,
       }),
       inject: [ConfigService],
     }),

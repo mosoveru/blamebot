@@ -16,7 +16,8 @@ export class WebhookController {
     @ServiceName() serviceName: GitWebhookServiceName,
   ): void {
     console.log(JSON.stringify(serviceName, null, 2), JSON.stringify(serviceType, null, 2));
-    const handler = this.handlersRepository.getGitRemoteHandler(`${serviceType.service}:${serviceType.eventType}`);
+    const handler = this.handlersRepository.getGitRemoteHandler(serviceType.service, serviceType.eventType);
     console.log(handler.composeNotification(serviceType));
+    console.log(handler.parseRecipients(serviceType));
   }
 }
