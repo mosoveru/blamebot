@@ -7,7 +7,7 @@ import { Repository } from 'typeorm';
 export class ChatService {
   constructor(@InjectRepository(Subscriber) private readonly chatRepository: Repository<Subscriber>) {}
 
-  async findChat(serviceName: string, username: string): Promise<Subscriber | null> {
+  async findChat(serviceName: string, username: string) {
     return this.chatRepository.findOneBy({
       service: serviceName,
       username: username,

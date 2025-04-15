@@ -15,7 +15,7 @@ export type ServiceName = Exclude<GitWebhookServiceName, null>;
 
 export interface GitRemoteHandler<T> {
   readonly eventType: string;
-  parseRecipients(serviceType: GitWebhookServiceType<T>): string[] | null;
+  parseRecipients(serviceType: GitWebhookServiceType<T>): string[];
   composeNotification(serviceType: GitWebhookServiceType<T>): string;
 }
 

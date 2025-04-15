@@ -6,4 +6,6 @@ export default () => ({
   DB_USER_PASSWORD: process.env.DB_USER_PASSWORD ?? '12345678',
   DB_PORT: Number(process.env.DB_PORT) ?? 5432,
   DB_NAME: process.env.DB_NAME ?? 'git_event_subscribers',
+  PRIVATE_JWT_KEY: process.env.PRIVATE_JWT_KEY,
+  BOT_SECRET_TOKEN: process.env.BOT_SECRET_TOKEN,
 });

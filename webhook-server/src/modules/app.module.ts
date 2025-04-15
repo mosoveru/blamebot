@@ -8,6 +8,7 @@ import { GitLabHandlers } from '../git-remote-handlers/gitlab';
 import { RemoteGitServices } from '../constants/enums';
 import { Subscriber } from '../models/subscriber.entity';
 import { ChatModule } from './chat.module';
+import { TelegramModule } from './telegram.module';
 
 type DataBaseType = 'postgres';
 
@@ -32,6 +33,7 @@ type DataBaseType = 'postgres';
       load: [configuration],
     }),
     ChatModule,
+    TelegramModule,
   ],
   controllers: [WebhookController],
   providers: [
