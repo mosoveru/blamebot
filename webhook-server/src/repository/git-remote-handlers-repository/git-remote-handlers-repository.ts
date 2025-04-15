@@ -13,7 +13,7 @@ export class GitRemoteHandlersRepository {
     }
   }
 
-  getGitRemoteHandler(serviceType: RemoteGitServices, eventType: string): GitRemoteHandler<any> {
+  getGitRemoteHandler(serviceType: RemoteGitServices, eventType: string) {
     return this.store.get(`${serviceType}:${eventType}`);
   }
 }

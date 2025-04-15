@@ -7,6 +7,7 @@ import { GitRemoteHandlersRepository } from '../repository/git-remote-handlers-r
 import { GitLabHandlers } from '../git-remote-handlers/gitlab';
 import { RemoteGitServices } from '../constants/enums';
 import { ChatEntity } from '../models/chat.entity';
+import { ChatModule } from './chat.module';
 
 type DataBaseType = 'postgres';
 
@@ -30,6 +31,7 @@ type DataBaseType = 'postgres';
     ConfigModule.forRoot({
       load: [configuration],
     }),
+    ChatModule,
   ],
   controllers: [WebhookController],
   providers: [

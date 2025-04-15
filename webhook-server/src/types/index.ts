@@ -10,6 +10,9 @@ export type GitWebhookServiceName = {
   name: string;
 } | null;
 
+export type ServiceType<T> = Exclude<GitWebhookServiceType<T>, null>;
+export type ServiceName = Exclude<GitWebhookServiceName, null>;
+
 export interface GitRemoteHandler<T> {
   readonly eventType: string;
   parseRecipients(serviceType: GitWebhookServiceType<T>): string[] | null;

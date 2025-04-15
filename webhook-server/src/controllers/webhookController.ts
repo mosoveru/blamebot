@@ -15,9 +15,15 @@ export class WebhookController {
     @ServiceType() serviceType: GitWebhookServiceType<any>,
     @ServiceName() serviceName: GitWebhookServiceName,
   ): void {
-    console.log(JSON.stringify(serviceName, null, 2), JSON.stringify(serviceType, null, 2));
-    const handler = this.handlersRepository.getGitRemoteHandler(serviceType.service, serviceType.eventType);
-    console.log(handler.composeNotification(serviceType));
-    console.log(handler.parseRecipients(serviceType));
+    if (serviceType && serviceName) {
+      console.log(JSON.stringify(serviceName, null, 2), JSON.stringify(serviceType, null, 2));
+      const handler = this.handlersRepository.getGitRemoteHandler(serviceType.service, serviceType.eventType);
+      if (handler) {
+        console.log(handler.composeNotification(serviceType));
+        console.log(handler.parseRecipients(serviceType));
+      } else {
+        console.log("Handler isn't existing");
+      }
+    }
   }
 }

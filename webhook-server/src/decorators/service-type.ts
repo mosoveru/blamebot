@@ -13,7 +13,7 @@ export const ServiceType = createParamDecorator((data: unknown, ctx: ExecutionCo
   for (const gitServiceEvent of gitServiceHeaders.keys()) {
     if (headers[gitServiceEvent]) {
       return {
-        service: gitServiceHeaders.get(gitServiceEvent),
+        service: gitServiceHeaders.get(gitServiceEvent)!,
         eventType: headers[gitServiceEvent] as string,
         eventPayload: body,
       } satisfies GitWebhookServiceType<any>;
