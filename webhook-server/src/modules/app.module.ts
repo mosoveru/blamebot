@@ -1,14 +1,13 @@
 import { Module } from '@nestjs/common';
-import { WebhookController } from '../controllers/webhookController';
+import { WebhookController } from '../controllers/webhook.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import configuration from '../config/configuration';
-import { GitRemoteHandlersRepository } from '../repository/git-remote-handlers-repository/git-remote-handlers-repository';
-import { GitLabHandlers } from '../git-remote-handlers/gitlab';
-import { RemoteGitServices } from '../constants/enums';
 import { Subscriber } from '../models/subscriber.entity';
 import { ChatModule } from './chat.module';
 import { TelegramModule } from './telegram.module';
+import { NotificationMediatorService } from '../services/notification-mediator/notification-mediator.service';
+import { HandlersModule } from './handlers.module';
 
 type DataBaseType = 'postgres';
 
@@ -34,17 +33,9 @@ type DataBaseType = 'postgres';
     }),
     ChatModule,
     TelegramModule,
+    HandlersModule,
   ],
   controllers: [WebhookController],
-  providers: [
-    {
-      provide: GitRemoteHandlersRepository,
-      useFactory: () => {
-        const repository = new GitRemoteHandlersRepository();
-        repository.registerHandlers(RemoteGitServices.GITLAB, GitLabHandlers);
-        return repository;
-      },
-    },
-  ],
+  providers: [NotificationMediatorService],
 })
 export class AppModule {}

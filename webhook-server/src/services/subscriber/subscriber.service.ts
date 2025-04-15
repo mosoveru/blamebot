@@ -4,11 +4,11 @@ import { Subscriber } from '../../models/subscriber.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
-export class ChatService {
-  constructor(@InjectRepository(Subscriber) private readonly chatRepository: Repository<Subscriber>) {}
+export class SubscriberService {
+  constructor(@InjectRepository(Subscriber) private readonly subscriberRepository: Repository<Subscriber>) {}
 
   async findChat(serviceName: string, username: string) {
-    return this.chatRepository.findOneBy({
+    return this.subscriberRepository.findOneBy({
       service: serviceName,
       username: username,
     });
