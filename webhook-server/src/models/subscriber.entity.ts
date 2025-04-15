@@ -1,7 +1,9 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 
-@Entity()
-export class ChatEntity {
+@Entity({
+  name: 'subscribers',
+})
+export class Subscriber {
   @PrimaryColumn()
   service: string;
 
