@@ -1,0 +1,106 @@
+{
+  "service": "GITLAB",
+  "eventType": "Issue Hook",
+  "eventPayload": {
+    "object_kind": "issue",
+    "event_type": "issue",
+    "user": {
+      "id": 34,
+      "name": "Sergey Mosienko",
+      "username": "mosoveru",
+      "avatar_url": "https://www.gravatar.com/avatar/b569d7d68d81fc486e7948b4fd432db7744c930d80e82630a3e85ff0eddb0034?s=80&d=identicon",
+      "email": "[REDACTED]"
+    },
+    "project": {
+      "id": 1,
+      "name": "Webhook-tests",
+      "description": null,
+      "web_url": "http://127.0.0.1:8929/mosoveru/webhook-tests",
+      "avatar_url": null,
+      "git_ssh_url": "ssh://git@127.0.0.1:2424/mosoveru/webhook-tests.git",
+      "git_http_url": "http://127.0.0.1:8929/mosoveru/webhook-tests.git",
+      "namespace": "Sergey Mosienko",
+      "visibility_level": 20,
+      "path_with_namespace": "mosoveru/webhook-tests",
+      "default_branch": "main",
+      "ci_config_path": null,
+      "homepage": "http://127.0.0.1:8929/mosoveru/webhook-tests",
+      "url": "ssh://git@127.0.0.1:2424/mosoveru/webhook-tests.git",
+      "ssh_url": "ssh://git@127.0.0.1:2424/mosoveru/webhook-tests.git",
+      "http_url": "http://127.0.0.1:8929/mosoveru/webhook-tests.git"
+    },
+    "object_attributes": {
+      "author_id": 34,
+      "closed_at": null,
+      "confidential": false,
+      "created_at": "2025-04-07 08:20:09 UTC",
+      "description": "Issue Description Here",
+      "discussion_locked": null,
+      "due_date": null,
+      "id": 1,
+      "iid": 1,
+      "last_edited_at": "2025-04-15 12:16:25 UTC",
+      "last_edited_by_id": 34,
+      "milestone_id": null,
+      "moved_to_id": null,
+      "duplicated_to_id": null,
+      "project_id": 1,
+      "relative_position": 513,
+      "state_id": 1,
+      "time_estimate": 0,
+      "title": "Issue Title Here",
+      "updated_at": "2025-04-15 12:16:25 UTC",
+      "updated_by_id": 34,
+      "type": "Issue",
+      "url": "http://127.0.0.1:8929/mosoveru/webhook-tests/-/issues/1",
+      "total_time_spent": 0,
+      "time_change": 0,
+      "human_total_time_spent": null,
+      "human_time_change": null,
+      "human_time_estimate": null,
+      "assignee_ids": [
+        36
+      ],
+      "assignee_id": 36,
+      "labels": [],
+      "state": "opened",
+      "severity": "unknown",
+      "customer_relations_contacts": [],
+      "action": "update"
+    },
+    "labels": [],
+    "changes": {
+      "description": {
+        "previous": "Изменили описание",
+        "current": "Изменили описаниеggf"
+      },
+      "last_edited_at": {
+        "previous": "2025-04-15 10:05:51 UTC",
+        "current": "2025-04-15 12:16:25 UTC"
+      },
+      "title": {
+        "previous": "Поменяли заголовок. Ещё",
+        "current": "Поменяли заголовок. Ещёfgfg"
+      },
+      "updated_at": {
+        "previous": "2025-04-15 12:12:21 UTC",
+        "current": "2025-04-15 12:16:25 UTC"
+      }
+    },
+    "repository": {
+      "name": "Webhook-tests",
+      "url": "ssh://git@127.0.0.1:2424/mosoveru/webhook-tests.git",
+      "description": null,
+      "homepage": "http://127.0.0.1:8929/mosoveru/webhook-tests"
+    },
+    "assignees": [
+      {
+        "id": 36,
+        "name": "Adam Smasher",
+        "username": "smasher",
+        "avatar_url": "https://www.gravatar.com/avatar/992f7d41659656227f45964f26f65c4ca0cbacdef6d8f7d9c3c51435c7f95898?s=80&d=identicon",
+        "email": "[REDACTED]"
+      }
+    ]
+  }
+}
