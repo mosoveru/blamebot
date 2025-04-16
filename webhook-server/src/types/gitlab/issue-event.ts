@@ -74,7 +74,7 @@ export type GitLabIssueEvent = {
     description: string;
     homepage: string;
   };
-  assignees: Assignee[];
+  assignees?: Assignee[];
   labels: Label[];
   changes: {
     updated_by_id: {
