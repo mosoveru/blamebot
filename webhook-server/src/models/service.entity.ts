@@ -1,18 +1,18 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 
 @Entity({
-  name: 'subscribers',
+  name: 'services',
 })
-export class Subscriber {
+export class Service {
   @PrimaryColumn()
-  telegramUserId: string;
+  serviceId: string;
 
   @Column()
-  username: string;
+  remoteName: string;
 
   @Column()
-  name: string;
+  gitProvider: string;
 
   @Column()
-  chatId: string;
+  serviceUrl: string;
 }
