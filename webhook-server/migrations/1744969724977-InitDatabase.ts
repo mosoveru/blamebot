@@ -2,8 +2,6 @@ import { MigrationInterface, QueryRunner, Table, TableForeignKey } from 'typeorm
 
 export class InitDatabase1744969724977 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // TODO: Check column types and fix them if they're not right
-
     await queryRunner.createTable(
       new Table({
         name: 'services',
@@ -83,6 +81,7 @@ export class InitDatabase1744969724977 implements MigrationInterface {
 
     await queryRunner.query(`INSERT INTO object_types ("typeName") VALUES ('request:open');`);
     await queryRunner.query(`INSERT INTO object_types ("typeName") VALUES ('request:closed');`);
+    await queryRunner.query(`INSERT INTO object_types ("typeName") VALUES ('request:merged');`);
     await queryRunner.query(`INSERT INTO object_types ("typeName") VALUES ('issue:open');`);
     await queryRunner.query(`INSERT INTO object_types ("typeName") VALUES ('issue:closed');`);
 
@@ -101,10 +100,6 @@ export class InitDatabase1744969724977 implements MigrationInterface {
           },
           {
             name: 'name',
-            type: 'varchar',
-          },
-          {
-            name: 'chatId',
             type: 'varchar',
           },
         ],

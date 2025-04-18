@@ -23,7 +23,7 @@ export class NotificationMediatorService {
       for (const recipient of recipients) {
         const subscriber = await this.chatService.findChat(serviceName.name, recipient);
         if (subscriber) {
-          const chat_id = subscriber.chat_id;
+          const chat_id = subscriber.chatId;
           await this.telegramService.sendNotification(notification, chat_id);
         }
       }
