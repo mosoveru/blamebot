@@ -5,18 +5,21 @@ import { GitLabEventTypes } from '../../constants/enums';
 export default class IssueHookHandler implements GitRemoteHandler<GitLabIssueEvent> {
   readonly eventType = GitLabEventTypes.ISSUE;
 
-  parseRecipients(serviceType: ServiceType<GitLabIssueEvent>): string[] {
-    const recipients: string[] = [];
-    if (!serviceType.eventPayload.assignees) {
-      return recipients;
-    }
-    for (const assignee of serviceType.eventPayload.assignees) {
-      if (assignee.username !== serviceType.eventPayload.user.username) {
-        recipients.push(serviceType.eventPayload.user.username);
-      }
-    }
-    return recipients;
+  parseEventMembersIds(serviceType: ServiceType<GitLabIssueEvent>) {
+    const objectMembersIds: number[] = [];
+    objectMembersIds.push(serviceType.eventPayload.object_attributes.author_id);
+    serviceType.eventPayload.object_attributes.assignee_ids.forEach((assigneeId) => objectMembersIds.push(assigneeId));
+    return objectMembersIds;
   }
+
+  parseObservableObjectInfo(serviceType: ServiceType<GitLabIssueEvent>) {
+    return {
+      objectId: serviceType.eventPayload.object_attributes.id,
+      projectId: serviceType.eventPayload.project.id,
+      objectType: serviceType.eventPayload.object_attributes.state === 'opened' ? 'issue:opened' : 'issue:closed',
+    };
+  }
+
   composeNotification(serviceType: ServiceType<GitLabIssueEvent>): string {
     const notificationStrings: string[] = [];
 
@@ -32,9 +35,11 @@ export default class IssueHookHandler implements GitRemoteHandler<GitLabIssueEve
         }
         case 'title': {
           notificationStrings.push(`Изменился заголовок\n`);
+          break;
         }
         case 'assignees': {
           notificationStrings.push(`Изменился Assignee у Issue\n`);
+          break;
         }
       }
     }

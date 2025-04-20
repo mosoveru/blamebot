@@ -16,7 +16,7 @@ export class NotificationMediatorService {
     console.log(JSON.stringify(serviceName, null, 2), JSON.stringify(serviceType, null, 2));
     const handler = this.handlersRepository.getGitRemoteHandler(serviceType.service, serviceType.eventType);
     if (handler) {
-      const recipients = handler.parseRecipients(serviceType);
+      const recipients = handler.parseEventMembersIds(serviceType);
       const notification = handler.composeNotification(serviceType);
       console.log(notification);
       console.log(recipients);

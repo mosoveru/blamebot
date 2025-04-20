@@ -82,7 +82,7 @@ export class InitDatabase1744969724977 implements MigrationInterface {
     await queryRunner.query(`INSERT INTO object_types ("typeName") VALUES ('request:open');`);
     await queryRunner.query(`INSERT INTO object_types ("typeName") VALUES ('request:closed');`);
     await queryRunner.query(`INSERT INTO object_types ("typeName") VALUES ('request:merged');`);
-    await queryRunner.query(`INSERT INTO object_types ("typeName") VALUES ('issue:open');`);
+    await queryRunner.query(`INSERT INTO object_types ("typeName") VALUES ('issue:opened');`);
     await queryRunner.query(`INSERT INTO object_types ("typeName") VALUES ('issue:closed');`);
 
     await queryRunner.createTable(

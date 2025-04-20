@@ -93,9 +93,11 @@ export type GitLabIssueEvent = {
 };
 
 type Assignee = {
+  id: string;
   name: string;
   username: string;
   avatar_url: string;
+  email: string;
 };
 
 type Label = {

@@ -12,11 +12,28 @@ export type GitWebhookServiceName = {
 
 export type ServiceType<T> = Exclude<GitWebhookServiceType<T>, null>;
 export type ServiceName = Exclude<GitWebhookServiceName, null>;
+export type TObservableObjectInfo = {
+  objectId: number;
+  projectId: number;
+  objectType: string;
+};
+
+export type TObservableObject = {
+  objectId: number;
+  projectId: number;
+  objectType: string;
+  serviceId: string;
+};
+
+export type PendingSubscription = TObservableObject & {
+  serviceUserId: number;
+};
 
 export interface GitRemoteHandler<T> {
   readonly eventType: string;
-  parseRecipients(serviceType: GitWebhookServiceType<T>): string[];
-  composeNotification(serviceType: GitWebhookServiceType<T>): string;
+  parseEventMembersIds(serviceType: ServiceType<T>): number[];
+  parseObservableObjectInfo(serviceType: ServiceType<T>): TObservableObjectInfo;
+  composeNotification(serviceType: ServiceType<T>): string;
 }
 
 export interface GitRemoteHandlerConstructor {
