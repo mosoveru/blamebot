@@ -36,10 +36,6 @@ export class NotificationMediatorService {
         recipients,
       );
 
-      /* TODO: Уведомления не должно быть для инициатора события. Лучше убрать его из итого списка
-      после создания подписки в системе.
-      */
-
       const subscribersWithActiveSubscription = subscriptions
         .filter((subscription) => subscription.isSubscribed)
         .map((subscription) => subscription.serviceUserId);
@@ -65,7 +61,17 @@ export class NotificationMediatorService {
         usersToBeNotified.push(...checkedServiceUsersIds);
       }
 
-      const serviceUsers = await this.serviceUsersService.retrieveTelegramIds(usersToBeNotified, serviceName.name);
+      const eventInitiatorId = handler.parseEventInitiatorId(serviceType);
+
+      const usersToBeNotifiedWithoutInitiator = this.notificationRecipientsService.excludeInitiator(
+        usersToBeNotified,
+        eventInitiatorId,
+      );
+
+      const serviceUsers = await this.serviceUsersService.retrieveTelegramIds(
+        usersToBeNotifiedWithoutInitiator,
+        serviceName.name,
+      );
 
       const notification = handler.composeNotification(serviceType);
       console.log(notification);

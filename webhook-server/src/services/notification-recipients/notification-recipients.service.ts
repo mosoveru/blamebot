@@ -14,4 +14,8 @@ export class NotificationRecipientsService {
     });
     return toBeChecked;
   }
+
+  excludeInitiator(usersToBeNotified: string[], initiatorId: string) {
+    return usersToBeNotified.filter((userId) => userId !== initiatorId);
+  }
 }

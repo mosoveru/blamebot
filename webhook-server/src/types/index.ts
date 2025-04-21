@@ -36,6 +36,7 @@ export interface GitRemoteHandler<T> {
   readonly eventType: string;
   parseEventMembersIds(serviceType: ServiceType<T>): number[];
   parseObservableObjectInfo(serviceType: ServiceType<T>): TObservableObjectInfoFromPayload;
+  parseEventInitiatorId(serviceType: ServiceType<T>): string;
   composeNotification(serviceType: ServiceType<T>): string;
 }
 

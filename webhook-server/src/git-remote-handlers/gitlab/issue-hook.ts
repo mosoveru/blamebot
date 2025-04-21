@@ -21,6 +21,10 @@ export default class IssueHookHandler implements GitRemoteHandler<GitLabIssueEve
     };
   }
 
+  parseEventInitiatorId(serviceType: ServiceType<GitLabIssueEvent>): string {
+    return String(serviceType.eventPayload.user.id);
+  }
+
   composeNotification(serviceType: ServiceType<GitLabIssueEvent>): string {
     const notificationStrings: string[] = [];
 
