@@ -1,6 +1,6 @@
 import { GitRemoteHandler, ServiceType } from '../../types';
 import { GitLabIssueEvent } from '../../types/gitlab/issue-event';
-import { GitLabEventTypes } from '../../constants/enums';
+import { GitLabEventTypes, ObjectTypes } from '../../constants/enums';
 
 export default class IssueHookHandler implements GitRemoteHandler<GitLabIssueEvent> {
   readonly eventType = GitLabEventTypes.ISSUE;
@@ -14,9 +14,10 @@ export default class IssueHookHandler implements GitRemoteHandler<GitLabIssueEve
 
   parseObservableObjectInfo(serviceType: ServiceType<GitLabIssueEvent>) {
     return {
-      objectId: serviceType.eventPayload.object_attributes.id,
-      projectId: serviceType.eventPayload.project.id,
-      objectType: serviceType.eventPayload.object_attributes.state === 'opened' ? 'issue:opened' : 'issue:closed',
+      objectId: String(serviceType.eventPayload.object_attributes.id),
+      projectId: String(serviceType.eventPayload.project.id),
+      objectType: ObjectTypes.ISSUE,
+      objectUrl: serviceType.eventPayload.object_attributes.url,
     };
   }
 

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Subscription } from '../../models/subscription.entity';
 import { Repository } from 'typeorm';
-import { PendingSubscription, TObservableObject } from '../../types';
+import { PendingSubscription, TObservableObjectEntity } from '../../types';
 
 @Injectable()
 export class SubscriptionService {
@@ -10,20 +10,15 @@ export class SubscriptionService {
 
   async subscribe(pendingSubscriptions: PendingSubscription[]) {
     if (pendingSubscriptions.length) {
-      for (const pendingSubscription of pendingSubscriptions) {
-        const adaptedPendingSubscription = {
-          serviceId: String(pendingSubscription.serviceId)!,
-          projectId: String(pendingSubscription.projectId),
-          objectId: String(pendingSubscription.objectId),
-          serviceUserId: String(pendingSubscription.serviceUserId),
-          isSubscribed: true,
-        };
-        this.subscriptionRepository.create(adaptedPendingSubscription);
-      }
+      const valuesToBeInserted = pendingSubscriptions.map((subscription) => ({
+        ...subscription,
+        isSubscribed: true,
+      }));
+      await this.subscriptionRepository.insert(valuesToBeInserted);
     }
   }
 
-  async findSubscribers(observableObject: TObservableObject) {
+  async findSubscribers(observableObject: Omit<TObservableObjectEntity, 'objectUrl'>) {
     return await this.subscriptionRepository.find({
       where: {
         objectId: String(observableObject.objectId),

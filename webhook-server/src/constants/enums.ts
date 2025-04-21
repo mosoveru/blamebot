@@ -21,3 +21,8 @@ export enum EventHeaders {
 export enum GitLabEventTypes {
   ISSUE = 'Issue Hook',
 }
+
+export enum ObjectTypes {
+  ISSUE = 'issue',
+  REQUEST = 'request',
+}
