@@ -7,11 +7,9 @@ import { Repository } from 'typeorm';
 export class SubscriberService {
   constructor(@InjectRepository(Subscriber) private readonly subscriberRepository: Repository<Subscriber>) {}
 
-  async findChat(serviceName: string, username: string) {
-    // TODO: Change subscriber query logic due to database schema change
-
+  async findTelegramUser(telegramUserId: string) {
     return this.subscriberRepository.findOneBy({
-      telegramUserId: serviceName,
+      telegramUserId: telegramUserId,
     });
   }
 }
