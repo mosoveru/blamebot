@@ -12,7 +12,10 @@ export class ServiceUser {
   @PrimaryColumn()
   serviceId: string;
 
-  @OneToOne(() => Subscriber, { nullable: true })
+  @PrimaryColumn()
+  telegramUserId: string;
+
+  @OneToOne(() => Subscriber)
   @JoinColumn({
     name: 'telegramUserId',
   })

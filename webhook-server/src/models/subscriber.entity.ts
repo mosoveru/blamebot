@@ -12,7 +12,4 @@ export class Subscriber {
 
   @Column()
   name: string;
-
-  @Column()
-  chatId: string;
 }

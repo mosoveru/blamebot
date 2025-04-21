@@ -3,6 +3,7 @@ import { ServiceUser } from './service-user.entity';
 import { Service } from './service.entity';
 import { Project } from './project.entity';
 import { ObservableObject } from './observable-object.entity';
+import { ObjectType } from './object-type.entity';
 
 @Entity({
   name: 'subscriptions',
@@ -38,6 +39,10 @@ export class Subscription {
   @OneToOne(() => ObservableObject)
   @JoinColumn({ name: 'objectId' })
   object: ObservableObject;
+
+  @OneToOne(() => ObjectType)
+  @JoinColumn({ name: 'objectType' })
+  objectTypeRelation: ObjectType;
 
   @Column()
   isSubscribed: boolean;
