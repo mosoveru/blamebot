@@ -65,25 +65,16 @@ export class InitDatabase1744969724977 implements MigrationInterface {
         name: 'object_types',
         columns: [
           {
-            name: 'objectTypeId',
-            type: 'int',
-            isPrimary: true,
-            isGenerated: true,
-            generationStrategy: 'increment',
-          },
-          {
-            name: 'typeName',
+            name: 'objectType',
             type: 'varchar',
+            isPrimary: true,
           },
         ],
       }),
     );
 
-    await queryRunner.query(`INSERT INTO object_types ("typeName") VALUES ('request:open');`);
-    await queryRunner.query(`INSERT INTO object_types ("typeName") VALUES ('request:closed');`);
-    await queryRunner.query(`INSERT INTO object_types ("typeName") VALUES ('request:merged');`);
-    await queryRunner.query(`INSERT INTO object_types ("typeName") VALUES ('issue:opened');`);
-    await queryRunner.query(`INSERT INTO object_types ("typeName") VALUES ('issue:closed');`);
+    await queryRunner.query(`INSERT INTO object_types ("objectType") VALUES ('request');`);
+    await queryRunner.query(`INSERT INTO object_types ("objectType") VALUES ('issue');`);
 
     await queryRunner.createTable(
       new Table({
@@ -173,8 +164,8 @@ export class InitDatabase1744969724977 implements MigrationInterface {
             isPrimary: true,
           },
           {
-            name: 'objectTypeId',
-            type: 'int',
+            name: 'objectType',
+            type: 'varchar',
             isPrimary: true,
           },
           {
@@ -192,8 +183,8 @@ export class InitDatabase1744969724977 implements MigrationInterface {
         referencedTableName: 'projects',
       }),
       new TableForeignKey({
-        columnNames: ['objectTypeId'],
-        referencedColumnNames: ['objectTypeId'],
+        columnNames: ['objectType'],
+        referencedColumnNames: ['objectType'],
         referencedTableName: 'object_types',
       }),
     ]);
@@ -223,8 +214,8 @@ export class InitDatabase1744969724977 implements MigrationInterface {
             isPrimary: true,
           },
           {
-            name: 'objectTypeId',
-            type: 'int',
+            name: 'objectType',
+            type: 'varchar',
             isPrimary: true,
           },
           {
@@ -237,8 +228,8 @@ export class InitDatabase1744969724977 implements MigrationInterface {
 
     await queryRunner.createForeignKeys('subscriptions', [
       new TableForeignKey({
-        columnNames: ['objectId', 'serviceId', 'projectId', 'objectTypeId'],
-        referencedColumnNames: ['objectId', 'serviceId', 'projectId', 'objectTypeId'],
+        columnNames: ['objectId', 'serviceId', 'projectId', 'objectType'],
+        referencedColumnNames: ['objectId', 'serviceId', 'projectId', 'objectType'],
         referencedTableName: 'observable_objects',
       }),
       new TableForeignKey({
