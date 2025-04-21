@@ -78,7 +78,7 @@ export class InitDatabase1744969724977 implements MigrationInterface {
 
     await queryRunner.createTable(
       new Table({
-        name: 'subscribers',
+        name: 'telegram_users',
         columns: [
           {
             name: 'telegramUserId',
@@ -140,7 +140,7 @@ export class InitDatabase1744969724977 implements MigrationInterface {
       new TableForeignKey({
         columnNames: ['telegramUserId'],
         referencedColumnNames: ['telegramUserId'],
-        referencedTableName: 'subscribers',
+        referencedTableName: 'telegram_users',
       }),
     ]);
 
@@ -244,7 +244,7 @@ export class InitDatabase1744969724977 implements MigrationInterface {
     await queryRunner.dropTable('subscriptions');
     await queryRunner.dropTable('service_users');
     await queryRunner.dropTable('observable_objects');
-    await queryRunner.dropTable('subscribers');
+    await queryRunner.dropTable('telegram_users');
     await queryRunner.dropTable('projects');
     await queryRunner.dropTable('object_types');
     await queryRunner.dropTable('services');
