@@ -1,18 +1,18 @@
-import { GitRemoteHandler, ServiceType } from '../../types';
+import { EventInfo, GitRemoteHandler, EventPayload } from '../../types';
 import { GitLabIssueEvent } from '../../types/gitlab/issue-event';
 import { GitLabEventTypes, ObjectTypes } from '../../constants/enums';
 
 export default class IssueHookHandler implements GitRemoteHandler<GitLabIssueEvent> {
   readonly eventType = GitLabEventTypes.ISSUE;
 
-  parseEventMembersIds(serviceType: ServiceType<GitLabIssueEvent>) {
+  parseEventMembersIds(serviceType: EventPayload<GitLabIssueEvent>) {
     const objectMembersIds: number[] = [];
     objectMembersIds.push(serviceType.eventPayload.object_attributes.author_id);
     serviceType.eventPayload.object_attributes.assignee_ids.forEach((assigneeId) => objectMembersIds.push(assigneeId));
     return objectMembersIds;
   }
 
-  parseObservableObjectInfo(serviceType: ServiceType<GitLabIssueEvent>) {
+  parseObservableObjectInfo(serviceType: EventPayload<GitLabIssueEvent>) {
     return {
       objectId: String(serviceType.eventPayload.object_attributes.id),
       projectId: String(serviceType.eventPayload.project.id),
@@ -21,18 +21,22 @@ export default class IssueHookHandler implements GitRemoteHandler<GitLabIssueEve
     };
   }
 
-  parseEventInitiatorId(serviceType: ServiceType<GitLabIssueEvent>): string {
+  parseEventInitiatorId(serviceType: EventPayload<GitLabIssueEvent>): string {
     return String(serviceType.eventPayload.user.id);
   }
 
-  composeNotification(serviceType: ServiceType<GitLabIssueEvent>): string {
+  composeNotification(eventInfo: EventInfo<GitLabIssueEvent>): string {
     const notificationStrings: string[] = [];
 
+    notificationStrings.push(`<b>${eventInfo.name}</b>\n\n`);
     notificationStrings.push(
-      `В связанном с вами Issue #${serviceType.eventPayload.object_attributes.id} в репозитории ${serviceType.eventPayload.repository.name} произошли изменения:\n\n`,
+      `В связанном с вами Issue <a href="${eventInfo.eventPayload.object_attributes.url}">#${eventInfo.eventPayload.object_attributes.id}</a>`,
+    );
+    notificationStrings.push(
+      ` в репозитории <a href="${eventInfo.eventPayload.project.web_url}">${eventInfo.eventPayload.repository.name}</a> произошли изменения:\n\n`,
     );
 
-    for (const changeType of Object.keys(serviceType.eventPayload.changes)) {
+    for (const changeType of Object.keys(eventInfo.eventPayload.changes)) {
       switch (changeType) {
         case 'description': {
           notificationStrings.push(`Изменилось описание\n`);

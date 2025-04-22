@@ -1,43 +1,40 @@
 import { RemoteGitServices } from '../constants/enums';
 
-export type GitWebhookServiceType<T> = {
+export type WebhookEventPayload<T> = {
   service: RemoteGitServices;
   eventType: string;
   eventPayload: T;
 } | null;
 
-export type GitWebhookServiceName = {
+export type WebhookServiceName = {
   name: string;
 } | null;
 
-export type ServiceType<T> = Exclude<GitWebhookServiceType<T>, null>;
-export type ServiceName = Exclude<GitWebhookServiceName, null>;
-export type EventInfo<T> = ServiceType<T> &
-  ServiceName & {
-    eventMemberIds: number[];
-  };
+export type EventPayload<T> = Exclude<WebhookEventPayload<T>, null>;
+export type ServiceName = Exclude<WebhookServiceName, null>;
+export type EventInfo<T> = EventPayload<T> & ServiceName;
 
-export type TObservableObjectInfoFromPayload = {
+export type TObjectFromPayload = {
   objectId: string;
   projectId: string;
   objectType: string;
   objectUrl: string;
 };
 
-export type TObservableObjectEntity = TObservableObjectInfoFromPayload & {
+export type TObservableObjectEntity = TObjectFromPayload & {
   serviceId: string;
 };
 
-export type PendingSubscription = Omit<TObservableObjectEntity, 'objectUrl'> & {
+export type TSubscriptionIdentifier = Omit<TObservableObjectEntity, 'objectUrl'> & {
   serviceUserId: string;
 };
 
 export interface GitRemoteHandler<T> {
   readonly eventType: string;
-  parseEventMembersIds(serviceType: ServiceType<T>): number[];
-  parseObservableObjectInfo(serviceType: ServiceType<T>): TObservableObjectInfoFromPayload;
-  parseEventInitiatorId(serviceType: ServiceType<T>): string;
-  composeNotification(serviceType: ServiceType<T>): string;
+  parseEventMembersIds(serviceType: EventPayload<T>): number[];
+  parseObservableObjectInfo(serviceType: EventPayload<T>): TObjectFromPayload;
+  parseEventInitiatorId(serviceType: EventPayload<T>): string;
+  composeNotification(serviceType: EventInfo<T>): string;
 }
 
 export interface GitRemoteHandlerConstructor {

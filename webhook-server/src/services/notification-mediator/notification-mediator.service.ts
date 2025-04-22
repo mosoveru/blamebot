@@ -1,83 +1,55 @@
 import { Injectable } from '@nestjs/common';
 import { GitRemoteHandlersRepository } from '../../repository/git-remote-handlers-repository/git-remote-handlers-repository';
 import { TelegramService } from '../telegram/telegram.service';
-import { ServiceName, ServiceType } from '../../types';
-import { ObservableObjectService } from '../observable-object/observable-object.service';
-import { SubscriptionService } from '../subscription/subscription.service';
+import { ServiceName, EventPayload } from '../../types';
 import { NotificationRecipientsService } from '../notification-recipients/notification-recipients.service';
-import { ServiceUserService } from '../service-user/service-user.service';
 
 @Injectable()
 export class NotificationMediatorService {
   constructor(
     private readonly handlersRepository: GitRemoteHandlersRepository,
     private readonly telegramService: TelegramService,
-    private readonly observableObjectService: ObservableObjectService,
-    private readonly subscriptionService: SubscriptionService,
     private readonly notificationRecipientsService: NotificationRecipientsService,
-    private readonly serviceUsersService: ServiceUserService,
   ) {}
 
-  async notify(serviceName: ServiceName, serviceType: ServiceType<any>) {
-    console.log(JSON.stringify(serviceName, null, 2), JSON.stringify(serviceType, null, 2));
-    const handler = this.handlersRepository.getGitRemoteHandler(serviceType.service, serviceType.eventType);
+  async notify(serviceName: ServiceName, eventPayload: EventPayload<any>) {
+    console.log(JSON.stringify(serviceName, null, 2), JSON.stringify(eventPayload, null, 2));
+    const handler = this.handlersRepository.getGitRemoteHandler(eventPayload.service, eventPayload.eventType);
     if (handler) {
-      const objectInfo = handler.parseObservableObjectInfo(serviceType);
-      const observableObjectEntity = {
+      const objectInfo = handler.parseObservableObjectInfo(eventPayload);
+      const objectEntity = {
         ...objectInfo,
         serviceId: serviceName.name,
       };
-      await this.observableObjectService.ensureExists(observableObjectEntity);
-      const subscriptions = await this.subscriptionService.findSubscribers(observableObjectEntity);
-      const recipients = handler.parseEventMembersIds(serviceType);
+      const eventMembersIds = handler.parseEventMembersIds(eventPayload);
+      const eventInitiatorId = handler.parseEventInitiatorId(eventPayload);
 
-      const usersToBeChecked = this.notificationRecipientsService.compareSubscriptionsWithEventMembers(
-        subscriptions,
-        recipients,
-      );
+      const serviceUsers = await this.notificationRecipientsService.retrieveRecipientsList({
+        eventMembersIds,
+        objectEntity,
+        eventInitiatorId,
+      });
 
-      const subscribersWithActiveSubscription = subscriptions
-        .filter((subscription) => subscription.isSubscribed)
-        .map((subscription) => subscription.serviceUserId);
-
-      const usersToBeNotified: string[] = [...subscribersWithActiveSubscription];
-
-      const checkedServiceUsers = await this.serviceUsersService.ensureServiceUsersExists(
-        usersToBeChecked,
-        serviceName.name,
-      );
-      const checkedServiceUsersIds = checkedServiceUsers.map((serviceUser) => serviceUser.serviceUserId);
-
-      if (checkedServiceUsers.length) {
-        const pendingSubscriptions = checkedServiceUsers.map((serviceUser) => ({
-          serviceId: serviceName.name,
-          objectType: observableObjectEntity.objectType,
-          projectId: observableObjectEntity.projectId,
-          objectId: observableObjectEntity.objectId,
-          serviceUserId: serviceUser.serviceUserId,
-        }));
-
-        await this.subscriptionService.subscribe(pendingSubscriptions);
-        usersToBeNotified.push(...checkedServiceUsersIds);
+      if (!serviceUsers.length) {
+        return;
       }
 
-      const eventInitiatorId = handler.parseEventInitiatorId(serviceType);
-
-      const usersToBeNotifiedWithoutInitiator = this.notificationRecipientsService.excludeInitiator(
-        usersToBeNotified,
-        eventInitiatorId,
-      );
-
-      const serviceUsers = await this.serviceUsersService.retrieveTelegramIds(
-        usersToBeNotifiedWithoutInitiator,
-        serviceName.name,
-      );
-
-      const notification = handler.composeNotification(serviceType);
+      const notification = handler.composeNotification({
+        ...eventPayload,
+        ...serviceName,
+      });
       console.log(notification);
-      console.log(recipients);
+      console.log(eventMembersIds);
       for (const user of serviceUsers) {
-        await this.telegramService.sendNotification(notification, user.telegramUserId);
+        const notificationData = {
+          message: notification,
+          chatId: user.telegramUserId,
+          subscriptionInfo: {
+            ...objectEntity,
+            serviceUserId: user.serviceUserId,
+          },
+        };
+        await this.telegramService.sendNotification(notificationData);
       }
     } else {
       console.log("Handler isn't existing");

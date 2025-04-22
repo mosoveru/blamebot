@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Subscription } from '../../models/subscription.entity';
 import { Repository } from 'typeorm';
-import { PendingSubscription, TObservableObjectEntity } from '../../types';
+import { TSubscriptionIdentifier, TObservableObjectEntity } from '../../types';
 
 @Injectable()
 export class SubscriptionService {
   constructor(@InjectRepository(Subscription) private readonly subscriptionRepository: Repository<Subscription>) {}
 
-  async subscribe(pendingSubscriptions: PendingSubscription[]) {
+  async subscribe(pendingSubscriptions: TSubscriptionIdentifier[]) {
     if (pendingSubscriptions.length) {
       const valuesToBeInserted = pendingSubscriptions.map((subscription) => ({
         ...subscription,
