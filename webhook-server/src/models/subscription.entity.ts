@@ -1,9 +1,6 @@
-import { Column, Entity, OneToOne, PrimaryColumn, JoinColumn } from 'typeorm';
+import { Column, Entity, PrimaryColumn, JoinColumn, ManyToOne } from 'typeorm';
 import { ServiceUser } from './service-user.entity';
-import { Service } from './service.entity';
-import { Project } from './project.entity';
 import { ObservableObject } from './observable-object.entity';
-import { ObjectType } from './object-type.entity';
 
 @Entity({
   name: 'subscriptions',
@@ -24,25 +21,21 @@ export class Subscription {
   @PrimaryColumn()
   objectType: string;
 
-  @OneToOne(() => Service)
-  @JoinColumn({ name: 'serviceId' })
-  service: Service;
+  @ManyToOne(() => ObservableObject)
+  @JoinColumn([
+    { name: 'objectId', referencedColumnName: 'objectId' },
+    { name: 'serviceId', referencedColumnName: 'serviceId' },
+    { name: 'projectId', referencedColumnName: 'projectId' },
+    { name: 'objectType', referencedColumnName: 'objectType' },
+  ])
+  observableObjects: ObservableObject;
 
-  @OneToOne(() => ServiceUser)
-  @JoinColumn({ name: 'serviceUserId' })
-  serviceUser: ServiceUser;
-
-  @OneToOne(() => Project)
-  @JoinColumn({ name: 'projectId' })
-  project: Project;
-
-  @OneToOne(() => ObservableObject)
-  @JoinColumn({ name: 'objectId' })
-  object: ObservableObject;
-
-  @OneToOne(() => ObjectType)
-  @JoinColumn({ name: 'objectType' })
-  objectTypeRelation: ObjectType;
+  @ManyToOne(() => ServiceUser)
+  @JoinColumn([
+    { name: 'serviceId', referencedColumnName: 'serviceId' },
+    { name: 'serviceUserId', referencedColumnName: 'serviceUserId' },
+  ])
+  serviceUsers: ServiceUser;
 
   @Column()
   isSubscribed: boolean;

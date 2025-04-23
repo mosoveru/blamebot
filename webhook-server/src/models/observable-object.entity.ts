@@ -20,15 +20,15 @@ export class ObservableObject {
   objectType: string;
 
   @OneToOne(() => Service)
-  @JoinColumn({ name: 'serviceId' })
+  @JoinColumn({ name: 'serviceId', referencedColumnName: 'serviceId' })
   service: Service;
 
   @OneToOne(() => Project)
-  @JoinColumn({ name: 'projectId' })
+  @JoinColumn({ name: 'projectId', referencedColumnName: 'projectId' })
   project: Project;
 
   @OneToOne(() => ObjectType)
-  @JoinColumn({ name: 'objectType' })
+  @JoinColumn({ name: 'objectType', referencedColumnName: 'objectType' })
   objectTypeRelation: ObjectType;
 
   @Column()

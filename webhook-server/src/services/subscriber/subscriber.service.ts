@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Subscriber } from '../../models/subscriber.entity';
+import { TelegramUser } from '../../models/telegram-user.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
 export class SubscriberService {
-  constructor(@InjectRepository(Subscriber) private readonly subscriberRepository: Repository<Subscriber>) {}
+  constructor(@InjectRepository(TelegramUser) private readonly subscriberRepository: Repository<TelegramUser>) {}
 
   async findTelegramUser(telegramUserId: string) {
     return this.subscriberRepository.findOneBy({

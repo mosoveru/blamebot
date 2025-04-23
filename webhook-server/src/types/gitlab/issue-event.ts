@@ -20,7 +20,7 @@ interface User {
 
 interface Changes {
   author_id?: AuthorID;
-  created_at: CreatedAt;
+  created_at?: CreatedAt;
   description?: CreatedAt;
   id?: AuthorID;
   iid?: AuthorID;
@@ -29,6 +29,12 @@ interface Changes {
   updated_at?: CreatedAt;
   closed_at?: ClosedAt;
   state_id?: StateID;
+  assignees?: Assignee;
+}
+
+interface Assignee {
+  previous: User[];
+  current: User[];
 }
 
 interface StateID {

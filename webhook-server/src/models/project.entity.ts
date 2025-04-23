@@ -12,7 +12,7 @@ export class Project {
   serviceId: string;
 
   @OneToOne(() => Service)
-  @JoinColumn({ name: 'serviceId' })
+  @JoinColumn({ name: 'serviceId', referencedColumnName: 'serviceId' })
   service: Service;
 
   @Column()

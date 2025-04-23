@@ -3,7 +3,7 @@ import { WebhookController } from '../controllers/webhook.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import configuration from '../config/configuration';
-import { Subscriber } from '../models/subscriber.entity';
+import { TelegramUser } from '../models/telegram-user.entity';
 import { TelegramModule } from './telegram.module';
 import { NotificationMediatorService } from '../services/notification-mediator/notification-mediator.service';
 import { HandlersModule } from './handlers.module';
@@ -29,7 +29,7 @@ type DataBaseType = 'postgres';
         username: configService.get<string>('DB_USER_LOGIN')!,
         password: configService.get<string>('DB_USER_PASSWORD')!,
         database: configService.get<string>('DB_NAME')!,
-        entities: [Subscriber, Subscription, ServiceUser, ObservableObject, Project, Service, ObjectType],
+        entities: [TelegramUser, Subscription, ServiceUser, ObservableObject, Project, Service, ObjectType],
         synchronize: false,
         retryAttempts: 10,
       }),
