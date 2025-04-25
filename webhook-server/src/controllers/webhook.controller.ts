@@ -1,20 +1,16 @@
 import { Controller, Post } from '@nestjs/common';
-import { WebhookServiceName, WebhookEventPayload } from '../types';
-import { EventPayload } from '../decorators/event-payload';
-import { ServiceName } from '../decorators/service-name';
+import { Payload } from '../decorators/event-payload';
 import { NotificationMediatorService } from '../services/notification-mediator/notification-mediator.service';
+import { EventPayload } from '../types';
 
 @Controller()
 export class WebhookController {
   constructor(private readonly mediator: NotificationMediatorService) {}
 
   @Post()
-  async handleWebhookEvent(
-    @EventPayload() serviceType: WebhookEventPayload<any>,
-    @ServiceName() serviceName: WebhookServiceName,
-  ) {
-    if (serviceType && serviceName) {
-      await this.mediator.notify(serviceName, serviceType);
+  async handleWebhookEvent(@Payload() eventPayload: EventPayload<any> | null) {
+    if (eventPayload) {
+      await this.mediator.notify(eventPayload);
     }
   }
 }

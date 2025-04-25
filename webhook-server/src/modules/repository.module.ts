@@ -1,16 +1,33 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { ServiceUser } from '../models/service-user.entity';
-import { Subscription } from '../models/subscription.entity';
-import { TelegramUser } from '../models/telegram-user.entity';
-import { ObservableObject } from '../models/observable-object.entity';
-import { ObservableObjectService } from '../services/observable-object/observable-object.service';
-import { ServiceUserService } from '../services/service-user/service-user.service';
-import { SubscriptionService } from '../services/subscription/subscription.service';
+import { GitRemoteHandlersRepository } from '../repository/git-remote-handlers-repository/git-remote-handlers-repository';
+import { DataParsersRepository } from '../repository/data-parsers-repository/data-parsers-repository.service';
+import { DataParsers } from '../data-parsers';
+import { NotificationComposers } from '../notification-composers';
+import { NotificationComposersRepository } from '../repository/notification-composers-repository/notification-composers-repository.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ServiceUser, Subscription, TelegramUser, ObservableObject])],
-  providers: [ObservableObjectService, ServiceUserService, SubscriptionService, SubscriptionService],
-  exports: [ObservableObjectService, ServiceUserService, SubscriptionService, SubscriptionService],
+  providers: [
+    {
+      provide: DataParsersRepository,
+      useFactory: () => {
+        const repository = new DataParsersRepository();
+        for (const parsers of DataParsers) {
+          repository.registerDataParsers(parsers);
+        }
+        return repository;
+      },
+    },
+    {
+      provide: NotificationComposersRepository,
+      useFactory: () => {
+        const repository = new NotificationComposersRepository();
+        for (const composers of NotificationComposers) {
+          repository.registerComposers(composers);
+        }
+        return repository;
+      },
+    },
+  ],
+  exports: [GitRemoteHandlersRepository],
 })
 export class RepositoryModule {}

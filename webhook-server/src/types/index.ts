@@ -1,16 +1,19 @@
-import { RemoteGitServices } from '../constants/enums';
+import { GitLabEventTypes, RemoteGitServices } from '../constants/enums';
 
-export type WebhookEventPayload<T> = {
+export type NullableEventPayload<T> = {
+  service: RemoteGitServices | null;
+  eventType: string | null;
+  eventPayload: T | null;
+  name: string | null;
+};
+
+export type EventPayload<T> = {
   service: RemoteGitServices;
   eventType: string;
   eventPayload: T;
-} | null;
-
-export type WebhookServiceName = {
   name: string;
-} | null;
+};
 
-export type EventPayload<T> = Exclude<WebhookEventPayload<T>, null>;
 export type ServiceName = Exclude<WebhookServiceName, null>;
 export type EventInfo<T> = EventPayload<T> & ServiceName;
 
@@ -35,6 +38,28 @@ export interface GitRemoteHandler<T> {
   parseObservableObjectInfo(serviceType: EventPayload<T>): TObjectFromPayload;
   parseEventInitiatorId(serviceType: EventPayload<T>): string;
   composeNotification(serviceType: EventInfo<T>): string;
+}
+
+export interface NotificationComposer<T> {
+  readonly eventType: GitLabEventTypes;
+  readonly gitProvider: RemoteGitServices;
+  composeNotification(serviceType: EventInfo<T>): string;
+}
+
+export interface DataParser<T> {
+  readonly eventType: GitLabEventTypes;
+  readonly gitProvider: RemoteGitServices;
+  parseEventMembersIds(serviceType: EventPayload<T>): number[];
+  parseObservableObjectInfo(serviceType: EventPayload<T>): TObjectFromPayload;
+  parseEventInitiatorId(serviceType: EventPayload<T>): string;
+}
+
+export interface NotificationComposerConstructor {
+  new (): NotificationComposer<any>;
+}
+
+export interface DataParserConstructor {
+  new (): DataParser<any>;
 }
 
 export interface GitRemoteHandlerConstructor {

@@ -6,9 +6,9 @@ import configuration from '../config/configuration';
 import { TelegramUser } from '../models/telegram-user.entity';
 import { TelegramModule } from './telegram.module';
 import { NotificationMediatorService } from '../services/notification-mediator/notification-mediator.service';
-import { HandlersModule } from './handlers.module';
-import { NotificationModule } from './notification.module';
 import { RepositoryModule } from './repository.module';
+import { NotificationModule } from './notification.module';
+import { EntityModule } from './entity.module';
 import { Subscription } from '../models/subscription.entity';
 import { ServiceUser } from '../models/service-user.entity';
 import { ObservableObject } from '../models/observable-object.entity';
@@ -39,9 +39,9 @@ type DataBaseType = 'postgres';
       load: [configuration],
     }),
     NotificationModule,
-    RepositoryModule,
+    EntityModule,
     TelegramModule,
-    HandlersModule,
+    RepositoryModule,
   ],
   controllers: [WebhookController],
   providers: [NotificationMediatorService],

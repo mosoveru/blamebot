@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { GitRemoteHandlersRepository } from '../../repository/git-remote-handlers-repository/git-remote-handlers-repository';
 import { TelegramService } from '../telegram/telegram.service';
-import { ServiceName, EventPayload } from '../../types';
+import { EventPayload } from '../../types';
 import { NotificationRecipientsService } from '../notification-recipients/notification-recipients.service';
 
 @Injectable()
@@ -12,7 +12,7 @@ export class NotificationMediatorService {
     private readonly notificationRecipientsService: NotificationRecipientsService,
   ) {}
 
-  async notify(serviceName: ServiceName, eventPayload: EventPayload<any>) {
+  async notify(eventPayload: EventPayload<any>) {
     console.log(JSON.stringify(serviceName, null, 2), JSON.stringify(eventPayload, null, 2));
     const handler = this.handlersRepository.getGitRemoteHandler(eventPayload.service, eventPayload.eventType);
     if (handler) {
