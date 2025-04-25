@@ -13,9 +13,7 @@ function signServices() {
         output: process.stdout,
     });
     rl.question('Enter the Git Service Name\n\n', function (answer) {
-        var serviceName = {
-            name: answer.trim(),
-        };
+        var serviceName = answer.trim();
         console.log("Sign using: ".concat(PRIVATE_JWT_KEY));
         var token = (0, jsonwebtoken_1.sign)(serviceName, PRIVATE_JWT_KEY);
         console.log("The Git Service token\n\n".concat(token.trim()));
