@@ -1,8 +1,3 @@
-export enum EventType {
-  GET_REQUEST = 'GET_REQUEST',
-  GIT_SERVICE_TYPE_PARSED = 'GIT_SERVICE_TYPE_PARSED',
-}
-
 export enum RemoteGitServices {
   GITLAB = 'GITLAB',
   GITEA = 'GITEA',
