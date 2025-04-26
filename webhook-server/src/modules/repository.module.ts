@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { GitRemoteHandlersRepository } from '../repository/git-remote-handlers-repository/git-remote-handlers-repository';
-import { DataParsersRepository } from '../repository/data-parsers-repository/data-parsers-repository.service';
+import { GitRemoteHandlersRepository } from '../repositories/git-remote-handlers-repository/git-remote-handlers-repository';
+import { DataParsersRepository } from '../repositories/data-parsers-repository/data-parsers-repository.service';
 import { DataParsers } from '../data-parsers';
 import { NotificationComposers } from '../notification-composers';
-import { NotificationComposersRepository } from '../repository/notification-composers-repository/notification-composers-repository.service';
+import { NotificationComposersRepository } from '../repositories/notification-composers-repository/notification-composers-repository.service';
 
 @Module({
   providers: [

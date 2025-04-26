@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { GitRemoteHandlersRepository } from '../../repository/git-remote-handlers-repository/git-remote-handlers-repository';
+import { GitRemoteHandlersRepository } from '../../repositories/git-remote-handlers-repository/git-remote-handlers-repository';
 import { TelegramService } from '../telegram/telegram.service';
 import { EventPayload } from '../../types';
 import { NotificationRecipientsService } from '../notification-recipients/notification-recipients.service';

@@ -14,8 +14,20 @@ export type EventPayload<T> = {
   name: string;
 };
 
-export type ServiceName = Exclude<WebhookServiceName, null>;
-export type EventInfo<T> = EventPayload<T> & ServiceName;
+export type EventChanges = {
+  serviceUserId?: string;
+  changes: string[];
+};
+
+export type NotificationMessage = {
+  serviceUserId?: string;
+  message: string;
+};
+
+export type ChangeParserData<T> = {
+  serviceUserId?: string;
+  eventPayload: Pick<EventPayload<T>, 'eventPayload'>;
+};
 
 export type TObjectFromPayload = {
   objectId: string;
@@ -32,18 +44,8 @@ export type TSubscriptionIdentifier = Omit<TObservableObjectEntity, 'objectUrl'>
   serviceUserId: string;
 };
 
-export interface GitRemoteHandler<T> {
-  readonly eventType: string;
-  parseEventMembersIds(serviceType: EventPayload<T>): number[];
-  parseObservableObjectInfo(serviceType: EventPayload<T>): TObjectFromPayload;
-  parseEventInitiatorId(serviceType: EventPayload<T>): string;
-  composeNotification(serviceType: EventInfo<T>): string;
-}
-
-export interface NotificationComposer<T> {
-  readonly eventType: GitLabEventTypes;
-  readonly gitProvider: RemoteGitServices;
-  composeNotification(serviceType: EventInfo<T>): string;
+export interface NotificationComposer {
+  composeNotification(serviceType: EventChanges): NotificationMessage;
 }
 
 export interface DataParser<T> {
@@ -54,14 +56,16 @@ export interface DataParser<T> {
   parseEventInitiatorId(serviceType: EventPayload<T>): string;
 }
 
-export interface NotificationComposerConstructor {
-  new (): NotificationComposer<any>;
+export interface ChangesParser<T> {
+  readonly eventType: GitLabEventTypes;
+  readonly gitProvider: RemoteGitServices;
+  parseEventChanges(data: ChangeParserData<T>): EventChanges;
 }
 
 export interface DataParserConstructor {
   new (): DataParser<any>;
 }
 
-export interface GitRemoteHandlerConstructor {
-  new (): GitRemoteHandler<any>;
+export interface ChangesParserConstructor {
+  new (): ChangesParser<any>;
 }
