@@ -1,8 +1,7 @@
 import { Module } from '@nestjs/common';
-import { DataParsersRepository } from '../repositories/data-parsers-repository/data-parsers-repository.service';
+import { DataParsersRepository } from '../repositories/data-parsers-repository/data-parsers.repository';
 import { DataParsers } from '../data-parsers';
-import { ChangesParserRepository } from '../repositories/changes-parser-repository/changes-parser-repository.service';
-import { ChangesParsers } from '../changes-parsers';
+import { ChangesAnalyserService } from '../services/changes-analyser/changes-analyser.service';
 
 @Module({
   providers: [
@@ -16,17 +15,8 @@ import { ChangesParsers } from '../changes-parsers';
         return repository;
       },
     },
-    {
-      provide: ChangesParserRepository,
-      useFactory: () => {
-        const repository = new ChangesParserRepository();
-        for (const composers of ChangesParsers) {
-          repository.registerChangesParsers(composers);
-        }
-        return repository;
-      },
-    },
+    ChangesAnalyserService,
   ],
-  exports: [DataParsersRepository, ChangesParserRepository],
+  exports: [DataParsersRepository, ChangesAnalyserService],
 })
 export class RepositoryModule {}

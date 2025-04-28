@@ -2,14 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { Subscription } from 'src/models/subscription.entity';
 import { EventPayload } from '../../types';
 import { SubscriptionService } from '../subscription/subscription.service';
-import { ServiceUserService } from '../service-user/service-user.service';
-import { DataParsersRepository } from '../../repositories/data-parsers-repository/data-parsers-repository.service';
+import { DataParsersRepository } from '../../repositories/data-parsers-repository/data-parsers.repository';
 import { ObservableObjectService } from '../observable-object/observable-object.service';
 
 @Injectable()
 export class NotificationRecipientsService {
   constructor(
-    private readonly serviceUserService: ServiceUserService,
     private readonly subscriptionService: SubscriptionService,
     private readonly dataParsersRepository: DataParsersRepository,
     private readonly observableObjectService: ObservableObjectService,
