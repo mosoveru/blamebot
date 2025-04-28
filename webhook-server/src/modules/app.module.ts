@@ -5,7 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import configuration from '../config/configuration';
 import { TelegramUser } from '../models/telegram-user.entity';
 import { TelegramModule } from './telegram.module';
-import { NotificationMediatorService } from '../services/notification-mediator/notification-mediator.service';
+import { NotificationService } from '../services/notification/notification.service';
 import { RepositoryModule } from './repository.module';
 import { NotificationModule } from './notification.module';
 import { EntityModule } from './entity.module';
@@ -44,6 +44,6 @@ type DataBaseType = 'postgres';
     RepositoryModule,
   ],
   controllers: [WebhookController],
-  providers: [NotificationMediatorService],
+  providers: [NotificationService],
 })
 export class AppModule {}

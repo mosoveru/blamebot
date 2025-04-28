@@ -29,18 +29,15 @@ export type ChangeParserData<T> = {
   eventPayload: Pick<EventPayload<T>, 'eventPayload'>;
 };
 
-export type TObjectFromPayload = {
+export type ObservableObjectEntity = {
+  serviceId: string;
   objectId: string;
   projectId: string;
   objectType: string;
   objectUrl: string;
 };
 
-export type TObservableObjectEntity = TObjectFromPayload & {
-  serviceId: string;
-};
-
-export type TSubscriptionIdentifier = Omit<TObservableObjectEntity, 'objectUrl'> & {
+export type SubscriptionIdentifier = Omit<ObservableObjectEntity, 'objectUrl'> & {
   serviceUserId: string;
 };
 
@@ -52,7 +49,7 @@ export interface DataParser<T> {
   readonly eventType: GitLabEventTypes;
   readonly gitProvider: RemoteGitServices;
   parseEventMembersIds(serviceType: EventPayload<T>): number[];
-  parseObservableObjectInfo(serviceType: EventPayload<T>): TObjectFromPayload;
+  parseObservableObjectInfo(serviceType: EventPayload<T>): ObservableObjectEntity;
   parseEventInitiatorId(serviceType: EventPayload<T>): string;
 }
 

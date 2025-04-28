@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ObservableObject } from '../../models/observable-object.entity';
 import { Repository } from 'typeorm';
-import { TObservableObjectEntity } from '../../types';
+import { ObservableObjectEntity } from '../../types';
 
 @Injectable()
 export class ObservableObjectService {
@@ -10,7 +10,7 @@ export class ObservableObjectService {
     @InjectRepository(ObservableObject) private readonly observableObjectRepository: Repository<ObservableObject>,
   ) {}
 
-  async ensureExists(objectInfo: TObservableObjectEntity) {
+  async ensureExists(objectInfo: ObservableObjectEntity) {
     const observableObject = await this.observableObjectRepository.findOne({
       where: {
         objectId: String(objectInfo.objectId),

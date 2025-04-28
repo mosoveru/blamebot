@@ -3,8 +3,8 @@ import { GitLabIssueEvent } from '../../types/gitlab/issue-event';
 import { GitLabEventTypes, ObjectTypes, RemoteGitServices } from '../../constants/enums';
 
 export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
-  readonly eventType: GitLabEventTypes.ISSUE;
-  readonly gitProvider: RemoteGitServices.GITLAB;
+  readonly eventType = GitLabEventTypes.ISSUE;
+  readonly gitProvider = RemoteGitServices.GITLAB;
 
   parseEventMembersIds(serviceType: EventPayload<GitLabIssueEvent>) {
     const objectMembersIds: number[] = [];
@@ -13,12 +13,13 @@ export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
     return objectMembersIds;
   }
 
-  parseObservableObjectInfo(serviceType: EventPayload<GitLabIssueEvent>) {
+  parseObservableObjectInfo(eventPayload: EventPayload<GitLabIssueEvent>) {
     return {
-      objectId: String(serviceType.eventPayload.object_attributes.id),
-      projectId: String(serviceType.eventPayload.project.id),
+      serviceId: eventPayload.name,
+      objectId: String(eventPayload.eventPayload.object_attributes.id),
+      projectId: String(eventPayload.eventPayload.project.id),
       objectType: ObjectTypes.ISSUE,
-      objectUrl: serviceType.eventPayload.object_attributes.url,
+      objectUrl: eventPayload.eventPayload.object_attributes.url,
     };
   }
 

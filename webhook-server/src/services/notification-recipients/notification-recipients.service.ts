@@ -1,73 +1,40 @@
 import { Injectable } from '@nestjs/common';
 import { Subscription } from 'src/models/subscription.entity';
-import { TObservableObjectEntity } from '../../types';
+import { EventPayload } from '../../types';
 import { SubscriptionService } from '../subscription/subscription.service';
-import { ObservableObjectService } from '../observable-object/observable-object.service';
 import { ServiceUserService } from '../service-user/service-user.service';
-
-type TRetrieveMethodRequiredData = {
-  objectEntity: TObservableObjectEntity;
-  eventInitiatorId: string;
-  eventMembersIds: number[];
-};
+import { DataParsersRepository } from '../../repositories/data-parsers-repository/data-parsers-repository.service';
+import { ObservableObjectService } from '../observable-object/observable-object.service';
 
 @Injectable()
 export class NotificationRecipientsService {
   constructor(
     private readonly serviceUserService: ServiceUserService,
-    private readonly observableObjectService: ObservableObjectService,
     private readonly subscriptionService: SubscriptionService,
+    private readonly dataParsersRepository: DataParsersRepository,
+    private readonly observableObjectService: ObservableObjectService,
   ) {}
 
-  async retrieveRecipientsList(data: TRetrieveMethodRequiredData) {
-    await this.observableObjectService.ensureExists(data.objectEntity);
-    const subscriptions = await this.subscriptionService.findSubscribers(data.objectEntity);
+  async retrieveRecipientsList(eventPayload: EventPayload<any>) {
+    const handler = this.dataParsersRepository.getDataParser(eventPayload.service, eventPayload.eventType);
 
-    const usersToBeChecked = this.compareSubscriptionsWithEventMembers(subscriptions, data.eventMembersIds);
-
-    const subscribersWithActiveSubscription = subscriptions
-      .filter((subscription) => subscription.isSubscribed)
-      .map((subscription) => subscription.serviceUserId);
-
-    const usersToBeNotified: string[] = [...subscribersWithActiveSubscription];
-
-    const checkedServiceUsers = await this.serviceUserService.ensureServiceUsersExists(
-      usersToBeChecked,
-      data.objectEntity.serviceId,
-    );
-    const checkedServiceUsersIds = checkedServiceUsers.map((serviceUser) => serviceUser.serviceUserId);
-
-    if (checkedServiceUsers.length) {
-      const pendingSubscriptions = checkedServiceUsers.map((serviceUser) => ({
-        ...data.objectEntity,
-        serviceUserId: serviceUser.serviceUserId,
-      }));
-
-      await this.subscriptionService.subscribe(pendingSubscriptions);
-      usersToBeNotified.push(...checkedServiceUsersIds);
+    if (!handler) {
+      return null;
     }
 
-    const usersToBeNotifiedWithoutInitiator = this.excludeInitiator(usersToBeNotified, data.eventInitiatorId);
+    const eventMembersIds = handler.parseEventMembersIds(eventPayload);
+    const eventInitiatorId = handler.parseEventInitiatorId(eventPayload);
+    const observableObject = handler.parseObservableObjectInfo(eventPayload);
 
-    return await this.serviceUserService.retrieveTelegramIds(
-      usersToBeNotifiedWithoutInitiator,
-      data.objectEntity.serviceId,
-    );
+    await this.observableObjectService.ensureExists(observableObject);
+    await this.subscriptionService.subscribeNewEventMembers(observableObject, eventMembersIds);
+
+    const activeSubscriptions = await this.subscriptionService.retrieveActiveSubscriptions(observableObject);
+
+    return this.excludeInitiator(activeSubscriptions, eventInitiatorId);
   }
 
-  private compareSubscriptionsWithEventMembers(subscriptions: Subscription[], membersIds: number[]) {
-    const toBeChecked: string[] = [];
-    const ids = membersIds.map((id) => String(id));
-    const subscriptionsIds = subscriptions.map((subscription) => subscription.serviceUserId);
-    ids.forEach((id) => {
-      if (!subscriptionsIds.includes(id)) {
-        toBeChecked.push(id);
-      }
-    });
-    return toBeChecked;
-  }
-
-  private excludeInitiator(usersToBeNotified: string[], initiatorId: string) {
-    return usersToBeNotified.filter((userId) => userId !== initiatorId);
+  private excludeInitiator(subscriptions: Subscription[], initiatorId: string) {
+    return subscriptions.filter((subscription) => subscription.serviceUserId !== initiatorId);
   }
 }

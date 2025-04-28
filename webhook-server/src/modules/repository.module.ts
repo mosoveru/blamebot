@@ -1,9 +1,8 @@
 import { Module } from '@nestjs/common';
-import { GitRemoteHandlersRepository } from '../repositories/git-remote-handlers-repository/git-remote-handlers-repository';
 import { DataParsersRepository } from '../repositories/data-parsers-repository/data-parsers-repository.service';
 import { DataParsers } from '../data-parsers';
-import { NotificationComposers } from '../notification-composers';
-import { NotificationComposersRepository } from '../repositories/notification-composers-repository/notification-composers-repository.service';
+import { ChangesParserRepository } from '../repositories/changes-parser-repository/changes-parser-repository.service';
+import { ChangesParsers } from '../changes-parsers';
 
 @Module({
   providers: [
@@ -18,16 +17,16 @@ import { NotificationComposersRepository } from '../repositories/notification-co
       },
     },
     {
-      provide: NotificationComposersRepository,
+      provide: ChangesParserRepository,
       useFactory: () => {
-        const repository = new NotificationComposersRepository();
-        for (const composers of NotificationComposers) {
-          repository.registerComposers(composers);
+        const repository = new ChangesParserRepository();
+        for (const composers of ChangesParsers) {
+          repository.registerChangesParsers(composers);
         }
         return repository;
       },
     },
   ],
-  exports: [GitRemoteHandlersRepository],
+  exports: [DataParsersRepository, ChangesParserRepository],
 })
 export class RepositoryModule {}

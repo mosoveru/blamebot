@@ -6,7 +6,7 @@ import { RemoteGitServices } from '../../constants/enums';
 export class ChangesParserRepository {
   private readonly store: Map<string, ChangesParser<any>> = new Map();
 
-  registerDataParsers(changesParsers: ChangesParserConstructor[]) {
+  registerChangesParsers(changesParsers: ChangesParserConstructor[]) {
     for (const ChangesParser of changesParsers) {
       const changesParserInstance = new ChangesParser();
       this.store.set(`${changesParserInstance.gitProvider}:${changesParserInstance.eventType}`, changesParserInstance);

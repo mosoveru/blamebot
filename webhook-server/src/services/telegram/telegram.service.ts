@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { Api, InlineKeyboard } from 'grammy';
-import { TSubscriptionIdentifier } from '../../types';
+import { SubscriptionIdentifier } from '../../types';
 
 type NotificationData = {
   message: string;
   chatId: string;
-  subscriptionInfo: TSubscriptionIdentifier;
+  subscriptionInfo: SubscriptionIdentifier;
 };
 
 @Injectable()
@@ -22,7 +22,7 @@ export class TelegramService {
     });
   }
 
-  private createCallbackQueryString(subscriptionInfo: TSubscriptionIdentifier) {
+  private createCallbackQueryString(subscriptionInfo: SubscriptionIdentifier) {
     const callbackQueryString: string[] = [];
     callbackQueryString.push('UNSUB;');
     callbackQueryString.push(`USR=${subscriptionInfo.serviceUserId};`);
