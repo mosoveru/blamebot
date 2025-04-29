@@ -25,7 +25,7 @@ export type NotificationMessage = {
 };
 
 export type ParseChangesData<T> = {
-  eventMembersId: number[];
+  eventMembersIds: number[];
 } & Pick<EventPayload<T>, 'eventPayload'>;
 
 export type ObservableObjectEntity = {

@@ -13,6 +13,11 @@ export class ChangesAnalyserService {
       return null;
     }
 
-    return changeParser.parseEventChanges(eventPayload);
+    const eventMembersIds = changeParser.parseEventMembersIds(eventPayload);
+
+    return changeParser.parseEventChanges({
+      eventMembersIds,
+      eventPayload,
+    });
   }
 }

@@ -1,4 +1,4 @@
-import { DataParser, EventPayload, ParseChangesData } from '../../types';
+import { DataParser, EventChanges, EventPayload, ParseChangesData } from '../../types';
 import { GitLabIssueEvent } from '../../types/gitlab/issue-event';
 import { GitLabEventTypes, ObjectTypes, RemoteGitServices } from '../../constants/enums';
 
@@ -27,34 +27,34 @@ export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
     return String(serviceType.eventPayload.user.id);
   }
 
-  parseEventChanges({ eventMembersId, eventPayload }: ParseChangesData<GitLabIssueEvent>) {
+  parseEventChanges({ eventMembersIds, eventPayload }: ParseChangesData<GitLabIssueEvent>) {
     const commonChanges = this.parseCommonChanges(eventPayload);
-    return eventMembersId.map((memberId) => {
+    const individualChanges = eventMembersIds.reduce<EventChanges[]>((acc, memberId) => {
       const isAssignee = eventPayload.assignees?.some((assignee) => assignee.id === memberId);
       if (isAssignee) {
         const assigneeChanges = this.parseChangesForAssigneeOrAuthor(eventPayload, 'assignee');
         if (assigneeChanges.length) {
-          return {
+          acc.push({
             serviceUserId: String(memberId),
             changes: assigneeChanges,
-          };
+          });
+          return acc;
         }
       }
       const isAuthor = eventPayload.object_attributes.author_id === memberId;
       if (isAuthor) {
         const authorChanges = this.parseChangesForAssigneeOrAuthor(eventPayload, 'author');
         if (authorChanges.length) {
-          return {
+          acc.push({
             serviceUserId: String(memberId),
             changes: authorChanges,
-          };
+          });
+          return acc;
         }
       }
-      return {
-        serviceUserId: String(memberId),
-        changes: commonChanges,
-      };
-    });
+      return acc;
+    }, []);
+    return [...individualChanges, { changes: commonChanges }];
   }
 
   private parseCommonChanges(eventPayload: GitLabIssueEvent) {
