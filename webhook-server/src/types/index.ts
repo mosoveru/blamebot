@@ -1,4 +1,4 @@
-import { GitLabEventTypes, RemoteGitServices } from '../constants/enums';
+import { GitLabEventTypes, ObjectTypes, RemoteGitServices } from '../constants/enums';
 
 export type NullableEventPayload<T> = {
   service: RemoteGitServices | null;
@@ -16,6 +16,15 @@ export type EventPayload<T> = {
 
 export type EventChanges = {
   serviceUserId?: string;
+  objectType: ObjectTypes;
+  objectUrl: string;
+  objectId: string;
+  projectUrl: string;
+  projectName: string;
+  isAssignee?: boolean;
+  isReviewer?: boolean;
+  isAuthor?: boolean;
+  isCommon: boolean;
   changes: string[];
 };
 
@@ -43,6 +52,7 @@ export type SubscriptionIdentifier = Omit<ObservableObjectEntity, 'objectUrl'> &
 export interface DataParser<T> {
   readonly eventType: GitLabEventTypes;
   readonly gitProvider: RemoteGitServices;
+  readonly objectType: ObjectTypes;
   parseEventMembersIds(serviceType: EventPayload<T>): number[];
   parseObservableObjectInfo(serviceType: EventPayload<T>): ObservableObjectEntity;
   parseEventInitiatorId(serviceType: EventPayload<T>): string;
