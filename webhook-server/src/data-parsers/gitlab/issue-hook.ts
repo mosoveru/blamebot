@@ -28,47 +28,95 @@ export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
   }
 
   parseEventChanges({ eventMembersId, eventPayload }: ParseChangesData<GitLabIssueEvent>) {
+    const commonChanges = this.parseCommonChanges(eventPayload);
     return eventMembersId.map((memberId) => {
       const isAssignee = eventPayload.assignees?.some((assignee) => assignee.id === memberId);
       if (isAssignee) {
-        const assigneeChanges = this.parseChangesForAssignee(eventPayload);
+        const assigneeChanges = this.parseChangesForAssigneeOrAuthor(eventPayload, 'assignee');
         if (assigneeChanges.length) {
           return {
-            serviceUserId: memberId,
+            serviceUserId: String(memberId),
             changes: assigneeChanges,
           };
         }
-        for (const change of Object.keys(eventPayload.changes)) {
-          switch (change) {
-            case 'description': {
-              assigneeChanges.push('description:changed');
-              break;
-            }
-            case 'title': {
-              assigneeChanges.push('title:changed');
-              break;
-            }
-          }
-        }
-        return { serviceUserId: memberId, changes: ['issue:assigned'] };
       }
+      const isAuthor = eventPayload.object_attributes.author_id === memberId;
+      if (isAuthor) {
+        const authorChanges = this.parseChangesForAssigneeOrAuthor(eventPayload, 'author');
+        if (authorChanges.length) {
+          return {
+            serviceUserId: String(memberId),
+            changes: authorChanges,
+          };
+        }
+      }
+      return {
+        serviceUserId: String(memberId),
+        changes: commonChanges,
+      };
     });
-
-    // TODO: Реализовать common change parser.
   }
 
-  private parseChangesForAssignee(eventPayload: GitLabIssueEvent) {
+  private parseCommonChanges(eventPayload: GitLabIssueEvent) {
+    const changes: string[] = [];
+    const payloadChanges = Object.keys(eventPayload.changes);
+    for (const change of payloadChanges) {
+      switch (change) {
+        case 'assignees': {
+          changes.push(`common:issue:new-assignment`);
+          break;
+        }
+        case 'state_id': {
+          const stateId = eventPayload.changes.state_id?.current;
+          if (stateId === 2) {
+            changes.push(`common:issue:closed`);
+            return changes;
+          } else if (!payloadChanges.includes('created_at')) {
+            changes.push(`common:issue:reopened`);
+            return changes;
+          }
+          break;
+        }
+        case 'description': {
+          changes.push(`common:description:changed`);
+          break;
+        }
+        case 'title': {
+          changes.push(`common:title:changed`);
+          break;
+        }
+      }
+    }
+    return changes;
+  }
+
+  private parseChangesForAssigneeOrAuthor(eventPayload: GitLabIssueEvent, memberType: 'assignee' | 'author') {
     const changes: string[] = [];
     const payloadChanges = Object.keys(eventPayload.changes);
     if (payloadChanges.includes('assignees')) {
-      changes.push('issue:assigned');
+      changes.push(`${memberType}:issue:new-assignment`);
+      return changes;
     }
     if (payloadChanges.includes('state_id')) {
       const stateId = eventPayload.changes.state_id?.current;
       if (stateId === 2) {
-        changes.push('issue:closed');
-      } else if (payloadChanges.includes('created_at')) {
-        changes.push('issue:reopened');
+        changes.push(`${memberType}:issue:closed`);
+        return changes;
+      } else if (!payloadChanges.includes('created_at')) {
+        changes.push(`${memberType}:issue:reopened`);
+        return changes;
+      }
+    }
+    for (const change of Object.keys(eventPayload.changes)) {
+      switch (change) {
+        case 'description': {
+          changes.push(`${memberType}:description:changed`);
+          break;
+        }
+        case 'title': {
+          changes.push(`${memberType}:title:changed`);
+          break;
+        }
       }
     }
     return changes;
