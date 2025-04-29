@@ -5,6 +5,7 @@ import { GitLabEventTypes, ObjectTypes, RemoteGitServices } from '../../constant
 export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
   readonly eventType = GitLabEventTypes.ISSUE;
   readonly gitProvider = RemoteGitServices.GITLAB;
+  readonly objectType = ObjectTypes.ISSUE;
 
   parseEventMembersIds(serviceType: EventPayload<GitLabIssueEvent>) {
     const objectMembersIds: number[] = [];
@@ -28,14 +29,29 @@ export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
   }
 
   parseEventChanges({ eventMembersIds, eventPayload }: ParseChangesData<GitLabIssueEvent>) {
-    const commonChanges = this.parseCommonChanges(eventPayload);
+    const commonChanges = {
+      changes: this.parseCommonChanges(eventPayload),
+      objectType: this.objectType,
+      objectUrl: eventPayload.object_attributes.url,
+      objectId: String(eventPayload.object_attributes.id),
+      projectUrl: eventPayload.project.web_url,
+      projectName: eventPayload.project.name,
+      isCommon: true,
+    };
     const individualChanges = eventMembersIds.reduce<EventChanges[]>((acc, memberId) => {
       const isAssignee = eventPayload.assignees?.some((assignee) => assignee.id === memberId);
       if (isAssignee) {
-        const assigneeChanges = this.parseChangesForAssigneeOrAuthor(eventPayload, 'assignee');
+        const assigneeChanges = this.parseChangesForAssigneeOrAuthor(eventPayload);
         if (assigneeChanges.length) {
           acc.push({
             serviceUserId: String(memberId),
+            objectType: this.objectType,
+            objectUrl: eventPayload.object_attributes.url,
+            objectId: String(eventPayload.object_attributes.id),
+            projectUrl: eventPayload.project.web_url,
+            projectName: eventPayload.project.name,
+            isAssignee: true,
+            isCommon: false,
             changes: assigneeChanges,
           });
           return acc;
@@ -43,10 +59,17 @@ export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
       }
       const isAuthor = eventPayload.object_attributes.author_id === memberId;
       if (isAuthor) {
-        const authorChanges = this.parseChangesForAssigneeOrAuthor(eventPayload, 'author');
+        const authorChanges = this.parseChangesForAssigneeOrAuthor(eventPayload);
         if (authorChanges.length) {
           acc.push({
             serviceUserId: String(memberId),
+            objectType: this.objectType,
+            objectUrl: eventPayload.object_attributes.url,
+            objectId: String(eventPayload.object_attributes.id),
+            projectUrl: eventPayload.project.web_url,
+            projectName: eventPayload.project.name,
+            isAuthor: true,
+            isCommon: false,
             changes: authorChanges,
           });
           return acc;
@@ -54,7 +77,7 @@ export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
       }
       return acc;
     }, []);
-    return [...individualChanges, { changes: commonChanges }];
+    return [...individualChanges, commonChanges];
   }
 
   private parseCommonChanges(eventPayload: GitLabIssueEvent) {
@@ -63,26 +86,26 @@ export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
     for (const change of payloadChanges) {
       switch (change) {
         case 'assignees': {
-          changes.push(`common:issue:new-assignment`);
+          changes.push(`new-assignment`);
           break;
         }
         case 'state_id': {
           const stateId = eventPayload.changes.state_id?.current;
           if (stateId === 2) {
-            changes.push(`common:issue:closed`);
+            changes.push(`closed`);
             return changes;
           } else if (!payloadChanges.includes('created_at')) {
-            changes.push(`common:issue:reopened`);
+            changes.push(`reopened`);
             return changes;
           }
           break;
         }
         case 'description': {
-          changes.push(`common:description:changed`);
+          changes.push(`description:changed`);
           break;
         }
         case 'title': {
-          changes.push(`common:title:changed`);
+          changes.push(`title:changed`);
           break;
         }
       }
@@ -90,31 +113,31 @@ export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
     return changes;
   }
 
-  private parseChangesForAssigneeOrAuthor(eventPayload: GitLabIssueEvent, memberType: 'assignee' | 'author') {
+  private parseChangesForAssigneeOrAuthor(eventPayload: GitLabIssueEvent) {
     const changes: string[] = [];
     const payloadChanges = Object.keys(eventPayload.changes);
     if (payloadChanges.includes('assignees')) {
-      changes.push(`${memberType}:issue:new-assignment`);
+      changes.push(`new-assignment`);
       return changes;
     }
     if (payloadChanges.includes('state_id')) {
       const stateId = eventPayload.changes.state_id?.current;
       if (stateId === 2) {
-        changes.push(`${memberType}:issue:closed`);
+        changes.push(`closed`);
         return changes;
       } else if (!payloadChanges.includes('created_at')) {
-        changes.push(`${memberType}:issue:reopened`);
+        changes.push(`reopened`);
         return changes;
       }
     }
     for (const change of Object.keys(eventPayload.changes)) {
       switch (change) {
         case 'description': {
-          changes.push(`${memberType}:description:changed`);
+          changes.push(`description:changed`);
           break;
         }
         case 'title': {
-          changes.push(`${memberType}:title:changed`);
+          changes.push(`title:changed`);
           break;
         }
       }
