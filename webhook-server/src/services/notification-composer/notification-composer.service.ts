@@ -1,56 +1,32 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { EventChanges, NotificationMessage } from '../../types';
+import { EventChanges, MessageComposer, NotificationMessage } from '../../types';
 import { ObjectTypes } from '../../constants/enums';
 
 @Injectable()
 export class NotificationComposerService {
-  constructor(private readonly logger: Logger) {}
+  constructor(
+    private readonly logger: Logger,
+    private readonly composers: Map<ObjectTypes, MessageComposer>,
+  ) {}
 
-  composeNotification(changes: EventChanges[]): NotificationMessage[] | null {
-    const individualChanges = changes.filter((change) => change.serviceUserId);
+  composeNotifications(changes: EventChanges[]): NotificationMessage[] | null {
     const commonChanges = changes.find((change) => change.isCommon);
-    if (commonChanges) {
+    if (!commonChanges) {
       this.logger.error(
         'There is no common changes described for Notification Composer. Check the parse event changes method for proper logic',
       );
       return null;
     }
-    const notificationMessages: NotificationMessage[] = [];
-    for (const change of individualChanges) {
-      if (change.isAssignee && change.objectType === ObjectTypes.ISSUE) {
-        notificationMessages.push({
-          serviceUserId: change.serviceUserId,
-          message: this.composeMessageForIssueAssignee(change),
-        });
-      }
+    if (!commonChanges.changes.length) {
+      this.logger.warn(
+        "There is no changes in common changes object. Maybe we've encountered unknown changes in event payload?",
+      );
+      return null;
     }
-  }
-
-  private composeMessageForIssueAssignee(change: EventChanges): string {
-    const preparedCommonMessage: string[] = [];
-    preparedCommonMessage.push(
-      `В Вашем <a href="${change.objectUrl}">Issue #${change.objectId}</a> в проекте <a href="${change.projectUrl}">${change.projectName}</a> `,
-    );
-    for (const assigneeChange of change.changes) {
-      switch (assigneeChange) {
-        case 'new-assignment': {
-          return `На Вас назначали новое <a href="${change.objectUrl}">Issue #${change.objectId}</a> в проекте <a href="${change.projectUrl}">${change.projectName}</a>`;
-        }
-        case 'closed': {
-          return `Ваша <a href="${change.objectUrl}">Issue #${change.objectId}</a> в проекте <a href="${change.projectUrl}">${change.projectName}</a> закрыта`;
-        }
-        case 'reopened': {
-          return `Ваша <a href="${change.objectUrl}">Issue #${change.objectId}</a> в проекте <a href="${change.projectUrl}">${change.projectName}</a> <b>снова открыта</b>`;
-        }
-        case 'description:changed': {
-          preparedCommonMessage.push('изменилось описание, ');
-          break;
-        }
-        case 'title:changed': {
-          preparedCommonMessage.push('изменился заголовок, ');
-        }
-      }
+    const composer = this.composers.get(commonChanges.objectType);
+    if (!composer) {
+      return null;
     }
-    return preparedCommonMessage.join('').replace(/,\s$/, '.');
+    return composer.composeMessage(changes);
   }
 }

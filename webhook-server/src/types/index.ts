@@ -62,3 +62,8 @@ export interface DataParser<T> {
 export interface DataParserConstructor {
   new (): DataParser<any>;
 }
+
+export interface MessageComposer {
+  readonly meantFor: string;
+  composeMessage(changes: EventChanges[]): NotificationMessage[];
+}
