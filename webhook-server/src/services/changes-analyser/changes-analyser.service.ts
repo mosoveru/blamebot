@@ -17,7 +17,7 @@ export class ChangesAnalyserService {
 
     return changeParser.parseEventChanges({
       eventMembersIds,
-      eventPayload,
+      eventPayload: eventPayload.eventPayload,
     });
   }
 }
