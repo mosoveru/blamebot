@@ -4,10 +4,23 @@ export interface GitLabIssueEvent {
   user: User;
   project: Project;
   object_attributes: ObjectAttributes;
-  labels: any[];
+  labels: Label[];
   changes: Changes;
   repository: Repository;
   assignees?: User[];
+}
+
+export interface Label {
+  id: number;
+  title: string;
+  color: string;
+  project_id: number;
+  created_at: string;
+  updated_at: string;
+  template: boolean;
+  description: null | string;
+  type: string;
+  group_id: null | number;
 }
 
 interface User {
@@ -30,6 +43,16 @@ interface Changes {
   closed_at?: ClosedAt;
   state_id?: StateID;
   assignees?: Assignee;
+  labels?: LabelChanges;
+  due_date?: DueDate;
+  total_time_spent?: TotalTimeSpend;
+  time_change?: TimeChange;
+  time_estimate?: TimeEstimate;
+}
+
+interface LabelChanges {
+  previous: Label[];
+  current: Label[];
 }
 
 interface Assignee {
@@ -57,6 +80,26 @@ interface CreatedAt {
   current: string;
 }
 
+interface DueDate {
+  previous: string | null;
+  current: string | null;
+}
+
+interface TotalTimeSpend {
+  previous: number;
+  current: number;
+}
+
+interface TimeChange {
+  previous: number;
+  current: number;
+}
+
+interface TimeEstimate {
+  previous: number;
+  current: number;
+}
+
 interface ObjectAttributes {
   author_id: number;
   closed_at: null;
@@ -64,31 +107,31 @@ interface ObjectAttributes {
   created_at: string;
   description: string;
   discussion_locked: null;
-  due_date: null;
+  due_date: null | string;
   id: number;
   iid: number;
   last_edited_at: null;
-  last_edited_by_id: null;
+  last_edited_by_id: null | number;
   milestone_id: null;
   moved_to_id: null;
   duplicated_to_id: null;
   project_id: number;
-  relative_position: null;
+  relative_position: null | number;
   state_id: number;
   time_estimate: number;
   title: string;
   updated_at: string;
-  updated_by_id: null;
+  updated_by_id: null | number;
   type: string;
   url: string;
   total_time_spent: number;
   time_change: number;
-  human_total_time_spent: null;
-  human_time_change: null;
-  human_time_estimate: null;
+  human_total_time_spent: null | string;
+  human_time_change: null | string;
+  human_time_estimate: null | string;
   assignee_ids: number[];
   assignee_id: number | null;
-  labels: any[];
+  labels: Label[];
   state: string;
   severity: string;
   customer_relations_contacts: any[];
@@ -117,6 +160,6 @@ interface Project {
 interface Repository {
   name: string;
   url: string;
-  description: null;
+  description: null | string;
   homepage: string;
 }
