@@ -1,14 +1,9 @@
 import { Module } from '@nestjs/common';
-import { WebhookController } from '../controllers/webhook.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import configuration from '../config/configuration';
 import { TelegramUser } from '../models/telegram-user.entity';
-import { TelegramModule } from './telegram.module';
-import { NotificationService } from '../services/notification/notification.service';
-import { RepositoryModule } from './repository.module';
 import { NotificationModule } from './notification.module';
-import { EntityModule } from './entity.module';
 import { Subscription } from '../models/subscription.entity';
 import { ServiceUser } from '../models/service-user.entity';
 import { ObservableObject } from '../models/observable-object.entity';
@@ -37,13 +32,9 @@ type DataBaseType = 'postgres';
     }),
     ConfigModule.forRoot({
       load: [configuration],
+      isGlobal: true,
     }),
     NotificationModule,
-    EntityModule,
-    TelegramModule,
-    RepositoryModule,
   ],
-  controllers: [WebhookController],
-  providers: [NotificationService],
 })
 export class AppModule {}
