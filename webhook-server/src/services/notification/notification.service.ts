@@ -27,28 +27,30 @@ export class NotificationService {
 
     const changes = this.changesAnalyser.parseEventChanges(eventPayload);
 
-    if (!changes) {
+    if (!changes || !changes.length) {
       return;
     }
 
-    const messages = this.notificationComposer.composeNotification(changes);
+    const messages = this.notificationComposer.composeNotifications(changes);
 
-    const recipientsWithMessages = this.messageAssignmentService.assignMessageToRecipient(messages, recipients);
+    if (!messages || !messages.length) {
+      return;
+    }
+
+    const recipientsWithMessages = this.messageAssignmentService.assignMessagesToRecipients(messages, recipients);
 
     console.log(recipientsWithMessages);
 
-    // for (const user of serviceUsers) {
-    //   const notificationData = {
-    //     message: notification,
-    //     chatId: user.telegramUserId,
-    //     subscriptionInfo: {
-    //       ...objectEntity,
-    //       serviceUserId: user.serviceUserId,
-    //     },
-    //   };
-    //   await this.telegramService.sendNotification(notificationData);
-    // }
-
-    console.log(recipients);
+    for (const recipient of recipientsWithMessages) {
+      const notificationData = {
+        message: recipient.message,
+        chatId: recipient.serviceUsers.telegramUserId,
+        subscriptionInfo: {
+          ...recipient.observableObjects,
+          serviceUserId: recipient.serviceUserId,
+        },
+      };
+      await this.telegramService.sendNotification(notificationData);
+    }
   }
 }
