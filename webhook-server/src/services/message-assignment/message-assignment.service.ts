@@ -8,7 +8,10 @@ type SubscriptionWithMessage = Subscription & {
 
 @Injectable()
 export class MessageAssignmentService {
-  assignMessageToRecipient(messages: NotificationMessage[], subscriptions: Subscription[]): SubscriptionWithMessage[] {
+  assignMessagesToRecipients(
+    messages: NotificationMessage[],
+    subscriptions: Subscription[],
+  ): SubscriptionWithMessage[] {
     const individualMessages = messages.filter((message) => message.serviceUserId);
     // Common message
     const { message } = messages.find((message) => !message.serviceUserId)!;
@@ -17,10 +20,10 @@ export class MessageAssignmentService {
       const messageForSubscription = individualMessages.find(
         (message) => message.serviceUserId === subscription.serviceUserId,
       );
-      if (!messageForSubscription) {
-        return Object.assign(subscription, { message });
-      } else {
+      if (messageForSubscription) {
         return Object.assign(subscription, { message: messageForSubscription.message });
+      } else {
+        return Object.assign(subscription, { message });
       }
     });
   }
