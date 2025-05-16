@@ -13,9 +13,9 @@ export class SubscriptionService {
   ) {}
 
   async subscribeNewEventMembers(observableObject: ObservableObjectEntity, eventMembersIds: number[]) {
-    const subscriptions = await this.findSubscriptions(observableObject);
+    const existingSubscriptions = await this.findExistingSubscriptions(observableObject);
 
-    const usersToBeChecked = this.compareSubscriptionsWithEventMembers(subscriptions, eventMembersIds);
+    const usersToBeChecked = this.compareExistingSubscriptionsWithEventMembers(existingSubscriptions, eventMembersIds);
 
     const checkedServiceUsers = await this.serviceUserService.ensureServiceUsersExists(
       usersToBeChecked,
@@ -23,18 +23,18 @@ export class SubscriptionService {
     );
 
     if (checkedServiceUsers.length) {
-      const pendingSubscriptions = checkedServiceUsers.map((serviceUser) => ({
+      const usersToBeSubscribed = checkedServiceUsers.map((serviceUser) => ({
         ...observableObject,
         serviceUserId: serviceUser.serviceUserId,
       }));
 
-      await this.createSubscription(pendingSubscriptions);
+      await this.createSubscription(usersToBeSubscribed);
     }
   }
 
-  async createSubscription(pendingSubscriptions: SubscriptionIdentifier[]) {
-    if (pendingSubscriptions.length) {
-      const valuesToBeInserted = pendingSubscriptions.map((subscription) => ({
+  async createSubscription(usersToBeSubscribed: SubscriptionIdentifier[]) {
+    if (usersToBeSubscribed.length) {
+      const valuesToBeInserted = usersToBeSubscribed.map((subscription) => ({
         ...subscription,
         isSubscribed: true,
       }));
@@ -58,7 +58,7 @@ export class SubscriptionService {
     });
   }
 
-  private async findSubscriptions(observableObject: ObservableObjectEntity) {
+  private async findExistingSubscriptions(observableObject: ObservableObjectEntity) {
     return await this.subscriptionRepository.find({
       where: {
         objectId: String(observableObject.objectId),
@@ -69,7 +69,7 @@ export class SubscriptionService {
     });
   }
 
-  private compareSubscriptionsWithEventMembers(subscriptions: Subscription[], membersIds: number[]) {
+  private compareExistingSubscriptionsWithEventMembers(subscriptions: Subscription[], membersIds: number[]) {
     const toBeChecked: string[] = [];
     const ids = membersIds.map((id) => String(id));
     const subscriptionsIds = subscriptions.map((subscription) => subscription.serviceUserId);
