@@ -35,27 +35,28 @@ export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
   }
 
   parseEventChanges({ eventMembersIds, eventPayload }: ParseChangesData<GitLabIssueEvent>) {
-    const commonChanges = {
-      changes: this.parseCommonChanges(eventPayload),
+    const eventChangesTemplate = {
       objectType: this.objectType,
       objectUrl: eventPayload.object_attributes.url,
       objectId: String(eventPayload.object_attributes.id),
+      isNewObject: this.isNewObject(eventPayload),
       projectUrl: eventPayload.project.web_url,
       projectName: eventPayload.project.name,
+    };
+    const commonChanges = {
+      ...eventChangesTemplate,
+      changes: this.parseCommonChanges(eventPayload),
       isCommon: true,
     };
     const individualChanges = eventMembersIds.reduce<EventChanges[]>((acc, memberId) => {
+      // TODO: Добавить changes для бывшего Assignee. Например, "С вас сняли задачу"
       const isAssignee = eventPayload.assignees?.some((assignee) => assignee.id === memberId);
       if (isAssignee) {
         const assigneeChanges = this.parseChangesForAssigneeOrAuthor(eventPayload);
         if (assigneeChanges.length) {
           acc.push({
+            ...eventChangesTemplate,
             serviceUserId: String(memberId),
-            objectType: this.objectType,
-            objectUrl: eventPayload.object_attributes.url,
-            objectId: String(eventPayload.object_attributes.id),
-            projectUrl: eventPayload.project.web_url,
-            projectName: eventPayload.project.name,
             isAssignee: true,
             isCommon: false,
             changes: assigneeChanges,
@@ -68,12 +69,8 @@ export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
         const authorChanges = this.parseChangesForAssigneeOrAuthor(eventPayload);
         if (authorChanges.length) {
           acc.push({
+            ...eventChangesTemplate,
             serviceUserId: String(memberId),
-            objectType: this.objectType,
-            objectUrl: eventPayload.object_attributes.url,
-            objectId: String(eventPayload.object_attributes.id),
-            projectUrl: eventPayload.project.web_url,
-            projectName: eventPayload.project.name,
             isAuthor: true,
             isCommon: false,
             changes: authorChanges,
@@ -86,9 +83,31 @@ export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
     return [...individualChanges, commonChanges];
   }
 
+  private parseNewAssignmentInNewObject(eventPayload: GitLabIssueEvent) {
+    const payloadChanges = Object.keys(eventPayload.changes);
+    if (eventPayload.assignees?.length) {
+      if (payloadChanges.includes('due_date')) {
+        return `new-assignment:deadline(${eventPayload.changes.due_date?.current})`;
+      }
+      return 'new-assignment';
+    }
+  }
+
+  private isNewObject(eventPayload: GitLabIssueEvent) {
+    const eventChanges = Object.keys(eventPayload.changes);
+    return eventChanges.includes('id');
+  }
+
   private parseCommonChanges(eventPayload: GitLabIssueEvent) {
     const changes: string[] = [];
     const payloadChanges = Object.keys(eventPayload.changes);
+    if (this.isNewObject(eventPayload)) {
+      const newObjectChanges = this.parseNewAssignmentInNewObject(eventPayload);
+      if (newObjectChanges) {
+        changes.push(newObjectChanges);
+        return changes;
+      }
+    }
     for (const change of payloadChanges) {
       switch (change) {
         case 'assignees': {
@@ -122,12 +141,24 @@ export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
       const labelChanges = this.parseChangesForLabels(currentLabels, previousLabels)!;
       changes.push(labelChanges);
     }
+    if (payloadChanges.includes('due_date')) {
+      const dueDateChange = this.parseChangesForDueDate(eventPayload.changes.due_date!);
+      changes.push(dueDateChange);
+      return changes;
+    }
     return changes;
   }
 
   private parseChangesForAssigneeOrAuthor(eventPayload: GitLabIssueEvent) {
     const changes: string[] = [];
     const payloadChanges = Object.keys(eventPayload.changes);
+    if (this.isNewObject(eventPayload)) {
+      const newObjectChanges = this.parseNewAssignmentInNewObject(eventPayload);
+      if (newObjectChanges) {
+        changes.push(newObjectChanges);
+        return changes;
+      }
+    }
     if (payloadChanges.includes('assignees')) {
       changes.push(`new-assignment`);
       return changes;
@@ -148,6 +179,11 @@ export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
       const labelChanges = this.parseChangesForLabels(currentLabels, previousLabels)!;
       changes.push(labelChanges);
     }
+    if (payloadChanges.includes('due_date')) {
+      const dueDateChange = this.parseChangesForDueDate(eventPayload.changes.due_date!);
+      changes.push(dueDateChange);
+      return changes;
+    }
     for (const change of Object.keys(eventPayload.changes)) {
       switch (change) {
         case 'description': {
@@ -161,6 +197,18 @@ export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
       }
     }
     return changes;
+  }
+
+  private parseChangesForDueDate(dueDate: NonNullable<GitLabIssueEvent['changes']['due_date']>) {
+    const isDueDateUpdated = !!dueDate.current && !!dueDate.previous;
+    const isDueDateAdded = !!dueDate.current && !dueDate.previous;
+    if (isDueDateUpdated) {
+      return `due_date:updated(${dueDate.current})`;
+    }
+    if (isDueDateAdded) {
+      return `due_date:added(${dueDate.current})`;
+    }
+    return `due_date:deleted`;
   }
 
   private parseChangesForLabels(currentLabels: Label[], previousLabels: Label[]) {

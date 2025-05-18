@@ -9,13 +9,13 @@ export class IssueMessageComposer implements MessageComposer {
     const commonChanges = changes.find((change) => change.isCommon)!;
     const notificationMessages: NotificationMessage[] = [];
     for (const change of individualChanges) {
-      if (change.isAssignee && change.objectType === ObjectTypes.ISSUE) {
+      if (change.isAssignee) {
         notificationMessages.push({
           serviceUserId: change.serviceUserId,
           message: this.composeMessageForIssueAssignee(change),
         });
       }
-      if (change.isAuthor && change.objectType === ObjectTypes.ISSUE) {
+      if (change.isAuthor) {
         notificationMessages.push({
           serviceUserId: change.serviceUserId,
           message: this.composeMessageForIssueAuthor(change),
@@ -57,6 +57,20 @@ export class IssueMessageComposer implements MessageComposer {
         const message = this.composeStringForLabelChanges(assigneeChange);
         preparedCommonMessage.push(message);
       }
+      const isThereNewAssignmentWithDeadline = assigneeChange?.startsWith('new-assignment:deadline');
+      if (isThereNewAssignmentWithDeadline) {
+        const date = assigneeChange.match(/(?<=:deadline\()[^\)]*(?=\))/)?.shift();
+        if (date) {
+          return `На Вас назначали новое <a href="${change.objectUrl}">Issue #${change.objectId}</a> в проекте <a href="${change.projectUrl}">${change.projectName}</a> с дедлайном до <b>${date}</b>`;
+        } else {
+          return `На Вас назначали новое <a href="${change.objectUrl}">Issue #${change.objectId}</a> в проекте <a href="${change.projectUrl}">${change.projectName}</a> с дедлайном`;
+        }
+      }
+      const isThereNewDueDate = assigneeChange?.startsWith('due_date');
+      if (isThereNewDueDate) {
+        const endOfText = this.composeStringForDueDateChanges(assigneeChange);
+        preparedCommonMessage.push(endOfText);
+      }
     }
     return preparedCommonMessage.join('').replace(/,\s$/, '.');
   }
@@ -89,6 +103,21 @@ export class IssueMessageComposer implements MessageComposer {
       if (isThereChangesForLabels) {
         const message = this.composeStringForLabelChanges(assigneeChange);
         preparedCommonMessage.push(message);
+      }
+      // TODO: Эти строки кода, видимо, никогда не будут выполнятся. Удалить в будущем
+      const isThereNewAssignmentWithDeadline = assigneeChange?.startsWith('new-assignment:deadline');
+      if (isThereNewAssignmentWithDeadline) {
+        const date = assigneeChange.match(/(?<=:deadline\()[^\)]*(?=\))/)?.shift();
+        if (date) {
+          return `В Вашем <a href="${change.objectUrl}">Issue #${change.objectId}</a> в проекте <a href="${change.projectUrl}">${change.projectName}</a> сменился исполнитель и назначен дедлайн до <b>${date}</b>`;
+        } else {
+          return `В Вашем <a href="${change.objectUrl}">Issue #${change.objectId}</a> в проекте <a href="${change.projectUrl}">${change.projectName}</a> сменился исполнитель и назначен дедлайн`;
+        }
+      }
+      const isThereNewDueDate = assigneeChange?.startsWith('due_date');
+      if (isThereNewDueDate) {
+        const endOfText = this.composeStringForDueDateChanges(assigneeChange);
+        preparedCommonMessage.push(endOfText);
       }
     }
     return preparedCommonMessage.join('').replace(/,\s$/, '.');
@@ -124,8 +153,38 @@ export class IssueMessageComposer implements MessageComposer {
         const message = this.composeStringForLabelChanges(assigneeChange);
         preparedCommonMessage.push(message);
       }
+      // TODO: Эти строки кода, видимо, никогда не будут выполнятся. Удалить в будущем
+      const isThereNewAssignmentWithDeadline = assigneeChange?.startsWith('new-assignment:deadline');
+      if (isThereNewAssignmentWithDeadline) {
+        const date = assigneeChange.match(/(?<=:deadline\()[^\)]*(?=\))/)?.shift();
+        if (date) {
+          preparedCommonMessage.push(`сменился исполнитель, добавился дедлайн до <b>${date}</b>, `);
+        } else {
+          preparedCommonMessage.push(`сменился исполнитель, добавился дедлайн, `);
+        }
+      }
+      const isThereNewDueDate = assigneeChange?.startsWith('due_date');
+      if (isThereNewDueDate) {
+        const endOfText = this.composeStringForDueDateChanges(assigneeChange);
+        preparedCommonMessage.push(endOfText);
+      }
     }
     return preparedCommonMessage.join('').replace(/,\s$/, '.');
+  }
+
+  private composeStringForDueDateChanges(dueDateChange: string) {
+    const updated = dueDateChange.startsWith('due_date:updated');
+    const added = dueDateChange.startsWith('due_date:added');
+
+    if (updated) {
+      const date = dueDateChange.match(/(?<=:updated\()[^\)]*(?=\))/)?.shift();
+      return `обновился дедлайн до <b>${date}</b>, `;
+    } else if (added) {
+      const date = dueDateChange.match(/(?<=:added\()[^\)]*(?=\))/)?.shift();
+      return `добавился дедлайн до <b>${date}</b>, `;
+    } else {
+      return `удалился дедлайн, `;
+    }
   }
 
   private composeStringForLabelChanges(labelChanges: string) {

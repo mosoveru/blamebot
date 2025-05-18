@@ -19,6 +19,7 @@ export type EventChanges = {
   objectType: ObjectTypes;
   objectUrl: string;
   objectId: string;
+  isNewObject: boolean;
   projectUrl: string;
   projectName: string;
   isAssignee?: boolean;
