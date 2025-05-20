@@ -1,24 +1,26 @@
 import { ObjectTypes } from '../../../constants/enums';
 import { EventChanges, MessageComposer, NotificationMessage } from '../../../types';
 
+type ChangesForIssue = EventChanges<IssueMessageComposer['meantFor']>;
+
 export class IssueMessageComposer implements MessageComposer {
   readonly meantFor = ObjectTypes.ISSUE;
 
-  composeMessage(changes: EventChanges[]): NotificationMessage[] {
+  composeMessage(changes: ChangesForIssue[]): NotificationMessage[] {
     const individualChanges = changes.filter((change) => change.serviceUserId);
     const commonChanges = changes.find((change) => change.isCommon)!;
     const notificationMessages: NotificationMessage[] = [];
-    for (const change of individualChanges) {
-      if (change.isAssignee) {
+    for (const eventChanges of individualChanges) {
+      if (eventChanges.changes.forAssignee) {
         notificationMessages.push({
-          serviceUserId: change.serviceUserId,
-          message: this.composeMessageForIssueAssignee(change),
+          serviceUserId: eventChanges.serviceUserId,
+          message: this.composeMessageForIssueAssignee(eventChanges),
         });
       }
-      if (change.isAuthor) {
+      if (eventChanges.changes.forAuthor) {
         notificationMessages.push({
-          serviceUserId: change.serviceUserId,
-          message: this.composeMessageForIssueAuthor(change),
+          serviceUserId: eventChanges.serviceUserId,
+          message: this.composeMessageForIssueAuthor(eventChanges),
         });
       }
     }
@@ -28,221 +30,139 @@ export class IssueMessageComposer implements MessageComposer {
     return notificationMessages;
   }
 
-  private composeMessageForIssueAssignee(change: EventChanges): string {
+  private composeMessageForIssueAssignee(eventChanges: ChangesForIssue): string {
     const preparedCommonMessage: string[] = [];
     preparedCommonMessage.push(
-      `В Вашем <a href="${change.objectUrl}">Issue #${change.objectId}</a> в проекте <a href="${change.projectUrl}">${change.projectName}</a> `,
+      `В Вашем <a href="${eventChanges.objectUrl}">Issue #${eventChanges.objectId}</a> в проекте <a href="${eventChanges.projectUrl}">${eventChanges.projectName}</a> `,
     );
-    for (const assigneeChange of change.changes) {
-      switch (assigneeChange) {
-        case 'new-assignment': {
-          return `На Вас назначали новое <a href="${change.objectUrl}">Issue #${change.objectId}</a> в проекте <a href="${change.projectUrl}">${change.projectName}</a>`;
-        }
-        case 'closed': {
-          return `Ваша <a href="${change.objectUrl}">Issue #${change.objectId}</a> в проекте <a href="${change.projectUrl}">${change.projectName}</a> закрыта`;
-        }
-        case 'reopened': {
-          return `Ваша <a href="${change.objectUrl}">Issue #${change.objectId}</a> в проекте <a href="${change.projectUrl}">${change.projectName}</a> <b>снова открыта</b>`;
-        }
-        case 'description:changed': {
-          preparedCommonMessage.push('изменилось описание, ');
-          break;
-        }
-        case 'title:changed': {
-          preparedCommonMessage.push('изменился заголовок, ');
-        }
-      }
-      const isThereChangesForLabels = assigneeChange?.startsWith('label');
-      if (isThereChangesForLabels) {
-        const message = this.composeStringForLabelChanges(assigneeChange);
-        preparedCommonMessage.push(message);
-      }
-      const isThereNewAssignmentWithDeadline = assigneeChange?.startsWith('new-assignment:deadline');
-      if (isThereNewAssignmentWithDeadline) {
-        const date = assigneeChange.match(/(?<=:deadline\()[^\)]*(?=\))/)?.shift();
-        if (date) {
-          return `На Вас назначали новое <a href="${change.objectUrl}">Issue #${change.objectId}</a> в проекте <a href="${change.projectUrl}">${change.projectName}</a> с дедлайном до <b>${date}</b>`;
-        } else {
-          return `На Вас назначали новое <a href="${change.objectUrl}">Issue #${change.objectId}</a> в проекте <a href="${change.projectUrl}">${change.projectName}</a> с дедлайном`;
-        }
-      }
-      const isThereNewDueDate = assigneeChange?.startsWith('due_date');
-      if (isThereNewDueDate) {
-        const endOfText = this.composeStringForDueDateChanges(assigneeChange);
-        preparedCommonMessage.push(endOfText);
-      }
+    if (eventChanges.changes.isNewAssignment) {
+      return `На Вас назначали новое <a href="${eventChanges.objectUrl}">Issue #${eventChanges.objectId}</a> в проекте <a href="${eventChanges.projectUrl}">${eventChanges.projectName}</a>`;
     }
+    if (eventChanges.changes.isClosed) {
+      return `Ваша <a href="${eventChanges.objectUrl}">Issue #${eventChanges.objectId}</a> в проекте <a href="${eventChanges.projectUrl}">${eventChanges.projectName}</a> закрыта`;
+    }
+    if (eventChanges.changes.isReopened) {
+      return `Ваша <a href="${eventChanges.objectUrl}">Issue #${eventChanges.objectId}</a> в проекте <a href="${eventChanges.projectUrl}">${eventChanges.projectName}</a> <b>снова открыта</b>`;
+    }
+    if (eventChanges.changes.isNewAssignmentWithDeadline) {
+      const date = eventChanges.changes.isNewAssignmentWithDeadline.deadline;
+      return `На Вас назначали новое <a href="${eventChanges.objectUrl}">Issue #${eventChanges.objectId}</a> в проекте <a href="${eventChanges.projectUrl}">${eventChanges.projectName}</a> с дедлайном до <b>${date}</b>`;
+    }
+    this.listMinorChanges(eventChanges, preparedCommonMessage);
     return preparedCommonMessage.join('').replace(/,\s$/, '.');
   }
 
-  private composeMessageForIssueAuthor(change: EventChanges): string {
+  private composeMessageForIssueAuthor(eventChanges: ChangesForIssue): string {
     const preparedCommonMessage: string[] = [];
     preparedCommonMessage.push(
-      `В Вашем <a href="${change.objectUrl}">Issue #${change.objectId}</a> в проекте <a href="${change.projectUrl}">${change.projectName}</a> `,
+      `В Вашем <a href="${eventChanges.objectUrl}">Issue #${eventChanges.objectId}</a> в проекте <a href="${eventChanges.projectUrl}">${eventChanges.projectName}</a> `,
     );
-    for (const assigneeChange of change.changes) {
-      switch (assigneeChange) {
-        case 'new-assignment': {
-          return `В Вашем <a href="${change.objectUrl}">Issue #${change.objectId}</a> в проекте <a href="${change.projectUrl}">${change.projectName}</a> сменился исполнитель`;
-        }
-        case 'closed': {
-          return `Ваша <a href="${change.objectUrl}">Issue #${change.objectId}</a> в проекте <a href="${change.projectUrl}">${change.projectName}</a> закрыта`;
-        }
-        case 'reopened': {
-          return `Ваша <a href="${change.objectUrl}">Issue #${change.objectId}</a> в проекте <a href="${change.projectUrl}">${change.projectName}</a> <b>снова открыта</b>`;
-        }
-        case 'description:changed': {
-          preparedCommonMessage.push('изменилось описание, ');
-          break;
-        }
-        case 'title:changed': {
-          preparedCommonMessage.push('изменился заголовок, ');
-        }
-      }
-      const isThereChangesForLabels = assigneeChange?.startsWith('label');
-      if (isThereChangesForLabels) {
-        const message = this.composeStringForLabelChanges(assigneeChange);
-        preparedCommonMessage.push(message);
-      }
-      // TODO: Эти строки кода, видимо, никогда не будут выполнятся. Удалить в будущем
-      const isThereNewAssignmentWithDeadline = assigneeChange?.startsWith('new-assignment:deadline');
-      if (isThereNewAssignmentWithDeadline) {
-        const date = assigneeChange.match(/(?<=:deadline\()[^\)]*(?=\))/)?.shift();
-        if (date) {
-          return `В Вашем <a href="${change.objectUrl}">Issue #${change.objectId}</a> в проекте <a href="${change.projectUrl}">${change.projectName}</a> сменился исполнитель и назначен дедлайн до <b>${date}</b>`;
-        } else {
-          return `В Вашем <a href="${change.objectUrl}">Issue #${change.objectId}</a> в проекте <a href="${change.projectUrl}">${change.projectName}</a> сменился исполнитель и назначен дедлайн`;
-        }
-      }
-      const isThereNewDueDate = assigneeChange?.startsWith('due_date');
-      if (isThereNewDueDate) {
-        const endOfText = this.composeStringForDueDateChanges(assigneeChange);
-        preparedCommonMessage.push(endOfText);
-      }
+    if (eventChanges.changes.isNewAssignment) {
+      return `В Вашем <a href="${eventChanges.objectUrl}">Issue #${eventChanges.objectId}</a> в проекте <a href="${eventChanges.projectUrl}">${eventChanges.projectName}</a> сменился исполнитель`;
     }
+    if (eventChanges.changes.isClosed) {
+      return `Ваша <a href="${eventChanges.objectUrl}">Issue #${eventChanges.objectId}</a> в проекте <a href="${eventChanges.projectUrl}">${eventChanges.projectName}</a> закрыта`;
+    }
+    if (eventChanges.changes.isReopened) {
+      return `Ваша <a href="${eventChanges.objectUrl}">Issue #${eventChanges.objectId}</a> в проекте <a href="${eventChanges.projectUrl}">${eventChanges.projectName}</a> <b>снова открыта</b>`;
+    }
+    if (eventChanges.changes.isNewAssignmentWithDeadline) {
+      const date = eventChanges.changes.isNewAssignmentWithDeadline.deadline;
+      return `В Вашем <a href="${eventChanges.objectUrl}">Issue #${eventChanges.objectId}</a> в проекте <a href="${eventChanges.projectUrl}">${eventChanges.projectName}</a> сменился исполнитель и назначен дедлайн до <b>${date}</b>`;
+    }
+    this.listMinorChanges(eventChanges, preparedCommonMessage);
     return preparedCommonMessage.join('').replace(/,\s$/, '.');
   }
 
-  private composeCommonMessageForIssue(change: EventChanges): string {
+  private composeCommonMessageForIssue(eventChanges: ChangesForIssue): string {
     const preparedCommonMessage: string[] = [];
     preparedCommonMessage.push(
-      `В связанном с Вами <a href="${change.objectUrl}">Issue #${change.objectId}</a> в проекте <a href="${change.projectUrl}">${change.projectName}</a> `,
+      `В связанном с Вами <a href="${eventChanges.objectUrl}">Issue #${eventChanges.objectId}</a> в проекте <a href="${eventChanges.projectUrl}">${eventChanges.projectName}</a> `,
     );
-    for (const assigneeChange of change.changes) {
-      switch (assigneeChange) {
-        case 'new-assignment': {
-          preparedCommonMessage.push(`сменился исполнитель, `);
-          break;
-        }
-        case 'closed': {
-          return `Связанное с Вами <a href="${change.objectUrl}">Issue #${change.objectId}</a> в проекте <a href="${change.projectUrl}">${change.projectName}</a> закрылось`;
-        }
-        case 'reopened': {
-          return `Связанное с Вами <a href="${change.objectUrl}">Issue #${change.objectId}</a> в проекте <a href="${change.projectUrl}">${change.projectName}</a> <b>снова открылось</b>`;
-        }
-        case 'description:changed': {
-          preparedCommonMessage.push('изменилось описание, ');
-          break;
-        }
-        case 'title:changed': {
-          preparedCommonMessage.push('изменился заголовок, ');
-        }
-      }
-      const isThereChangesForLabels = assigneeChange?.startsWith('label');
-      if (isThereChangesForLabels) {
-        const message = this.composeStringForLabelChanges(assigneeChange);
-        preparedCommonMessage.push(message);
-      }
-      // TODO: Эти строки кода, видимо, никогда не будут выполнятся. Удалить в будущем
-      const isThereNewAssignmentWithDeadline = assigneeChange?.startsWith('new-assignment:deadline');
-      if (isThereNewAssignmentWithDeadline) {
-        const date = assigneeChange.match(/(?<=:deadline\()[^\)]*(?=\))/)?.shift();
-        if (date) {
-          preparedCommonMessage.push(`сменился исполнитель, добавился дедлайн до <b>${date}</b>, `);
-        } else {
-          preparedCommonMessage.push(`сменился исполнитель, добавился дедлайн, `);
-        }
-      }
-      const isThereNewDueDate = assigneeChange?.startsWith('due_date');
-      if (isThereNewDueDate) {
-        const endOfText = this.composeStringForDueDateChanges(assigneeChange);
-        preparedCommonMessage.push(endOfText);
-      }
+    if (eventChanges.changes.isNewAssignment) {
+      preparedCommonMessage.push(`сменился исполнитель, `);
     }
+    if (eventChanges.changes.isClosed) {
+      return `Связанное с Вами <a href="${eventChanges.objectUrl}">Issue #${eventChanges.objectId}</a> в проекте <a href="${eventChanges.projectUrl}">${eventChanges.projectName}</a> закрылось`;
+    }
+    if (eventChanges.changes.isReopened) {
+      return `Связанное с Вами <a href="${eventChanges.objectUrl}">Issue #${eventChanges.objectId}</a> в проекте <a href="${eventChanges.projectUrl}">${eventChanges.projectName}</a> <b>снова открылось</b>`;
+    }
+    if (eventChanges.changes.isNewAssignmentWithDeadline) {
+      const date = eventChanges.changes.isNewAssignmentWithDeadline.deadline;
+      preparedCommonMessage.push(`сменился исполнитель, добавился дедлайн до <b>${date}</b>, `);
+    }
+    this.listMinorChanges(eventChanges, preparedCommonMessage);
     return preparedCommonMessage.join('').replace(/,\s$/, '.');
   }
 
-  private composeStringForDueDateChanges(dueDateChange: string) {
-    const updated = dueDateChange.startsWith('due_date:updated');
-    const added = dueDateChange.startsWith('due_date:added');
+  private listMinorChanges(eventChanges: ChangesForIssue, preparedCommonMessage: string[]) {
+    if (eventChanges.changes.isDescriptionChanged) {
+      preparedCommonMessage.push('изменилось описание, ');
+    }
+    if (eventChanges.changes.isTitleChanged) {
+      preparedCommonMessage.push('изменился заголовок, ');
+    }
+    if (eventChanges.changes.isLabelsAddedAndDeleted) {
+      const addedLabels = eventChanges.changes.isLabelsAddedAndDeleted.addedLabels;
+      const deletedLabels = eventChanges.changes.isLabelsAddedAndDeleted.deletedLabels;
+      const sentence = this.composeStringForLabelChanges(addedLabels, deletedLabels);
+      preparedCommonMessage.push(sentence);
+    }
+    if (eventChanges.changes.isLabelsAdded) {
+      const addedLabels = eventChanges.changes.isLabelsAdded.labels;
+      const sentence = this.composeStringForLabelChanges(addedLabels);
+      preparedCommonMessage.push(sentence);
+    }
+    if (eventChanges.changes.isLabelsDeleted) {
+      const deletedLabels = eventChanges.changes.isLabelsDeleted.labels;
+      const sentence = this.composeStringForLabelChanges(undefined, deletedLabels);
+      preparedCommonMessage.push(sentence);
+    }
+    if (eventChanges.changes.isDueDateAdded) {
+      const date = eventChanges.changes.isDueDateAdded.due_date;
+      const sentence = this.composeStringForDueDateChanges('added', date);
+      preparedCommonMessage.push(sentence);
+    }
+    if (eventChanges.changes.isDueDateUpdated) {
+      const date = eventChanges.changes.isDueDateUpdated.due_date;
+      const sentence = this.composeStringForDueDateChanges('updated', date);
+      preparedCommonMessage.push(sentence);
+    }
+    if (eventChanges.changes.isDueDateDeleted) {
+      const sentence = this.composeStringForDueDateChanges('deleted');
+      preparedCommonMessage.push(sentence);
+    }
+  }
 
-    if (updated) {
-      const date = dueDateChange.match(/(?<=:updated\()[^\)]*(?=\))/)?.shift();
+  private composeStringForDueDateChanges(type: 'updated' | 'added' | 'deleted', date?: string) {
+    if (type === 'updated') {
       return `обновился дедлайн до <b>${date}</b>, `;
-    } else if (added) {
-      const date = dueDateChange.match(/(?<=:added\()[^\)]*(?=\))/)?.shift();
+    } else if (type === 'added') {
       return `добавился дедлайн до <b>${date}</b>, `;
     } else {
       return `удалился дедлайн, `;
     }
   }
 
-  private composeStringForLabelChanges(labelChanges: string) {
-    const preparedMessageForLabelChanges: string[] = [];
-    if (labelChanges.startsWith('label:added')) {
-      const labelText = labelChanges.match(/(?<=\()[^\)]*(?=\))/g);
-      if (labelText && labelText.length === 1) {
-        const label = labelText.pop();
-        preparedMessageForLabelChanges.push(`добавился лейбл ${label}.`);
-      } else if (labelText) {
-        let endOfText = 'добавились лейблы ';
-        labelText.forEach((label) => {
-          endOfText += `${label}, `;
-        });
-        endOfText = endOfText.replace(/,\s$/, '.');
-        preparedMessageForLabelChanges.push(endOfText);
-      }
+  private composeStringForLabelChanges(addedLabels?: string[], deletedLabels?: string[]) {
+    let endOfText = '';
+    if (addedLabels && addedLabels.length === 1) {
+      endOfText += 'добавился лейбл ';
+      addedLabels.forEach((label) => (endOfText += `${label} `));
+    } else if (addedLabels) {
+      endOfText += 'добавились лейблы ';
+      addedLabels.forEach((label) => (endOfText += `${label}, `));
     }
-    if (labelChanges.startsWith('label:deleted')) {
-      const labelText = labelChanges.match(/(?<=\()[^\)]*(?=\))/g);
-      if (labelText && labelText.length === 1) {
-        const label = labelText.pop();
-        preparedMessageForLabelChanges.push(`удалился лейбл ${label}.`);
-      } else if (labelText) {
-        let endOfText = 'удалились лейблы ';
-        labelText.forEach((label) => {
-          endOfText += `${label}, `;
-        });
-        endOfText = endOfText.replace(/,\s$/, '.');
-        preparedMessageForLabelChanges.push(endOfText);
-      }
-    }
-    if (labelChanges.startsWith('label:both')) {
-      let endOfText = '';
-      const addedLabels = labelChanges.match(/(?<=:added).*(?=:deleted)/)?.shift();
-      const addedLabelsText = addedLabels?.match(/(?<=\()[^\)]*(?=\))/g);
-      const deletedLabels = labelChanges.match(/(?<=:deleted).*/)?.shift();
-      const deletedLabelsText = deletedLabels?.match(/(?<=\()[^\)]*(?=\))/g);
-
-      if (addedLabelsText && addedLabelsText.length === 1) {
-        endOfText += 'добавился лейбл ';
-        addedLabelsText.forEach((label) => (endOfText += `${label} `));
-      } else if (addedLabelsText) {
-        endOfText += 'добавились лейблы ';
-        addedLabelsText.forEach((label) => (endOfText += `${label}, `));
-      }
-      if (deletedLabelsText && deletedLabelsText.length === 1) {
-        endOfText += 'и удалился лейбл ';
-        deletedLabelsText.forEach((label) => (endOfText += `${label}.`));
-      } else if (deletedLabelsText) {
-        endOfText += 'и удалились лейблы ';
-        deletedLabelsText.forEach((label) => (endOfText += `${label}, `));
-        endOfText = endOfText.replace(/,\s$/, '.');
-      }
-
-      preparedMessageForLabelChanges.push(endOfText);
+    if (deletedLabels && deletedLabels.length === 1) {
+      endOfText += 'и удалился лейбл ';
+      deletedLabels.forEach((label) => (endOfText += `${label}.`));
+    } else if (deletedLabels) {
+      endOfText += 'и удалились лейблы ';
+      deletedLabels.forEach((label) => (endOfText += `${label}, `));
+      endOfText = endOfText.replace(/(,\s|\s)$/, '.');
     }
 
-    return preparedMessageForLabelChanges.join('');
+    return endOfText;
   }
 }

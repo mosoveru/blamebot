@@ -6,18 +6,18 @@ import { DataParsersRepository } from '../../repositories/data-parsers-repositor
 export class ChangesAnalyserService {
   constructor(private readonly changesParsersRepository: DataParsersRepository) {}
 
-  parseEventChanges(eventPayload: EventPayload<any>) {
-    const changeParser = this.changesParsersRepository.getDataParser(eventPayload.service, eventPayload.eventType);
+  parseEventChanges(payload: EventPayload<any>) {
+    const changeParser = this.changesParsersRepository.getDataParser(payload.service, payload.eventType);
 
     if (!changeParser) {
       return null;
     }
 
-    const eventMembersIds = changeParser.parseEventMembersIds(eventPayload);
+    const eventMembersIds = changeParser.parseEventMembersIds(payload);
 
     return changeParser.parseEventChanges({
       eventMembersIds,
-      eventPayload: eventPayload.eventPayload,
+      eventPayload: payload.eventPayload,
     });
   }
 }

@@ -1,11 +1,13 @@
-import { DataParser, EventChanges, EventPayload, ParseChangesData } from '../../types';
+import { DataParser, EventChanges, EventPayload, IssueChanges, ParseChangesData } from '../../types';
 import { GitLabIssueEvent, Label } from '../../types/gitlab/issue-event';
 import { GitLabEventTypes, ObjectTypes, RemoteGitServices } from '../../constants/enums';
+
+type ChangesForIssue = EventChanges<ObjectTypes.ISSUE>;
 
 export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
   readonly eventType = GitLabEventTypes.ISSUE;
   readonly gitProvider = RemoteGitServices.GITLAB;
-  readonly objectType = ObjectTypes.ISSUE;
+  readonly objectType = ObjectTypes.ISSUE as const;
 
   parseEventMembersIds(serviceType: EventPayload<GitLabIssueEvent>) {
     const objectMembersIdsSet = new Set<number>();
@@ -34,7 +36,7 @@ export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
     return String(serviceType.eventPayload.user.id);
   }
 
-  parseEventChanges({ eventMembersIds, eventPayload }: ParseChangesData<GitLabIssueEvent>) {
+  parseEventChanges({ eventMembersIds, eventPayload }: ParseChangesData<GitLabIssueEvent>): ChangesForIssue[] {
     const eventChangesTemplate = {
       objectType: this.objectType,
       objectUrl: eventPayload.object_attributes.url,
@@ -45,35 +47,39 @@ export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
     };
     const commonChanges = {
       ...eventChangesTemplate,
-      changes: this.parseCommonChanges(eventPayload),
+      changes: this.parseChanges(eventPayload),
       isCommon: true,
     };
-    const individualChanges = eventMembersIds.reduce<EventChanges[]>((acc, memberId) => {
+    const individualChanges = eventMembersIds.reduce<ChangesForIssue[]>((acc, memberId) => {
       // TODO: Добавить changes для бывшего Assignee. Например, "С вас сняли задачу"
       const isAssignee = eventPayload.assignees?.some((assignee) => assignee.id === memberId);
       if (isAssignee) {
-        const assigneeChanges = this.parseChangesForAssigneeOrAuthor(eventPayload);
-        if (assigneeChanges.length) {
+        const assigneeChanges = this.parseChanges(eventPayload);
+        if (assigneeChanges.haveChanges) {
           acc.push({
             ...eventChangesTemplate,
             serviceUserId: String(memberId),
-            isAssignee: true,
             isCommon: false,
-            changes: assigneeChanges,
+            changes: {
+              ...assigneeChanges,
+              forAssignee: true,
+            },
           });
           return acc;
         }
       }
       const isAuthor = eventPayload.object_attributes.author_id === memberId;
       if (isAuthor) {
-        const authorChanges = this.parseChangesForAssigneeOrAuthor(eventPayload);
-        if (authorChanges.length) {
+        const authorChanges = this.parseChanges(eventPayload);
+        if (authorChanges.haveChanges) {
           acc.push({
             ...eventChangesTemplate,
             serviceUserId: String(memberId),
-            isAuthor: true,
             isCommon: false,
-            changes: authorChanges,
+            changes: {
+              ...authorChanges,
+              forAuthor: true,
+            },
           });
           return acc;
         }
@@ -83,118 +89,106 @@ export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
     return [...individualChanges, commonChanges];
   }
 
-  private parseNewAssignmentInNewObject(eventPayload: GitLabIssueEvent) {
-    const payloadChanges = Object.keys(eventPayload.changes);
-    if (eventPayload.assignees?.length) {
-      if (payloadChanges.includes('due_date')) {
-        return `new-assignment:deadline(${eventPayload.changes.due_date?.current})`;
-      }
-      return 'new-assignment';
+  private isNewAssignmentWithDeadline(eventPayload: GitLabIssueEvent) {
+    if (eventPayload.assignees?.length && eventPayload.changes.due_date && eventPayload.changes.due_date.current) {
+      return {
+        deadline: eventPayload.changes.due_date.current,
+      };
     }
+    return false;
   }
 
   private isNewObject(eventPayload: GitLabIssueEvent) {
-    const eventChanges = Object.keys(eventPayload.changes);
-    return eventChanges.includes('id');
+    return !!eventPayload.changes.id;
   }
 
-  private parseCommonChanges(eventPayload: GitLabIssueEvent) {
-    const changes: string[] = [];
-    const payloadChanges = Object.keys(eventPayload.changes);
-    if (this.isNewObject(eventPayload)) {
-      const newObjectChanges = this.parseNewAssignmentInNewObject(eventPayload);
-      if (newObjectChanges) {
-        changes.push(newObjectChanges);
-        return changes;
-      }
-    }
-    for (const change of payloadChanges) {
-      switch (change) {
-        case 'assignees': {
-          changes.push(`new-assignment`);
-          break;
-        }
-        case 'state_id': {
-          const stateId = eventPayload.changes.state_id?.current;
-          if (stateId === 2) {
-            changes.push(`closed`);
-            return changes;
-          } else if (!payloadChanges.includes('created_at')) {
-            changes.push(`reopened`);
-            return changes;
-          }
-          break;
-        }
-        case 'description': {
-          changes.push(`description:changed`);
-          break;
-        }
-        case 'title': {
-          changes.push(`title:changed`);
-          break;
-        }
-      }
-    }
-    if (payloadChanges.includes('labels')) {
-      const currentLabels = [...eventPayload.changes.labels!.current];
-      const previousLabels = [...eventPayload.changes.labels!.previous];
-      const labelChanges = this.parseChangesForLabels(currentLabels, previousLabels)!;
-      changes.push(labelChanges);
-    }
-    if (payloadChanges.includes('due_date')) {
-      const dueDateChange = this.parseChangesForDueDate(eventPayload.changes.due_date!);
-      changes.push(dueDateChange);
-      return changes;
-    }
-    return changes;
+  private isIssueClosed(eventPayload: GitLabIssueEvent): boolean {
+    const stateId = eventPayload.changes.state_id;
+    return !!(stateId && stateId.current === 2);
   }
 
-  private parseChangesForAssigneeOrAuthor(eventPayload: GitLabIssueEvent) {
-    const changes: string[] = [];
-    const payloadChanges = Object.keys(eventPayload.changes);
-    if (this.isNewObject(eventPayload)) {
-      const newObjectChanges = this.parseNewAssignmentInNewObject(eventPayload);
-      if (newObjectChanges) {
-        changes.push(newObjectChanges);
-        return changes;
-      }
-    }
-    if (payloadChanges.includes('assignees')) {
-      changes.push(`new-assignment`);
+  private isIssueReopened(eventPayload: GitLabIssueEvent): boolean {
+    const stateId = eventPayload.changes.state_id;
+    return !!(stateId && !eventPayload.changes.created_at);
+  }
+
+  private parseChanges(eventPayload: GitLabIssueEvent) {
+    const changes: IssueChanges = {
+      isNewObject: this.isNewObject(eventPayload),
+      haveChanges: false,
+    };
+    const isNewAssignmentWithDeadline = this.isNewAssignmentWithDeadline(eventPayload);
+    if (changes.isNewObject && isNewAssignmentWithDeadline) {
+      changes.isNewAssignmentWithDeadline = isNewAssignmentWithDeadline;
+      changes.haveChanges = true;
+      return changes;
+    } else if (changes.isNewObject && eventPayload.assignees?.length) {
+      changes.isNewAssignment = true;
+      changes.haveChanges = true;
       return changes;
     }
-    if (payloadChanges.includes('state_id')) {
-      const stateId = eventPayload.changes.state_id?.current;
-      if (stateId === 2) {
-        changes.push(`closed`);
-        return changes;
-      } else if (!payloadChanges.includes('created_at')) {
-        changes.push(`reopened`);
+    if (eventPayload.changes.assignees) {
+      changes.isNewAssignment = true;
+      changes.haveChanges = true;
+    }
+    if (this.isIssueClosed(eventPayload)) {
+      changes.isClosed = true;
+      changes.haveChanges = true;
+      return changes;
+    } else if (this.isIssueReopened(eventPayload)) {
+      changes.isReopened = true;
+      changes.haveChanges = true;
+      return changes;
+    }
+    if (eventPayload.changes.due_date) {
+      const dueDateChange = this.parseChangesForDueDate(eventPayload.changes.due_date);
+      if (dueDateChange.isUpdated) {
+        changes.isDueDateUpdated = {
+          due_date: dueDateChange.due_date!,
+        };
+        changes.haveChanges = true;
         return changes;
       }
+      if (dueDateChange.isAdded) {
+        changes.isDueDateAdded = {
+          due_date: dueDateChange.due_date!,
+        };
+        changes.haveChanges = true;
+        return changes;
+      }
+      changes.isDueDateDeleted = true;
+      changes.haveChanges = true;
+      return changes;
     }
-    if (payloadChanges.includes('labels')) {
-      const currentLabels = [...eventPayload.changes.labels!.current];
-      const previousLabels = [...eventPayload.changes.labels!.previous];
+    if (eventPayload.changes.description) {
+      changes.isDescriptionChanged = true;
+      changes.haveChanges = true;
+    }
+    if (eventPayload.changes.title) {
+      changes.isTitleChanged = true;
+      changes.haveChanges = true;
+    }
+    if (eventPayload.changes.labels) {
+      const currentLabels = [...eventPayload.changes.labels.current];
+      const previousLabels = [...eventPayload.changes.labels.previous];
       const labelChanges = this.parseChangesForLabels(currentLabels, previousLabels)!;
-      changes.push(labelChanges);
-    }
-    if (payloadChanges.includes('due_date')) {
-      const dueDateChange = this.parseChangesForDueDate(eventPayload.changes.due_date!);
-      changes.push(dueDateChange);
-      return changes;
-    }
-    for (const change of Object.keys(eventPayload.changes)) {
-      switch (change) {
-        case 'description': {
-          changes.push(`description:changed`);
-          break;
-        }
-        case 'title': {
-          changes.push(`title:changed`);
-          break;
-        }
+      if (labelChanges.addedLabels && labelChanges.deletedLabels) {
+        changes.isLabelsAddedAndDeleted = labelChanges;
+        changes.haveChanges = true;
+        return changes;
       }
+      if (labelChanges.deletedLabels && !labelChanges.addedLabels) {
+        changes.isLabelsDeleted = {
+          labels: labelChanges.deletedLabels,
+        };
+        changes.haveChanges = true;
+        return changes;
+      }
+      changes.isLabelsAdded = {
+        labels: labelChanges.addedLabels,
+      };
+      changes.haveChanges = true;
+      return changes;
     }
     return changes;
   }
@@ -203,12 +197,20 @@ export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
     const isDueDateUpdated = !!dueDate.current && !!dueDate.previous;
     const isDueDateAdded = !!dueDate.current && !dueDate.previous;
     if (isDueDateUpdated) {
-      return `due_date:updated(${dueDate.current})`;
+      return {
+        isUpdated: true,
+        due_date: dueDate.current,
+      };
     }
     if (isDueDateAdded) {
-      return `due_date:added(${dueDate.current})`;
+      return {
+        isAdded: true,
+        due_date: dueDate.current,
+      };
     }
-    return `due_date:deleted`;
+    return {
+      isDeleted: true,
+    };
   }
 
   private parseChangesForLabels(currentLabels: Label[], previousLabels: Label[]) {
@@ -217,27 +219,22 @@ export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
     }
     const [addedLabels, deletedLabels] = this.performBinarySearchInLabelChanges(currentLabels, previousLabels);
     const isLabelsAddedAndDeleted = !!addedLabels.length && !!deletedLabels.length;
-    const isLabelsOnlyAdded = !!addedLabels.length && !deletedLabels.length;
     const isLabelsOnlyDeleted = !addedLabels.length && !!deletedLabels.length;
 
     if (isLabelsAddedAndDeleted) {
-      let labelChanges = 'label:both:';
-      labelChanges += 'added';
-      addedLabels.forEach((label) => (labelChanges += `(${label.title})`));
-      labelChanges += ':deleted';
-      deletedLabels.forEach((label) => (labelChanges += `(${label.title})`));
-      return labelChanges;
+      return {
+        addedLabels: addedLabels.map((label) => label.title),
+        deletedLabels: deletedLabels.map((label) => label.title),
+      };
     }
     if (isLabelsOnlyDeleted) {
-      let labelChanges = 'label:deleted';
-      deletedLabels.forEach((label) => (labelChanges += `(${label.title})`));
-      return labelChanges;
+      return {
+        deletedLabels: deletedLabels.map((label) => label.title),
+      };
     }
-    if (isLabelsOnlyAdded) {
-      let labelChanges = 'label:added';
-      addedLabels.forEach((label) => (labelChanges += `(${label.title})`));
-      return labelChanges;
-    }
+    return {
+      addedLabels: addedLabels.map((label) => label.title),
+    };
   }
 
   private performBinarySearchInLabelChanges(currentSortedLabels: Label[], previousLabels: Label[]) {

@@ -14,19 +14,54 @@ export type EventPayload<T> = {
   name: string;
 };
 
-export type EventChanges = {
+export type IssueChanges = {
+  forAuthor?: boolean;
+  forAssignee?: boolean;
+  isNewAssignment?: boolean;
+  isNewAssignmentWithDeadline?: {
+    deadline: string;
+  };
+  isNewObject: boolean;
+  isClosed?: boolean;
+  isReopened?: boolean;
+  isDescriptionChanged?: boolean;
+  isTitleChanged?: boolean;
+  isLabelsAdded?: {
+    labels: string[];
+  };
+  isLabelsDeleted?: {
+    labels: string[];
+  };
+  isLabelsAddedAndDeleted?: {
+    addedLabels: string[];
+    deletedLabels: string[];
+  };
+  isDueDateUpdated?: {
+    due_date: string;
+  };
+  isDueDateAdded?: {
+    due_date: string;
+  };
+  isDueDateDeleted?: boolean;
+  haveChanges: boolean;
+};
+
+export type ChangesMap = {
+  [ObjectTypes.ISSUE]: IssueChanges;
+  [ObjectTypes.REQUEST]: 'not-implemented';
+};
+
+type ObjectTypeValues = (typeof ObjectTypes)[keyof typeof ObjectTypes];
+
+export type EventChanges<T extends ObjectTypeValues> = {
   serviceUserId?: string;
-  objectType: ObjectTypes;
+  objectType: T;
   objectUrl: string;
   objectId: string;
-  isNewObject: boolean;
   projectUrl: string;
   projectName: string;
-  isAssignee?: boolean;
-  isReviewer?: boolean;
-  isAuthor?: boolean;
   isCommon: boolean;
-  changes: string[];
+  changes: T extends keyof ChangesMap ? ChangesMap[T] : never;
 };
 
 export type NotificationMessage = {
@@ -57,7 +92,7 @@ export interface DataParser<T> {
   parseEventMembersIds(serviceType: EventPayload<T>): number[];
   parseObservableObjectInfo(serviceType: EventPayload<T>): ObservableObjectEntity;
   parseEventInitiatorId(serviceType: EventPayload<T>): string;
-  parseEventChanges(data: ParseChangesData<T>): EventChanges[];
+  parseEventChanges(data: ParseChangesData<T>): EventChanges<ObjectTypeValues>[];
 }
 
 export interface DataParserConstructor {
@@ -65,6 +100,6 @@ export interface DataParserConstructor {
 }
 
 export interface MessageComposer {
-  readonly meantFor: string;
-  composeMessage(changes: EventChanges[]): NotificationMessage[];
+  readonly meantFor: ObjectTypes;
+  composeMessage(changes: EventChanges<ObjectTypes>[]): NotificationMessage[];
 }
