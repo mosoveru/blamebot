@@ -1,9 +1,9 @@
 import { Composer, Keyboard } from 'grammy';
 import { BlamebotContext, DatabaseService } from '../types';
 import { conversations, createConversation } from '@grammyjs/conversations';
-import ReplyMessages from '../constants/text';
 import linkClient from '../conversations/linkClient';
 import provideDatabaseService from '../middlewares/provideDatabaseService';
+import ReplyMessages from '../constants/enums';
 
 function initLinkClientConversation(databaseService: DatabaseService) {
   const composer = new Composer<BlamebotContext>();
