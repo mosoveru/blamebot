@@ -21,7 +21,7 @@ function initLinkClientConversation(databaseService: DatabaseService) {
     await ctx.reply(ReplyMessages.HELLO_MESSAGE, {
       reply_markup: keyboard,
     });
-    await ctx.conversation.exit('link');
+    await ctx.conversation.exit(linkClient.name);
   });
 
   composer.use(createConversation(linkClient));
