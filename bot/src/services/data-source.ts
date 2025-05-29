@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import { Service } from '../entities/service.entity';
 import { TelegramUser } from '../entities/telegram-user.service';
+import { ServiceUser } from '../entities/service-user.entity';
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
@@ -11,9 +12,7 @@ export const AppDataSource = new DataSource({
   password: '12345678',
   database: 'git_event_subscribers',
   synchronize: false,
-  entities: [Service, TelegramUser],
+  entities: [Service, TelegramUser, ServiceUser],
 });
-
-AppDataSource.initialize(); // Add to Promise.all
 
 // TODO: move hardcoded values to a config service

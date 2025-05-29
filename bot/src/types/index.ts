@@ -1,3 +1,6 @@
+import { Conversation, ConversationFlavor } from '@grammyjs/conversations';
+import type { Context } from 'grammy';
+
 export interface GitRemoteApiHandler {
   setAccessToken(token: string): void;
   setOrigin(origin: string): void;
@@ -28,10 +31,21 @@ export type RemoteServiceInfo = {
 
 export interface DatabaseService {
   saveTgUser(info: TelegramUserInfo): Promise<void>;
-  getTgUserInfo(id: string): Promise<TelegramUserInfo>;
+  getTgUserInfo(id: string): Promise<TelegramUserInfo | null>;
   saveRemoteUser(info: RemoteUserData): Promise<void>;
-  getRemoteUserInfo(serviceUserId: string, serviceId: string): Promise<RemoteUserData>;
+  getRemoteUserInfo(serviceUserId: string, serviceId: string): Promise<RemoteUserData | null>;
+
   saveRemoteServiceInfo(info: RemoteServiceInfo): Promise<void>;
-  getRemoteServiceInfo(serviceId: string): Promise<RemoteServiceInfo>;
-  findRemoteServiceInfo(url: string): Promise<RemoteServiceInfo>;
+  getRemoteServiceInfo(serviceId: string): Promise<RemoteServiceInfo | null>;
+  findRemoteServiceInfoByURL(url: string): Promise<RemoteServiceInfo | null>;
 }
+
+type DatabaseServiceFlavor<C extends Context> = C & {
+  dbService: DatabaseService;
+};
+
+export type BlamebotContext = DatabaseServiceFlavor<ConversationFlavor<Context>>;
+
+export type ConversationInsideContext = DatabaseServiceFlavor<Context>;
+
+export type BlamebotConversation = Conversation<BlamebotContext, ConversationInsideContext>;
