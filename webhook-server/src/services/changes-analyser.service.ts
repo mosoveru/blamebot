@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { EventPayload } from '../../types';
-import { DataParsersRepository } from '../../repositories/data-parsers-repository/data-parsers.repository';
+import { EventPayload } from '../types';
+import { DataParsersRepository } from '../repositories/data-parsers.repository';
 
 @Injectable()
 export class ChangesAnalyserService {

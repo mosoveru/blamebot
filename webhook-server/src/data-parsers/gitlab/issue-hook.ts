@@ -1,4 +1,4 @@
-import { DataParser, EventChanges, EventPayload, IssueChanges, ParseChangesData } from '../../types';
+import { DataForParsingChanges, DataParser, EventChanges, EventPayload, IssueChanges } from '../../types';
 import { GitLabIssueEvent, Label } from '../../types/gitlab/issue-event';
 import { GitLabEventTypes, ObjectTypes, RemoteGitServices } from '../../constants/enums';
 
@@ -8,6 +8,25 @@ export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
   readonly eventType = GitLabEventTypes.ISSUE;
   readonly gitProvider = RemoteGitServices.GITLAB;
   readonly objectType = ObjectTypes.ISSUE as const;
+
+  parseProjectInfo(eventPayload: EventPayload<GitLabIssueEvent>) {
+    return {
+      serviceId: eventPayload.name,
+      projectId: String(eventPayload.eventPayload.project.id),
+      name: eventPayload.eventPayload.project.name,
+      projectUrl: eventPayload.eventPayload.project.web_url,
+    };
+  }
+
+  parseObservableObjectInfo(eventPayload: EventPayload<GitLabIssueEvent>) {
+    return {
+      serviceId: eventPayload.name,
+      objectId: String(eventPayload.eventPayload.object_attributes.id),
+      projectId: String(eventPayload.eventPayload.project.id),
+      objectType: ObjectTypes.ISSUE,
+      objectUrl: eventPayload.eventPayload.object_attributes.url,
+    };
+  }
 
   parseEventMembersIds(serviceType: EventPayload<GitLabIssueEvent>) {
     const objectMembersIdsSet = new Set<number>();
@@ -22,21 +41,11 @@ export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
     return objectMembersIds;
   }
 
-  parseObservableObjectInfo(eventPayload: EventPayload<GitLabIssueEvent>) {
-    return {
-      serviceId: eventPayload.name,
-      objectId: String(eventPayload.eventPayload.object_attributes.id),
-      projectId: String(eventPayload.eventPayload.project.id),
-      objectType: ObjectTypes.ISSUE,
-      objectUrl: eventPayload.eventPayload.object_attributes.url,
-    };
-  }
-
   parseEventInitiatorId(serviceType: EventPayload<GitLabIssueEvent>): string {
     return String(serviceType.eventPayload.user.id);
   }
 
-  parseEventChanges({ eventMembersIds, eventPayload }: ParseChangesData<GitLabIssueEvent>): ChangesForIssue[] {
+  parseEventChanges({ eventMembersIds, eventPayload }: DataForParsingChanges<GitLabIssueEvent>): ChangesForIssue[] {
     const eventChangesTemplate = {
       objectType: this.objectType,
       objectUrl: eventPayload.object_attributes.url,

@@ -11,7 +11,7 @@ export type EventPayload<T> = {
   service: RemoteGitServices;
   eventType: string;
   eventPayload: T;
-  name: string;
+  name: string; // TODO: Неочевидно, что вот это name - это serviceId
 };
 
 export type IssueChanges = {
@@ -69,9 +69,16 @@ export type NotificationMessage = {
   message: string;
 };
 
-export type ParseChangesData<T> = {
+export type DataForParsingChanges<T> = {
   eventMembersIds: number[];
 } & Pick<EventPayload<T>, 'eventPayload'>;
+
+export type ProjectEntity = {
+  projectId: string;
+  serviceId: string;
+  name: string;
+  projectUrl: string;
+};
 
 export type ObservableObjectEntity = {
   serviceId: string;
@@ -89,10 +96,11 @@ export interface DataParser<T> {
   readonly eventType: GitLabEventTypes;
   readonly gitProvider: RemoteGitServices;
   readonly objectType: ObjectTypes;
-  parseEventMembersIds(serviceType: EventPayload<T>): number[];
-  parseObservableObjectInfo(serviceType: EventPayload<T>): ObservableObjectEntity;
-  parseEventInitiatorId(serviceType: EventPayload<T>): string;
-  parseEventChanges(data: ParseChangesData<T>): EventChanges<ObjectTypeValues>[];
+  parseObservableObjectInfo(eventPayload: EventPayload<T>): ObservableObjectEntity;
+  parseProjectInfo(eventPayload: EventPayload<T>): ProjectEntity;
+  parseEventMembersIds(eventPayload: EventPayload<T>): number[];
+  parseEventInitiatorId(eventPayload: EventPayload<T>): string;
+  parseEventChanges(data: DataForParsingChanges<T>): EventChanges<ObjectTypeValues>[];
 }
 
 export interface DataParserConstructor {

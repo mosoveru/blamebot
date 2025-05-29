@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { TelegramService } from '../services/telegram/telegram.service';
+import { TelegramService } from '../services/telegram.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Api } from 'grammy';
 

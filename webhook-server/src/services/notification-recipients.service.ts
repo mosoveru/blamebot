@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { Subscription } from 'src/models/subscription.entity';
-import { EventPayload } from '../../types';
-import { SubscriptionService } from '../subscription/subscription.service';
-import { DataParsersRepository } from '../../repositories/data-parsers-repository/data-parsers.repository';
-import { ObservableObjectService } from '../observable-object/observable-object.service';
+import { EventPayload } from '../types';
+import { SubscriptionService } from './subscription.service';
+import { DataParsersRepository } from '../repositories/data-parsers.repository';
+import { ObservableObjectService } from './observable-object.service';
+import { ProjectService } from './project.service';
 
 @Injectable()
 export class NotificationRecipientsService {
@@ -11,6 +12,7 @@ export class NotificationRecipientsService {
     private readonly subscriptionService: SubscriptionService,
     private readonly dataParsersRepository: DataParsersRepository,
     private readonly observableObjectService: ObservableObjectService,
+    private readonly projectService: ProjectService,
   ) {}
 
   async retrieveRecipientsList(eventPayload: EventPayload<any>) {
@@ -22,8 +24,10 @@ export class NotificationRecipientsService {
 
     const eventMembersIds = handler.parseEventMembersIds(eventPayload);
     const eventInitiatorId = handler.parseEventInitiatorId(eventPayload);
+    const project = handler.parseProjectInfo(eventPayload);
     const observableObject = handler.parseObservableObjectInfo(eventPayload);
 
+    await this.projectService.ensureExists(project);
     await this.observableObjectService.ensureExists(observableObject);
     await this.subscriptionService.subscribeNewEventMembers(observableObject, eventMembersIds);
 

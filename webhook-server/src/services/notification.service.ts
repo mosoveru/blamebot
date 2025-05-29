@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { TelegramService } from '../telegram/telegram.service';
-import { EventPayload } from '../../types';
-import { NotificationRecipientsService } from '../notification-recipients/notification-recipients.service';
-import { ChangesAnalyserService } from '../changes-analyser/changes-analyser.service';
-import { MessageAssignmentService } from '../message-assignment/message-assignment.service';
-import { NotificationComposerService } from '../notification-composer/notification-composer.service';
+import { TelegramService } from './telegram.service';
+import { EventPayload } from '../types';
+import { NotificationRecipientsService } from './notification-recipients.service';
+import { ChangesAnalyserService } from './changes-analyser.service';
+import { MessageAssignmentService } from './message-assignment.service';
+import { NotificationComposerService } from './notification-composer/notification-composer.service';
 
 @Injectable()
 export class NotificationService {

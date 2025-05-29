@@ -1,6 +1,6 @@
 import { Controller, Post } from '@nestjs/common';
 import { Payload } from '../decorators/event-payload';
-import { NotificationService } from '../services/notification/notification.service';
+import { NotificationService } from '../services/notification.service';
 import { EventPayload } from '../types';
 
 @Controller()

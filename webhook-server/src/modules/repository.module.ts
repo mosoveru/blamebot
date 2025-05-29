@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { DataParsersRepository } from '../repositories/data-parsers-repository/data-parsers.repository';
+import { DataParsersRepository } from '../repositories/data-parsers.repository';
 import { DataParsers } from '../data-parsers';
-import { ChangesAnalyserService } from '../services/changes-analyser/changes-analyser.service';
+import { ChangesAnalyserService } from '../services/changes-analyser.service';
 
 @Module({
   providers: [

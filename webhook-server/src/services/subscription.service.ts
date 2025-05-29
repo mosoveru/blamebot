@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Subscription } from '../../models/subscription.entity';
+import { Subscription } from '../models/subscription.entity';
 import { Repository } from 'typeorm';
-import { SubscriptionIdentifier, ObservableObjectEntity } from '../../types';
-import { ServiceUserService } from '../service-user/service-user.service';
+import { SubscriptionIdentifier, ObservableObjectEntity } from '../types';
+import { ServiceUserService } from './service-user.service';
 
 @Injectable()
 export class SubscriptionService {

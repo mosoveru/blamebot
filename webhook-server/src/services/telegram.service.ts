@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Api, InlineKeyboard } from 'grammy';
-import { SubscriptionIdentifier } from '../../types';
+import { SubscriptionIdentifier } from '../types';
 
 type NotificationData = {
   message: string;

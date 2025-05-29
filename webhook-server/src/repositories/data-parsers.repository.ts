@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { DataParser, DataParserConstructor } from '../../types';
-import { RemoteGitServices } from '../../constants/enums';
+import { DataParser, DataParserConstructor } from '../types';
+import { RemoteGitServices } from '../constants/enums';
 
 @Injectable()
 export class DataParsersRepository {
