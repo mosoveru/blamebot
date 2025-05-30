@@ -3,6 +3,7 @@
     "module": "commonjs",                                /* Specify what module code is generated. */
     "target": "esnext",                                  /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
     "baseUrl": "./src",                                  /* Specify the base directory to resolve non-relative module names. */
+    "outDir": "dist",
     "paths": {
       "@entities": ["entities"],
       "@exceptions": ["exceptions"],
@@ -22,9 +23,17 @@
     "strict": true,                                      /* Enable all strict type-checking options. */
     "strictNullChecks": true,                         /* When type checking, take into account 'null' and 'undefined'. */
     "strictPropertyInitialization": false,             /* Check for class properties that are declared but not set in the constructor. */
+    "types": ["node", "node-fetch"],
+    "plugins": [
+      { "transform": "typescript-transform-paths" }
+    ]
   },
   "include": ["src"],
   "ts-node": {
     "require": ["tsconfig-paths/register"]
+  },
+  "tsc-alias": {
+    "verbose": true,
+    "resolveFullPaths": true
   }
 }
