@@ -1,1 +1,1 @@
-export { isValidURL } from './isValidURL';
+export { isValidHttpURL } from './isValidHttpURL';
