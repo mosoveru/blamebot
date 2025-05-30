@@ -27,7 +27,7 @@ import Config from '@config';
     await error.ctx.reply('Произошла ошибка');
   });
 
-  void bot.start({
+  bot.start({
     onStart: () => {
       console.log('Telegram bot has been started!');
     },

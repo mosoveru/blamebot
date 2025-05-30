@@ -1,6 +1,6 @@
 import 'dotenv/config';
-import { BadConfigurationException } from '../exceptions';
-import { ConfigOptions, DatabaseDrivers } from '../types';
+import { BadConfigurationException } from '@exceptions';
+import { ConfigOptions, DatabaseDrivers } from '@types';
 
 export default (): ConfigOptions => {
   const botSecretToken = process.env.BOT_SECRET_TOKEN;
@@ -21,12 +21,5 @@ export default (): ConfigOptions => {
 };
 
 const checkDatabaseDriver = (driver?: string): driver is DatabaseDrivers => {
-  switch (driver) {
-    case 'postgres': {
-      return true;
-    }
-    default: {
-      return false;
-    }
-  }
+  return driver === 'postgres';
 };

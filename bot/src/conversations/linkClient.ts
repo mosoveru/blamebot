@@ -1,7 +1,7 @@
 import { Keyboard } from 'grammy';
 import { BlamebotConversation, ConversationInsideContext } from '@types';
 import ReplyMessages from '@constants';
-import { regexForURL } from '@constants';
+import { isValidURL } from '@utils';
 
 async function linkClient(conversation: BlamebotConversation, ctx: ConversationInsideContext) {
   const returnBack = new Keyboard().text(ReplyMessages.GO_BACK).resized();
@@ -15,7 +15,7 @@ async function linkClient(conversation: BlamebotConversation, ctx: ConversationI
         reply_markup: returnBack,
       }),
   });
-  if (regexForURL.test(url)) {
+  if (isValidURL(url)) {
     await ctx.reply(`Пришлите персональный токен доступа с правами на чтение пользователя.`);
     const token = await conversation.form.text({
       otherwise: (ctx) =>
