@@ -3,6 +3,7 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 import eslintPluginPrettier from 'eslint-plugin-prettier/recommended';
 import { defineConfig } from 'eslint/config';
+import sonarjs from 'eslint-plugin-sonarjs';
 
 export default defineConfig([
   {
@@ -15,5 +16,6 @@ export default defineConfig([
     languageOptions: { globals: globals.node },
   },
   tseslint.configs.recommended,
+  sonarjs.configs.recommended,
   eslintPluginPrettier,
 ]);
