@@ -1,7 +1,7 @@
-import { BlamebotConversation, ConversationInsideContext } from '../types';
 import { Keyboard } from 'grammy';
-import ReplyMessages from '../constants/enums';
-import { regexForURL } from '../constants';
+import { BlamebotConversation, ConversationInsideContext } from '@types';
+import ReplyMessages from '@constants';
+import { regexForURL } from '@constants';
 
 async function linkClient(conversation: BlamebotConversation, ctx: ConversationInsideContext) {
   const returnBack = new Keyboard().text(ReplyMessages.GO_BACK).resized();

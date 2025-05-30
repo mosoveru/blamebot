@@ -1,9 +1,9 @@
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
-import { Service } from '../entities/service.entity';
-import { TelegramUser } from '../entities/telegram-user.service';
-import { ServiceUser } from '../entities/service-user.entity';
-import Config from '../config';
+import { Service } from '@entities';
+import { TelegramUser } from '@entities';
+import { ServiceUser } from '@entities';
+import Config from '@config';
 
 export const AppDataSource = new DataSource({
   type: Config.get('DB_DRIVER'),

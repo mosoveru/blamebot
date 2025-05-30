@@ -1,5 +1,5 @@
-import { BlamebotContext, DatabaseService } from '../types';
 import { NextFunction } from 'grammy';
+import { BlamebotContext, DatabaseService } from '@types';
 
 function provideDatabaseService(databaseService: DatabaseService) {
   return async (ctx: BlamebotContext, next: NextFunction) => {

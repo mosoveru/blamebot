@@ -1,9 +1,9 @@
 import { Repository } from 'typeorm';
-import { DatabaseService, RemoteServiceInfo, RemoteUserData, TelegramUserInfo } from '../types';
-import { Service } from '../entities/service.entity';
-import { ServiceUser } from '../entities/service-user.entity';
-import { TelegramUser } from '../entities/telegram-user.service';
-import { DuplicateRemoteServiceURLException } from '../exceptions/DuplicateRemoteServiceURLException';
+import { DatabaseService, RemoteServiceInfo, RemoteUserData, TelegramUserInfo } from '@types';
+import { Service } from '@entities';
+import { ServiceUser } from '@entities';
+import { TelegramUser } from '@entities';
+import { DuplicateRemoteServiceURLException } from '@exceptions';
 
 class PostgresDatabaseService implements DatabaseService {
   constructor(

@@ -1,12 +1,12 @@
 import { Bot } from 'grammy';
-import { BlamebotContext } from './types';
-import { AppDataSource } from './services/data-source';
-import initLinkClientConversation from './composers/linkClientConversation';
-import PostgresDatabaseService from './services/PostgresDatabaseService';
-import { Service } from './entities/service.entity';
-import { TelegramUser } from './entities/telegram-user.service';
-import { ServiceUser } from './entities/service-user.entity';
-import Config from './config';
+import { BlamebotContext } from '@types';
+import { AppDataSource } from '@services';
+import initLinkClientConversation from '@composers';
+import PostgresDatabaseService from '@services';
+import { Service } from '@entities';
+import { TelegramUser } from '@entities';
+import { ServiceUser } from '@entities';
+import Config from '@config';
 
 (async () => {
   const bot = new Bot<BlamebotContext>(Config.get('BOT_SECRET_TOKEN'));

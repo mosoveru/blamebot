@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { BadConfigurationException } from '../exceptions/BadConfigurationException';
+import { BadConfigurationException } from '../exceptions';
 import { ConfigOptions, DatabaseDrivers } from '../types';
 
 export default (): ConfigOptions => {
