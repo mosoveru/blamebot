@@ -15,7 +15,7 @@ export const Payload = createParamDecorator((data: unknown, ctx: ExecutionContex
     service: null,
     eventType: null,
     eventPayload: null,
-    name: null,
+    instanceId: null,
   };
 
   const eventHeaders = new Map([
@@ -37,7 +37,7 @@ export const Payload = createParamDecorator((data: unknown, ctx: ExecutionContex
   for (const header of secretTokenHeaders.keys()) {
     const serviceSecret = headers[header];
     if (serviceSecret) {
-      eventPayload.name = verify(serviceSecret, jwtKey) as string;
+      eventPayload.instanceId = verify(serviceSecret, jwtKey) as string;
     }
   }
   const hasNull = Object.values(eventPayload).some((value) => value === null || value === undefined);

@@ -4,14 +4,14 @@ export type NullableEventPayload<T> = {
   service: RemoteGitServices | null;
   eventType: string | null;
   eventPayload: T | null;
-  name: string | null;
+  instanceId: string | null;
 };
 
 export type EventPayload<T> = {
   service: RemoteGitServices;
   eventType: string;
   eventPayload: T;
-  name: string; // TODO: Неочевидно, что вот это name - это instanceId
+  instanceId: string;
 };
 
 export type IssueChanges = {

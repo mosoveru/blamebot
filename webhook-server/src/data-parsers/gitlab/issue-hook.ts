@@ -11,7 +11,7 @@ export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
 
   parseProjectInfo(eventPayload: EventPayload<GitLabIssueEvent>) {
     return {
-      instanceId: eventPayload.name,
+      instanceId: eventPayload.instanceId,
       projectId: String(eventPayload.eventPayload.project.id),
       name: eventPayload.eventPayload.project.name,
       projectUrl: eventPayload.eventPayload.project.web_url,
@@ -20,7 +20,7 @@ export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
 
   parseObservableObjectInfo(eventPayload: EventPayload<GitLabIssueEvent>) {
     return {
-      instanceId: eventPayload.name,
+      instanceId: eventPayload.instanceId,
       objectId: String(eventPayload.eventPayload.object_attributes.id),
       projectId: String(eventPayload.eventPayload.project.id),
       objectType: ObjectTypes.ISSUE,
