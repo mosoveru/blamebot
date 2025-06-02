@@ -39,9 +39,7 @@ export class NotificationService {
 
     const recipientsWithMessages = this.messageAssignmentService.assignMessagesToRecipients(messages, recipients);
 
-    console.log(recipientsWithMessages);
-
-    for (const recipient of recipientsWithMessages) {
+    const pendingNotifications = recipientsWithMessages.map((recipient) => {
       const notificationData = {
         message: recipient.message,
         chatId: recipient.instanceUsers.telegramUserId,
@@ -50,7 +48,9 @@ export class NotificationService {
           instanceUserId: recipient.instanceUserId,
         },
       };
-      await this.telegramService.sendNotification(notificationData);
-    }
+      return this.telegramService.sendNotification(notificationData);
+    });
+
+    await Promise.all(pendingNotifications);
   }
 }
