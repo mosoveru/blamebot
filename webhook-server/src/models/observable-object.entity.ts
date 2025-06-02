@@ -1,5 +1,5 @@
 import { Column, Entity, OneToOne, PrimaryColumn, JoinColumn } from 'typeorm';
-import { Service } from './service.entity';
+import { Instance } from './instance.entity';
 import { Project } from './project.entity';
 import { ObjectType } from './object-type.entity';
 
@@ -11,7 +11,7 @@ export class ObservableObject {
   objectId: string;
 
   @PrimaryColumn()
-  serviceId: string;
+  instanceId: string;
 
   @PrimaryColumn()
   projectId: string;
@@ -19,9 +19,9 @@ export class ObservableObject {
   @PrimaryColumn()
   objectType: string;
 
-  @OneToOne(() => Service)
-  @JoinColumn({ name: 'serviceId', referencedColumnName: 'serviceId' })
-  service: Service;
+  @OneToOne(() => Instance)
+  @JoinColumn({ name: 'instanceId', referencedColumnName: 'instanceId' })
+  instance: Instance;
 
   @OneToOne(() => Project)
   @JoinColumn({ name: 'projectId', referencedColumnName: 'projectId' })
@@ -32,5 +32,5 @@ export class ObservableObject {
   objectTypeRelation: ObjectType;
 
   @Column()
-  objectUrl: string;
+  pathname: string;
 }

@@ -25,9 +25,9 @@ export class TelegramService {
   private createCallbackQueryString(subscriptionInfo: SubscriptionIdentifier) {
     const callbackQueryString: string[] = [];
     callbackQueryString.push('UNSUB;');
-    callbackQueryString.push(`USR=${subscriptionInfo.serviceUserId};`);
+    callbackQueryString.push(`USR=${subscriptionInfo.instanceUserId};`);
     callbackQueryString.push(`OBJ=${subscriptionInfo.objectId};`);
-    callbackQueryString.push(`SRV=${subscriptionInfo.serviceId};`);
+    callbackQueryString.push(`SRV=${subscriptionInfo.instanceId};`);
     callbackQueryString.push(`PROJ=${subscriptionInfo.projectId};`);
     callbackQueryString.push(`TYPE=${subscriptionInfo.objectType};`);
     return callbackQueryString.join('');

@@ -44,10 +44,10 @@ export class NotificationService {
     for (const recipient of recipientsWithMessages) {
       const notificationData = {
         message: recipient.message,
-        chatId: recipient.serviceUsers.telegramUserId,
+        chatId: recipient.instanceUsers.telegramUserId,
         subscriptionInfo: {
           ...recipient.observableObjects,
-          serviceUserId: recipient.serviceUserId,
+          instanceUserId: recipient.instanceUserId,
         },
       };
       await this.telegramService.sendNotification(notificationData);

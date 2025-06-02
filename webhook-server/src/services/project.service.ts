@@ -8,19 +8,20 @@ import { Repository } from 'typeorm';
 export class ProjectService {
   constructor(@InjectRepository(Project) private readonly projectRepository: Repository<Project>) {}
 
-  async ensureExists({ projectId, serviceId, name, projectUrl }: ProjectEntity) {
+  async ensureExists({ projectId, instanceId, name, projectUrl }: ProjectEntity) {
     const projectEntity = await this.projectRepository.findOne({
       where: {
         projectId,
-        serviceId,
+        instanceId,
       },
     });
     if (!projectEntity) {
+      const pathname = new URL(projectUrl).pathname;
       await this.projectRepository.insert({
         projectId,
-        serviceId,
+        instanceId,
         name,
-        projectUrl,
+        pathname,
       });
     }
   }

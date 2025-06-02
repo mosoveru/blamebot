@@ -19,13 +19,13 @@ export class SubscriptionService {
 
     const checkedServiceUsers = await this.serviceUserService.ensureServiceUsersExists(
       usersToBeChecked,
-      observableObject.serviceId,
+      observableObject.instanceId,
     );
 
     if (checkedServiceUsers.length) {
       const usersToBeSubscribed = checkedServiceUsers.map((serviceUser) => ({
         ...observableObject,
-        serviceUserId: serviceUser.serviceUserId,
+        instanceUserId: serviceUser.instanceUserId,
       }));
 
       await this.createSubscription(usersToBeSubscribed);
@@ -46,14 +46,14 @@ export class SubscriptionService {
     return await this.subscriptionRepository.find({
       where: {
         objectId: String(observableObject.objectId),
-        serviceId: String(observableObject.serviceId),
+        instanceId: String(observableObject.instanceId),
         projectId: String(observableObject.projectId),
         objectType: String(observableObject.objectType),
         isSubscribed: true,
       },
       relations: {
         observableObjects: true,
-        serviceUsers: true,
+        instanceUsers: true,
       },
     });
   }
@@ -62,7 +62,7 @@ export class SubscriptionService {
     return await this.subscriptionRepository.find({
       where: {
         objectId: String(observableObject.objectId),
-        serviceId: String(observableObject.serviceId),
+        instanceId: String(observableObject.instanceId),
         projectId: String(observableObject.projectId),
         objectType: String(observableObject.objectType),
       },
@@ -72,7 +72,7 @@ export class SubscriptionService {
   private compareExistingSubscriptionsWithEventMembers(subscriptions: Subscription[], membersIds: number[]) {
     const toBeChecked: string[] = [];
     const ids = membersIds.map((id) => String(id));
-    const subscriptionsIds = subscriptions.map((subscription) => subscription.serviceUserId);
+    const subscriptionsIds = subscriptions.map((subscription) => subscription.instanceUserId);
     ids.forEach((id) => {
       if (!subscriptionsIds.includes(id)) {
         toBeChecked.push(id);

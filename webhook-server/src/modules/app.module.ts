@@ -5,9 +5,9 @@ import configuration from '../config/configuration';
 import { TelegramUser } from '../models/telegram-user.entity';
 import { NotificationModule } from './notification.module';
 import { Subscription } from '../models/subscription.entity';
-import { ServiceUser } from '../models/service-user.entity';
+import { InstanceUser } from '../models/instanceUser.entity';
 import { ObservableObject } from '../models/observable-object.entity';
-import { Service } from '../models/service.entity';
+import { Instance } from '../models/instance.entity';
 import { Project } from '../models/project.entity';
 import { ObjectType } from '../models/object-type.entity';
 
@@ -24,7 +24,7 @@ type DataBaseType = 'postgres';
         username: configService.get<string>('DB_USER_LOGIN')!,
         password: configService.get<string>('DB_USER_PASSWORD')!,
         database: configService.get<string>('DB_NAME')!,
-        entities: [TelegramUser, Subscription, ServiceUser, ObservableObject, Project, Service, ObjectType],
+        entities: [TelegramUser, Subscription, InstanceUser, ObservableObject, Project, Instance, ObjectType],
         synchronize: false,
         retryAttempts: 10,
       }),

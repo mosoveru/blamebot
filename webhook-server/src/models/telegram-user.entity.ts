@@ -1,5 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
-import { ServiceUser } from './service-user.entity';
+import { InstanceUser } from './instanceUser.entity';
 
 @Entity({
   name: 'telegram_users',
@@ -14,6 +14,6 @@ export class TelegramUser {
   @Column()
   name: string;
 
-  @OneToMany(() => ServiceUser, (serviceUser) => serviceUser.telegramUser)
-  serviceUsers: ServiceUser[];
+  @OneToMany(() => InstanceUser, (instanceUser) => instanceUser.telegramUser)
+  instanceUsers: InstanceUser[];
 }

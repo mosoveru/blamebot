@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ServiceUser } from '../models/service-user.entity';
+import { InstanceUser } from '../models/instanceUser.entity';
 import { Repository, In } from 'typeorm';
 
 @Injectable()
 export class ServiceUserService {
-  constructor(@InjectRepository(ServiceUser) private readonly serviceUserRepository: Repository<ServiceUser>) {}
+  constructor(@InjectRepository(InstanceUser) private readonly serviceUserRepository: Repository<InstanceUser>) {}
 
-  async ensureServiceUsersExists(serviceUserIds: string[], serviceId: string) {
+  async ensureServiceUsersExists(serviceUserIds: string[], instanceId: string) {
     return await this.serviceUserRepository.find({
       where: {
-        serviceUserId: In(serviceUserIds),
-        serviceId,
+        instanceUserId: In(serviceUserIds),
+        instanceId,
       },
     });
   }

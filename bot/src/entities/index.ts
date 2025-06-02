@@ -1,3 +1,3 @@
-export { Service } from './service.entity';
-export { ServiceUser } from './service-user.entity';
+export { Service } from './instance.entity';
+export { ServiceUser } from './instanceUser.entity';
 export { TelegramUser } from './telegram-user.service';

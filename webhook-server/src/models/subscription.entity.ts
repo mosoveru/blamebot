@@ -1,5 +1,5 @@
 import { Column, Entity, PrimaryColumn, JoinColumn, ManyToOne } from 'typeorm';
-import { ServiceUser } from './service-user.entity';
+import { InstanceUser } from './instanceUser.entity';
 import { ObservableObject } from './observable-object.entity';
 
 @Entity({
@@ -7,13 +7,13 @@ import { ObservableObject } from './observable-object.entity';
 })
 export class Subscription {
   @PrimaryColumn()
-  serviceUserId: string;
+  instanceUserId: string;
 
   @PrimaryColumn()
   objectId: string;
 
   @PrimaryColumn()
-  serviceId: string;
+  instanceId: string;
 
   @PrimaryColumn()
   projectId: string;
@@ -24,18 +24,18 @@ export class Subscription {
   @ManyToOne(() => ObservableObject)
   @JoinColumn([
     { name: 'objectId', referencedColumnName: 'objectId' },
-    { name: 'serviceId', referencedColumnName: 'serviceId' },
+    { name: 'instanceId', referencedColumnName: 'instanceId' },
     { name: 'projectId', referencedColumnName: 'projectId' },
     { name: 'objectType', referencedColumnName: 'objectType' },
   ])
   observableObjects: ObservableObject;
 
-  @ManyToOne(() => ServiceUser)
+  @ManyToOne(() => InstanceUser)
   @JoinColumn([
-    { name: 'serviceId', referencedColumnName: 'serviceId' },
-    { name: 'serviceUserId', referencedColumnName: 'serviceUserId' },
+    { name: 'instanceId', referencedColumnName: 'instanceId' },
+    { name: 'instanceUserId', referencedColumnName: 'instanceUserId' },
   ])
-  serviceUsers: ServiceUser;
+  instanceUsers: InstanceUser;
 
   @Column()
   isSubscribed: boolean;

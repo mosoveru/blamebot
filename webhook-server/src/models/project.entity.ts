@@ -1,5 +1,5 @@
 import { Column, Entity, OneToOne, PrimaryColumn, JoinColumn } from 'typeorm';
-import { Service } from './service.entity';
+import { Instance } from './instance.entity';
 
 @Entity({
   name: 'projects',
@@ -9,15 +9,15 @@ export class Project {
   projectId: string;
 
   @PrimaryColumn()
-  serviceId: string;
+  instanceId: string;
 
-  @OneToOne(() => Service)
-  @JoinColumn({ name: 'serviceId', referencedColumnName: 'serviceId' })
-  service: Service;
+  @OneToOne(() => Instance)
+  @JoinColumn({ name: 'instanceId', referencedColumnName: 'instanceId' })
+  instance: Instance;
 
   @Column()
   name: string;
 
   @Column()
-  projectUrl: string;
+  pathname: string;
 }

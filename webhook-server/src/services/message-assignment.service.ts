@@ -12,13 +12,13 @@ export class MessageAssignmentService {
     messages: NotificationMessage[],
     subscriptions: Subscription[],
   ): SubscriptionWithMessage[] {
-    const individualMessages = messages.filter((message) => message.serviceUserId);
+    const individualMessages = messages.filter((message) => message.instanceUserId);
     // Common message
-    const { message } = messages.find((message) => !message.serviceUserId)!;
+    const { message } = messages.find((message) => !message.instanceUserId)!;
 
     return subscriptions.map((subscription) => {
       const messageForSubscription = individualMessages.find(
-        (message) => message.serviceUserId === subscription.serviceUserId,
+        (message) => message.instanceUserId === subscription.instanceUserId,
       );
       if (messageForSubscription) {
         return Object.assign(subscription, { message: messageForSubscription.message });

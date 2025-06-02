@@ -7,19 +7,19 @@ export class IssueMessageComposer implements MessageComposer {
   readonly meantFor = ObjectTypes.ISSUE;
 
   composeMessage(changes: ChangesForIssue[]): NotificationMessage[] {
-    const individualChanges = changes.filter((change) => change.serviceUserId);
+    const individualChanges = changes.filter((change) => change.instanceUserId);
     const commonChanges = changes.find((change) => change.isCommon)!;
     const notificationMessages: NotificationMessage[] = [];
     for (const eventChanges of individualChanges) {
       if (eventChanges.changes.forAssignee) {
         notificationMessages.push({
-          serviceUserId: eventChanges.serviceUserId,
+          instanceUserId: eventChanges.instanceUserId,
           message: this.composeMessageForIssueAssignee(eventChanges),
         });
       }
       if (eventChanges.changes.forAuthor) {
         notificationMessages.push({
-          serviceUserId: eventChanges.serviceUserId,
+          instanceUserId: eventChanges.instanceUserId,
           message: this.composeMessageForIssueAuthor(eventChanges),
         });
       }

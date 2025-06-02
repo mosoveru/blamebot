@@ -37,6 +37,6 @@ export class NotificationRecipientsService {
   }
 
   private excludeInitiator(subscriptions: Subscription[], initiatorId: string) {
-    return subscriptions.filter((subscription) => subscription.serviceUserId !== initiatorId);
+    return subscriptions.filter((subscription) => subscription.instanceUserId !== initiatorId);
   }
 }

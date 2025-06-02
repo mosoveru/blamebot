@@ -11,7 +11,7 @@ export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
 
   parseProjectInfo(eventPayload: EventPayload<GitLabIssueEvent>) {
     return {
-      serviceId: eventPayload.name,
+      instanceId: eventPayload.name,
       projectId: String(eventPayload.eventPayload.project.id),
       name: eventPayload.eventPayload.project.name,
       projectUrl: eventPayload.eventPayload.project.web_url,
@@ -20,7 +20,7 @@ export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
 
   parseObservableObjectInfo(eventPayload: EventPayload<GitLabIssueEvent>) {
     return {
-      serviceId: eventPayload.name,
+      instanceId: eventPayload.name,
       objectId: String(eventPayload.eventPayload.object_attributes.id),
       projectId: String(eventPayload.eventPayload.project.id),
       objectType: ObjectTypes.ISSUE,
@@ -67,7 +67,7 @@ export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
         if (assigneeChanges.haveChanges) {
           acc.push({
             ...eventChangesTemplate,
-            serviceUserId: String(memberId),
+            instanceUserId: String(memberId),
             isCommon: false,
             changes: {
               ...assigneeChanges,
@@ -83,7 +83,7 @@ export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
         if (authorChanges.haveChanges) {
           acc.push({
             ...eventChangesTemplate,
-            serviceUserId: String(memberId),
+            instanceUserId: String(memberId),
             isCommon: false,
             changes: {
               ...authorChanges,

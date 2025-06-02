@@ -1,16 +1,16 @@
 import { Column, Entity, OneToOne, PrimaryColumn, JoinColumn, ManyToOne } from 'typeorm';
-import { Service } from './service.entity';
+import { Instance } from './instance.entity';
 import { TelegramUser } from './telegram-user.service';
 
 @Entity({
-  name: 'service_users',
+  name: 'instance_users',
 })
-export class ServiceUser {
+export class InstanceUser {
   @PrimaryColumn()
-  serviceUserId: string;
+  instanceUserId: string;
 
   @PrimaryColumn()
-  serviceId: string;
+  instanceId: string;
 
   @Column()
   telegramUserId: string;
@@ -22,7 +22,7 @@ export class ServiceUser {
   email: string;
 
   @Column()
-  profileUrl: string;
+  pathname: string;
 
   @ManyToOne(() => TelegramUser)
   @JoinColumn({
@@ -31,7 +31,7 @@ export class ServiceUser {
   })
   telegramUser: TelegramUser;
 
-  @OneToOne(() => Service)
-  @JoinColumn({ name: 'serviceId', referencedColumnName: 'serviceId' })
-  service: Service;
+  @OneToOne(() => Instance)
+  @JoinColumn({ name: 'instanceId', referencedColumnName: 'instanceId' })
+  instance: Instance;
 }

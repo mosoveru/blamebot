@@ -10,22 +10,23 @@ export class ObservableObjectService {
     @InjectRepository(ObservableObject) private readonly observableObjectRepository: Repository<ObservableObject>,
   ) {}
 
-  async ensureExists(objectInfo: ObservableObjectEntity) {
+  async ensureExists({ objectId, objectType, instanceId, projectId, objectUrl }: ObservableObjectEntity) {
     const observableObject = await this.observableObjectRepository.findOne({
       where: {
-        objectId: String(objectInfo.objectId),
-        projectId: String(objectInfo.projectId),
-        objectType: objectInfo.objectType,
-        serviceId: objectInfo.serviceId,
+        objectId,
+        projectId,
+        objectType,
+        instanceId,
       },
     });
     if (!observableObject) {
+      const pathname = new URL(objectUrl).pathname;
       await this.observableObjectRepository.insert({
-        objectId: String(objectInfo.objectId),
-        projectId: String(objectInfo.projectId),
-        objectType: objectInfo.objectType,
-        serviceId: objectInfo.serviceId,
-        objectUrl: objectInfo.objectUrl,
+        objectId,
+        projectId,
+        objectType,
+        instanceId,
+        pathname,
       });
     }
   }

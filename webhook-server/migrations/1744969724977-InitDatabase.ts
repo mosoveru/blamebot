@@ -4,15 +4,15 @@ export class InitDatabase1744969724977 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'services',
+        name: 'instances',
         columns: [
           {
-            name: 'serviceId',
+            name: 'instanceId',
             type: 'varchar',
             isPrimary: true,
           },
           {
-            name: 'remoteName',
+            name: 'instanceName',
             type: 'varchar',
           },
           {
@@ -20,7 +20,7 @@ export class InitDatabase1744969724977 implements MigrationInterface {
             type: 'varchar',
           },
           {
-            name: 'serviceUrl',
+            name: 'serviceBaseUrl',
             type: 'varchar',
           },
         ],
@@ -37,7 +37,7 @@ export class InitDatabase1744969724977 implements MigrationInterface {
             isPrimary: true,
           },
           {
-            name: 'serviceId',
+            name: 'instanceId',
             type: 'varchar',
             isPrimary: true,
           },
@@ -46,7 +46,7 @@ export class InitDatabase1744969724977 implements MigrationInterface {
             type: 'varchar',
           },
           {
-            name: 'projectUrl',
+            name: 'pathname',
             type: 'varchar',
           },
         ],
@@ -55,9 +55,9 @@ export class InitDatabase1744969724977 implements MigrationInterface {
     await queryRunner.createForeignKey(
       'projects',
       new TableForeignKey({
-        columnNames: ['serviceId'],
-        referencedColumnNames: ['serviceId'],
-        referencedTableName: 'services',
+        columnNames: ['instanceId'],
+        referencedColumnNames: ['instanceId'],
+        referencedTableName: 'instances',
       }),
     );
     await queryRunner.createTable(
@@ -99,15 +99,15 @@ export class InitDatabase1744969724977 implements MigrationInterface {
 
     await queryRunner.createTable(
       new Table({
-        name: 'service_users',
+        name: 'instance_users',
         columns: [
           {
-            name: 'serviceUserId',
+            name: 'instanceUserId',
             type: 'varchar',
             isPrimary: true,
           },
           {
-            name: 'serviceId',
+            name: 'instanceId',
             type: 'varchar',
             isPrimary: true,
           },
@@ -124,18 +124,18 @@ export class InitDatabase1744969724977 implements MigrationInterface {
             type: 'varchar',
           },
           {
-            name: 'profileUrl',
+            name: 'pathname',
             type: 'varchar',
           },
         ],
       }),
     );
 
-    await queryRunner.createForeignKeys('service_users', [
+    await queryRunner.createForeignKeys('instance_users', [
       new TableForeignKey({
-        columnNames: ['serviceId'],
-        referencedColumnNames: ['serviceId'],
-        referencedTableName: 'services',
+        columnNames: ['instanceId'],
+        referencedColumnNames: ['instanceId'],
+        referencedTableName: 'instances',
       }),
       new TableForeignKey({
         columnNames: ['telegramUserId'],
@@ -154,7 +154,7 @@ export class InitDatabase1744969724977 implements MigrationInterface {
             isPrimary: true,
           },
           {
-            name: 'serviceId',
+            name: 'instanceId',
             type: 'varchar',
             isPrimary: true,
           },
@@ -169,7 +169,7 @@ export class InitDatabase1744969724977 implements MigrationInterface {
             isPrimary: true,
           },
           {
-            name: 'objectUrl',
+            name: 'pathname',
             type: 'varchar',
           },
         ],
@@ -178,8 +178,8 @@ export class InitDatabase1744969724977 implements MigrationInterface {
 
     await queryRunner.createForeignKeys('observable_objects', [
       new TableForeignKey({
-        columnNames: ['projectId', 'serviceId'],
-        referencedColumnNames: ['projectId', 'serviceId'],
+        columnNames: ['projectId', 'instanceId'],
+        referencedColumnNames: ['projectId', 'instanceId'],
         referencedTableName: 'projects',
       }),
       new TableForeignKey({
@@ -194,7 +194,7 @@ export class InitDatabase1744969724977 implements MigrationInterface {
         name: 'subscriptions',
         columns: [
           {
-            name: 'serviceUserId',
+            name: 'instanceUserId',
             type: 'varchar',
             isPrimary: true,
           },
@@ -204,7 +204,7 @@ export class InitDatabase1744969724977 implements MigrationInterface {
             isPrimary: true,
           },
           {
-            name: 'serviceId',
+            name: 'instanceId',
             type: 'varchar',
             isPrimary: true,
           },
@@ -228,25 +228,25 @@ export class InitDatabase1744969724977 implements MigrationInterface {
 
     await queryRunner.createForeignKeys('subscriptions', [
       new TableForeignKey({
-        columnNames: ['objectId', 'serviceId', 'projectId', 'objectType'],
-        referencedColumnNames: ['objectId', 'serviceId', 'projectId', 'objectType'],
+        columnNames: ['objectId', 'instanceId', 'projectId', 'objectType'],
+        referencedColumnNames: ['objectId', 'instanceId', 'projectId', 'objectType'],
         referencedTableName: 'observable_objects',
       }),
       new TableForeignKey({
-        columnNames: ['serviceUserId', 'serviceId'],
-        referencedColumnNames: ['serviceUserId', 'serviceId'],
-        referencedTableName: 'service_users',
+        columnNames: ['instanceUserId', 'instanceId'],
+        referencedColumnNames: ['instanceUserId', 'instanceId'],
+        referencedTableName: 'instance_users',
       }),
     ]);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.dropTable('subscriptions');
-    await queryRunner.dropTable('service_users');
+    await queryRunner.dropTable('instance_users');
     await queryRunner.dropTable('observable_objects');
     await queryRunner.dropTable('telegram_users');
     await queryRunner.dropTable('projects');
     await queryRunner.dropTable('object_types');
-    await queryRunner.dropTable('services');
+    await queryRunner.dropTable('instances');
   }
 }

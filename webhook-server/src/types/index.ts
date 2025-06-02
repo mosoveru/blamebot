@@ -11,7 +11,7 @@ export type EventPayload<T> = {
   service: RemoteGitServices;
   eventType: string;
   eventPayload: T;
-  name: string; // TODO: Неочевидно, что вот это name - это serviceId
+  name: string; // TODO: Неочевидно, что вот это name - это instanceId
 };
 
 export type IssueChanges = {
@@ -54,7 +54,7 @@ export type ChangesMap = {
 type ObjectTypeValues = (typeof ObjectTypes)[keyof typeof ObjectTypes];
 
 export type EventChanges<T extends ObjectTypeValues> = {
-  serviceUserId?: string;
+  instanceUserId?: string;
   objectType: T;
   objectUrl: string;
   objectId: string;
@@ -65,7 +65,7 @@ export type EventChanges<T extends ObjectTypeValues> = {
 };
 
 export type NotificationMessage = {
-  serviceUserId?: string;
+  instanceUserId?: string;
   message: string;
 };
 
@@ -75,13 +75,13 @@ export type DataForParsingChanges<T> = {
 
 export type ProjectEntity = {
   projectId: string;
-  serviceId: string;
+  instanceId: string;
   name: string;
   projectUrl: string;
 };
 
 export type ObservableObjectEntity = {
-  serviceId: string;
+  instanceId: string;
   objectId: string;
   projectId: string;
   objectType: string;
@@ -89,7 +89,7 @@ export type ObservableObjectEntity = {
 };
 
 export type SubscriptionIdentifier = Omit<ObservableObjectEntity, 'objectUrl'> & {
-  serviceUserId: string;
+  instanceUserId: string;
 };
 
 export interface DataParser<T> {
