@@ -17,11 +17,14 @@ export class InitDatabase1744969724977 implements MigrationInterface {
           },
           {
             name: 'gitProvider',
-            type: 'varchar',
+            type: 'enum',
+            enum: ['GITLAB', 'GITEA'],
+            enumName: 'GitProviders',
           },
           {
             name: 'serviceBaseUrl',
             type: 'varchar',
+            isUnique: true,
           },
         ],
       }),
@@ -66,7 +69,9 @@ export class InitDatabase1744969724977 implements MigrationInterface {
         columns: [
           {
             name: 'objectType',
-            type: 'varchar',
+            type: 'enum',
+            enum: ['issue', 'request'],
+            enumName: 'GitObjectTypes',
             isPrimary: true,
           },
         ],
@@ -114,6 +119,7 @@ export class InitDatabase1744969724977 implements MigrationInterface {
           {
             name: 'telegramUserId',
             type: 'varchar',
+            isNullable: false,
           },
           {
             name: 'username',
@@ -165,7 +171,9 @@ export class InitDatabase1744969724977 implements MigrationInterface {
           },
           {
             name: 'objectType',
-            type: 'varchar',
+            type: 'enum',
+            enum: ['issue', 'request'],
+            enumName: 'GitObjectTypes',
             isPrimary: true,
           },
           {
@@ -215,7 +223,9 @@ export class InitDatabase1744969724977 implements MigrationInterface {
           },
           {
             name: 'objectType',
-            type: 'varchar',
+            type: 'enum',
+            enum: ['issue', 'request'],
+            enumName: 'GitObjectTypes',
             isPrimary: true,
           },
           {
