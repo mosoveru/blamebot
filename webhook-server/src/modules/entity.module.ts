@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { InstanceUser } from '../models/instanceUser.entity';
-import { Subscription } from '../models/subscription.entity';
+import { UserSubscription } from '../models/userSubscription.entity';
 import { TelegramUser } from '../models/telegram-user.entity';
 import { ObservableObject } from '../models/observable-object.entity';
 import { Project } from '../models/project.entity';
@@ -11,7 +11,7 @@ import { SubscriptionService } from '../services/subscription.service';
 import { ProjectService } from '../services/project.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([InstanceUser, Subscription, TelegramUser, ObservableObject, Project])],
+  imports: [TypeOrmModule.forFeature([InstanceUser, UserSubscription, TelegramUser, ObservableObject, Project])],
   providers: [ObservableObjectService, ServiceUserService, SubscriptionService, SubscriptionService, ProjectService],
   exports: [ObservableObjectService, ServiceUserService, SubscriptionService, SubscriptionService, ProjectService],
 })

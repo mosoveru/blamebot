@@ -10,7 +10,7 @@ export class Instance {
   @Column()
   instanceName: string;
 
-  @Column({ enum: ['GITLAB', 'GITEA'], enumName: 'GitProviders' })
+  @Column({ enum: ['GITLAB', 'GITEA'], enumName: 'GitProviders', type: 'enum' })
   gitProvider: string;
 
   @Column({ unique: true })

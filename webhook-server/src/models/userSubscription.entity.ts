@@ -5,7 +5,7 @@ import { ObservableObject } from './observable-object.entity';
 @Entity({
   name: 'subscriptions',
 })
-export class Subscription {
+export class UserSubscription {
   @PrimaryColumn()
   instanceUserId: string;
 

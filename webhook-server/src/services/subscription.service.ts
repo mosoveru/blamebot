@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Subscription } from '../models/subscription.entity';
+import { UserSubscription } from '../models/userSubscription.entity';
 import { Repository } from 'typeorm';
 import { SubscriptionIdentifier, ObservableObjectEntity } from '../types';
 import { ServiceUserService } from './service-user.service';
@@ -8,7 +8,7 @@ import { ServiceUserService } from './service-user.service';
 @Injectable()
 export class SubscriptionService {
   constructor(
-    @InjectRepository(Subscription) private readonly subscriptionRepository: Repository<Subscription>,
+    @InjectRepository(UserSubscription) private readonly subscriptionRepository: Repository<UserSubscription>,
     private readonly serviceUserService: ServiceUserService,
   ) {}
 
@@ -69,7 +69,7 @@ export class SubscriptionService {
     });
   }
 
-  private compareExistingSubscriptionsWithEventMembers(subscriptions: Subscription[], membersIds: number[]) {
+  private compareExistingSubscriptionsWithEventMembers(subscriptions: UserSubscription[], membersIds: number[]) {
     const toBeChecked: string[] = [];
     const ids = membersIds.map((id) => String(id));
     const subscriptionsIds = subscriptions.map((subscription) => subscription.instanceUserId);

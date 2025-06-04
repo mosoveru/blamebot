@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Subscription } from 'src/models/subscription.entity';
+import { UserSubscription } from 'src/models/userSubscription.entity';
 import { EventPayload } from '../types';
 import { SubscriptionService } from './subscription.service';
 import { DataParsersRepository } from '../repositories/data-parsers.repository';
@@ -36,7 +36,7 @@ export class NotificationRecipientsService {
     return this.excludeInitiator(activeSubscriptions, eventInitiatorId);
   }
 
-  private excludeInitiator(subscriptions: Subscription[], initiatorId: string) {
+  private excludeInitiator(subscriptions: UserSubscription[], initiatorId: string) {
     return subscriptions.filter((subscription) => subscription.instanceUserId !== initiatorId);
   }
 }

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { NotificationMessage } from '../types';
-import { Subscription } from '../models/subscription.entity';
+import { UserSubscription } from '../models/userSubscription.entity';
 
-type SubscriptionWithMessage = Subscription & {
+type SubscriptionWithMessage = UserSubscription & {
   message: string;
 };
 
@@ -10,7 +10,7 @@ type SubscriptionWithMessage = Subscription & {
 export class MessageAssignmentService {
   assignMessagesToRecipients(
     messages: NotificationMessage[],
-    subscriptions: Subscription[],
+    subscriptions: UserSubscription[],
   ): SubscriptionWithMessage[] {
     const individualMessages = messages.filter((message) => message.instanceUserId);
     // Common message

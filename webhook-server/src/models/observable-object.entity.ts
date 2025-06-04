@@ -19,12 +19,11 @@ export class ObservableObject {
   @PrimaryColumn()
   objectType: string;
 
-  @OneToOne(() => Instance)
-  @JoinColumn({ name: 'instanceId', referencedColumnName: 'instanceId' })
-  instance: Instance;
-
   @OneToOne(() => Project)
-  @JoinColumn({ name: 'projectId', referencedColumnName: 'projectId' })
+  @JoinColumn([
+    { name: 'projectId', referencedColumnName: 'projectId' },
+    { name: 'instanceId', referencedColumnName: 'instanceId' },
+  ])
   project: Project;
 
   @OneToOne(() => ObjectType)
