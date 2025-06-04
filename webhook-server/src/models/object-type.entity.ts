@@ -4,6 +4,6 @@ import { Entity, PrimaryColumn } from 'typeorm';
   name: 'object_types',
 })
 export class ObjectType {
-  @PrimaryColumn()
+  @PrimaryColumn({ enum: ['issue', 'request'], enumName: 'GitObjectTypes' })
   objectType: string;
 }

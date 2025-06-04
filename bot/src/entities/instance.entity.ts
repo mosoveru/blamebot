@@ -10,9 +10,9 @@ export class Instance {
   @Column()
   instanceName: string;
 
-  @Column()
+  @Column({ enum: ['GITLAB', 'GITEA'], enumName: 'GitProviders' })
   gitProvider: string;
 
-  @Column()
+  @Column({ unique: true })
   serviceBaseUrl: string;
 }
