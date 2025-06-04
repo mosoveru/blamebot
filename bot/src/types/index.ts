@@ -32,12 +32,12 @@ export type RemoteServiceInfo = {
 export interface DatabaseService {
   saveTgUser(info: TelegramUserInfo): Promise<void>;
   getTgUserInfo(id: string): Promise<TelegramUserInfo | null>;
-  saveRemoteUser(info: RemoteUserData): Promise<void>;
-  getRemoteUserInfo(instanceUserId: string, instanceId: string): Promise<RemoteUserData | null>;
+  saveInstanceUser(info: RemoteUserData): Promise<void>;
+  getInstanceUserInfo(instanceUserId: string, instanceId: string): Promise<RemoteUserData | null>;
 
-  saveRemoteServiceInfo(info: RemoteServiceInfo): Promise<void>;
-  getRemoteServiceInfo(instanceId: string): Promise<RemoteServiceInfo | null>;
-  findRemoteServiceInfoByURL(url: string): Promise<RemoteServiceInfo | null>;
+  saveInstance(info: RemoteServiceInfo): Promise<void>;
+  getInstanceInfo(instanceId: string): Promise<RemoteServiceInfo | null>;
+  findInstanceInfoByUrl(url: string): Promise<RemoteServiceInfo | null>;
 }
 
 export type DatabaseDrivers = 'postgres';

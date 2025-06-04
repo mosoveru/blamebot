@@ -25,7 +25,7 @@ async function linkClient(conversation: BlamebotConversation, ctx: ConversationI
       action: (ctx) => ctx.deleteMessage(),
     });
     const testDbRequest = await conversation.external(async () => {
-      const serviceUser = await ctx.dbService.getRemoteUserInfo('#####', '#######');
+      const serviceUser = await ctx.dbService.getInstanceUserInfo('#####', '#######');
       if (!serviceUser) {
         return 'Банка не сработала';
       } else {

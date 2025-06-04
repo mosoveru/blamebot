@@ -22,11 +22,11 @@ class PostgresDatabaseService implements DatabaseService {
     });
   }
 
-  async saveRemoteUser(info: RemoteUserData) {
+  async saveInstanceUser(info: RemoteUserData) {
     await this.serviceUserRepository.save(info);
   }
 
-  async getRemoteUserInfo(instanceUserId: string, instanceId: string) {
+  async getInstanceUserInfo(instanceUserId: string, instanceId: string) {
     return await this.serviceUserRepository.findOneBy({
       instanceUserId,
       instanceId,
@@ -37,7 +37,7 @@ class PostgresDatabaseService implements DatabaseService {
    * @throws {DuplicateRemoteServiceURLException} Ошибка выбрасывается, если уже существует экземпляр с таким же serviceUrl
    */
 
-  async saveRemoteServiceInfo(info: RemoteServiceInfo) {
+  async saveInstance(info: RemoteServiceInfo) {
     const isServiceWithSameUrlNotExist = await this.serviceRepository
       .find({
         where: {
@@ -52,13 +52,13 @@ class PostgresDatabaseService implements DatabaseService {
     }
   }
 
-  async getRemoteServiceInfo(instanceId: string) {
+  async getInstanceInfo(instanceId: string) {
     return await this.serviceRepository.findOneBy({
       instanceId,
     });
   }
 
-  async findRemoteServiceInfoByURL(url: string) {
+  async findInstanceInfoByUrl(url: string) {
     return await this.serviceRepository.findOneBy({
       serviceBaseUrl: url,
     });
