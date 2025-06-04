@@ -8,12 +8,12 @@ export interface GitRemoteApiHandler {
 }
 
 export type RemoteUserData = {
-  serviceUserId: string;
-  serviceId: string;
+  instanceUserId: string;
+  instanceId: string;
   telegramUserId: string;
   username: string;
   email: string;
-  profileUrl: string;
+  pathname: string;
 };
 
 export type TelegramUserInfo = {
@@ -23,20 +23,20 @@ export type TelegramUserInfo = {
 };
 
 export type RemoteServiceInfo = {
-  serviceId: string;
-  remoteName: string;
+  instanceId: string;
+  instanceName: string;
   gitProvider: string;
-  serviceUrl: string;
+  serviceBaseUrl: string;
 };
 
 export interface DatabaseService {
   saveTgUser(info: TelegramUserInfo): Promise<void>;
   getTgUserInfo(id: string): Promise<TelegramUserInfo | null>;
   saveRemoteUser(info: RemoteUserData): Promise<void>;
-  getRemoteUserInfo(serviceUserId: string, serviceId: string): Promise<RemoteUserData | null>;
+  getRemoteUserInfo(instanceUserId: string, instanceId: string): Promise<RemoteUserData | null>;
 
   saveRemoteServiceInfo(info: RemoteServiceInfo): Promise<void>;
-  getRemoteServiceInfo(serviceId: string): Promise<RemoteServiceInfo | null>;
+  getRemoteServiceInfo(instanceId: string): Promise<RemoteServiceInfo | null>;
   findRemoteServiceInfoByURL(url: string): Promise<RemoteServiceInfo | null>;
 }
 

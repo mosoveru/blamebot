@@ -3,18 +3,18 @@ import { BlamebotContext } from '@types';
 import { AppDataSource } from '@services';
 import initLinkClientConversation from '@composers';
 import PostgresDatabaseService from '@services';
-import { Service } from '@entities';
+import { Instance } from '@entities';
 import { TelegramUser } from '@entities';
-import { ServiceUser } from '@entities';
+import { InstanceUser } from '@entities';
 import Config from '@config';
 
 (async () => {
   const bot = new Bot<BlamebotContext>(Config.get('BOT_SECRET_TOKEN'));
 
   const dataSource = await AppDataSource.initialize();
-  const remoteServiceRepository = dataSource.getRepository(Service);
+  const remoteServiceRepository = dataSource.getRepository(Instance);
   const telegramUserRepository = dataSource.getRepository(TelegramUser);
-  const serviceUserRepository = dataSource.getRepository(ServiceUser);
+  const serviceUserRepository = dataSource.getRepository(InstanceUser);
   const databaseService = new PostgresDatabaseService(
     telegramUserRepository,
     serviceUserRepository,

@@ -1,15 +1,15 @@
 import { Repository } from 'typeorm';
 import { DatabaseService, RemoteServiceInfo, RemoteUserData, TelegramUserInfo } from '@types';
-import { Service } from '@entities';
-import { ServiceUser } from '@entities';
+import { Instance } from '@entities';
+import { InstanceUser } from '@entities';
 import { TelegramUser } from '@entities';
 import { DuplicateRemoteServiceURLException } from '@exceptions';
 
 class PostgresDatabaseService implements DatabaseService {
   constructor(
     private readonly telegramUserRepository: Repository<TelegramUser>,
-    private readonly serviceUserRepository: Repository<ServiceUser>,
-    private readonly serviceRepository: Repository<Service>,
+    private readonly serviceUserRepository: Repository<InstanceUser>,
+    private readonly serviceRepository: Repository<Instance>,
   ) {}
 
   async saveTgUser(info: TelegramUserInfo) {
@@ -26,10 +26,10 @@ class PostgresDatabaseService implements DatabaseService {
     await this.serviceUserRepository.save(info);
   }
 
-  async getRemoteUserInfo(serviceUserId: string, serviceId: string) {
+  async getRemoteUserInfo(instanceUserId: string, instanceId: string) {
     return await this.serviceUserRepository.findOneBy({
-      serviceUserId,
-      serviceId,
+      instanceUserId,
+      instanceId,
     });
   }
 
@@ -41,7 +41,7 @@ class PostgresDatabaseService implements DatabaseService {
     const isServiceWithSameUrlNotExist = await this.serviceRepository
       .find({
         where: {
-          serviceUrl: info.serviceUrl,
+          serviceBaseUrl: info.serviceBaseUrl,
         },
       })
       .then((services) => !services.length);
@@ -52,15 +52,15 @@ class PostgresDatabaseService implements DatabaseService {
     }
   }
 
-  async getRemoteServiceInfo(serviceId: string) {
+  async getRemoteServiceInfo(instanceId: string) {
     return await this.serviceRepository.findOneBy({
-      serviceId,
+      instanceId,
     });
   }
 
   async findRemoteServiceInfoByURL(url: string) {
     return await this.serviceRepository.findOneBy({
-      serviceUrl: url,
+      serviceBaseUrl: url,
     });
   }
 }
