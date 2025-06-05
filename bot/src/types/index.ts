@@ -2,10 +2,24 @@ import { Conversation, ConversationFlavor } from '@grammyjs/conversations';
 import type { Context } from 'grammy';
 import { GitProviders } from '@constants';
 
-export interface GitRemoteApiHandler {
-  setAccessToken(token: string): void;
-  setOrigin(origin: string): void;
-  fetchUserData(): RemoteUserData;
+export interface ExternalGitSystemDataFetcher {
+  fetchUserData(info: RequiredInfo): Promise<ApiResponse>;
+}
+
+export interface DatabaseService {
+  saveTgUser(info: TelegramUserInfo): Promise<void>;
+  getTgUserInfo(id: string): Promise<TelegramUserInfo | null>;
+  saveInstanceUser(info: RemoteUserData): Promise<void>;
+  getInstanceUserInfo(instanceUserId: string, instanceId: string): Promise<RemoteUserData | null>;
+
+  saveInstance(info: RemoteServiceInfo): Promise<void>;
+  getInstanceInfo(instanceId: string): Promise<RemoteServiceInfo | null>;
+  findInstanceInfoByUrl(url: string): Promise<RemoteServiceInfo | null>;
+}
+
+export interface GitApiHandler {
+  readonly meantFor: GitProviders;
+  requestUserData(origin: string, token: string): Promise<ApiResponse>;
 }
 
 export type RemoteUserData = {
@@ -30,26 +44,11 @@ export type RemoteServiceInfo = {
   serviceBaseUrl: string;
 };
 
-export interface DatabaseService {
-  saveTgUser(info: TelegramUserInfo): Promise<void>;
-  getTgUserInfo(id: string): Promise<TelegramUserInfo | null>;
-  saveInstanceUser(info: RemoteUserData): Promise<void>;
-  getInstanceUserInfo(instanceUserId: string, instanceId: string): Promise<RemoteUserData | null>;
-
-  saveInstance(info: RemoteServiceInfo): Promise<void>;
-  getInstanceInfo(instanceId: string): Promise<RemoteServiceInfo | null>;
-  findInstanceInfoByUrl(url: string): Promise<RemoteServiceInfo | null>;
-}
-
 type RequiredInfo = {
   origin: string;
   provider: GitProviders;
   token: string;
 };
-
-export interface ExternalGitSystemDataFetcher {
-  fetchUserData(info: RequiredInfo): Promise<ApiResponse>;
-}
 
 export type DatabaseDrivers = 'postgres';
 
@@ -92,13 +91,3 @@ type FailedResponse = {
 };
 
 export type ApiResponse = SuccessfulResponse | FailedResponse;
-
-export type ApiError = {
-  cause: string;
-  message: string;
-};
-
-export interface GitApiHandler {
-  readonly meantFor: GitProviders;
-  requestUserData(origin: string, token: string): Promise<ApiResponse>;
-}
