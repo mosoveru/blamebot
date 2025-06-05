@@ -21,16 +21,20 @@ async function linkClient(conversation: BlamebotConversation, ctx: ConversationI
     });
     await conversation.rewind(urlCheckpoint);
   }
-  const gitProvidersKeyboard = new InlineKeyboard().text('GitLab', 'GITLAB').row().text('Gitea', 'GITEA');
+  const origin = new URL(url).origin;
+  const gitProvidersKeyboard = new InlineKeyboard()
+    .text('GitLab', GitProviders.GITLAB)
+    .row()
+    .text('Gitea', GitProviders.GITEA);
   const gitProvidersMessage = await ctx.reply('Выберите провайдера Git', {
     reply_markup: gitProvidersKeyboard,
   });
-  const callbackQueryCheckpoint = conversation.checkpoint();
+  const gitProviderChoiceCheckpoint = conversation.checkpoint();
   const answer = await conversation.wait();
   const isNotSameMessage = gitProvidersMessage.message_id !== answer.callbackQuery?.message?.message_id;
-  const isCallbackDataNotExist = !!answer.callbackQuery && !answer.callbackQuery.data;
+  const isCallbackDataNotExist = !(!!answer.callbackQuery && !!answer.callbackQuery.data);
   if (isNotSameMessage && isCallbackDataNotExist) {
-    await conversation.rewind(callbackQueryCheckpoint);
+    await conversation.rewind(gitProviderChoiceCheckpoint);
   }
   const chosenProvider = answer.callbackQuery!.data! as GitProviders;
   await answer.editMessageReplyMarkup({
@@ -47,7 +51,7 @@ async function linkClient(conversation: BlamebotConversation, ctx: ConversationI
   console.log(token);
   const instanceUserInfo = await conversation.external(async () => {
     return await ctx.fetcher.fetchUserData({
-      origin: url,
+      origin,
       token,
       provider: chosenProvider,
     });
