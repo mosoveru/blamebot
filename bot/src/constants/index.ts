@@ -1,1 +1,1 @@
-export { default } from './enums';
+export { default, GitProviders } from './enums';

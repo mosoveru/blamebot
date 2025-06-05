@@ -48,6 +48,7 @@ class PostgresDatabaseService implements DatabaseService {
     if (isServiceWithSameUrlNotExist) {
       await this.serviceRepository.save(info);
     } else {
+      // TODO: В банке уже есть Unique Constraint. Переписать на try catch
       throw new DuplicateRemoteServiceURLException();
     }
   }

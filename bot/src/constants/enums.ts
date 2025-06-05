@@ -4,4 +4,9 @@ enum ReplyMessages {
   LINK_CLIENT = 'Связать клиент с сервисом',
 }
 
+export enum GitProviders {
+  GITLAB = 'GITLAB',
+  GITEA = 'GITEA',
+}
+
 export default ReplyMessages;

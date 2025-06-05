@@ -2,6 +2,8 @@ import 'dotenv/config';
 import { BadConfigurationException } from '@exceptions';
 import { ConfigOptions, DatabaseDrivers } from '@types';
 
+// TODO: Проверить все env значения на существование
+
 export default (): ConfigOptions => {
   const botSecretToken = process.env.BOT_SECRET_TOKEN;
   const databaseDriver = process.env.DB_DRIVER;

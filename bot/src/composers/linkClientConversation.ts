@@ -1,18 +1,19 @@
 import { Composer, Keyboard } from 'grammy';
 import { conversations, createConversation } from '@grammyjs/conversations';
-import { BlamebotContext, DatabaseService } from '@types';
+import { BlamebotContext, DatabaseService, ExternalGitSystemDataFetcher } from '@types';
 import linkClient from '@conversations';
-import provideDatabaseService from '@middlewares';
+import provideDatabaseService, { provideFetcher } from '@middlewares';
 import ReplyMessages from '@constants';
 
-function initLinkClientConversation(databaseService: DatabaseService) {
+function initLinkClientConversation(dbService: DatabaseService, fetcher: ExternalGitSystemDataFetcher) {
   const composer = new Composer<BlamebotContext>();
 
-  composer.use(provideDatabaseService(databaseService));
+  composer.use(provideDatabaseService(dbService));
+  composer.use(provideFetcher(fetcher));
 
   composer.use(
     conversations({
-      plugins: [provideDatabaseService(databaseService)],
+      plugins: [provideDatabaseService(dbService), provideFetcher(fetcher)],
     }),
   );
 

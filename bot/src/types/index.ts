@@ -1,5 +1,6 @@
 import { Conversation, ConversationFlavor } from '@grammyjs/conversations';
 import type { Context } from 'grammy';
+import { GitProviders } from '@constants';
 
 export interface GitRemoteApiHandler {
   setAccessToken(token: string): void;
@@ -40,6 +41,16 @@ export interface DatabaseService {
   findInstanceInfoByUrl(url: string): Promise<RemoteServiceInfo | null>;
 }
 
+type RequiredInfo = {
+  origin: string;
+  provider: GitProviders;
+  token: string;
+};
+
+export interface ExternalGitSystemDataFetcher {
+  fetchUserData(info: RequiredInfo): Promise<ApiResponse>;
+}
+
 export type DatabaseDrivers = 'postgres';
 
 export type ConfigOptions = {
@@ -56,8 +67,38 @@ type DatabaseServiceFlavor<C extends Context> = C & {
   dbService: DatabaseService;
 };
 
-export type BlamebotContext = DatabaseServiceFlavor<ConversationFlavor<Context>>;
+type ParserFlavor<C extends Context> = C & {
+  fetcher: ExternalGitSystemDataFetcher;
+};
 
-export type ConversationInsideContext = DatabaseServiceFlavor<Context>;
+export type BlamebotContext = ParserFlavor<DatabaseServiceFlavor<ConversationFlavor<Context>>>;
+
+export type ConversationInsideContext = ParserFlavor<DatabaseServiceFlavor<Context>>;
 
 export type BlamebotConversation = Conversation<BlamebotContext, ConversationInsideContext>;
+
+type SuccessfulResponse = {
+  ok: true;
+  instanceUserId: string;
+  username: string;
+  email: string;
+  pathname: string;
+};
+
+type FailedResponse = {
+  ok: false;
+  cause: string;
+  message: string;
+};
+
+export type ApiResponse = SuccessfulResponse | FailedResponse;
+
+export type ApiError = {
+  cause: string;
+  message: string;
+};
+
+export interface GitApiHandler {
+  readonly meantFor: GitProviders;
+  requestUserData(origin: string, token: string): Promise<ApiResponse>;
+}

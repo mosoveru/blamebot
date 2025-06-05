@@ -1,6 +1,6 @@
 import { Bot } from 'grammy';
 import { BlamebotContext } from '@types';
-import { AppDataSource } from '@services';
+import { AppDataSource, Fetcher, GitApiHandlers } from '@services';
 import initLinkClientConversation from '@composers';
 import PostgresDatabaseService from '@services';
 import { Instance } from '@entities';
@@ -20,8 +20,10 @@ import Config from '@config';
     serviceUserRepository,
     remoteServiceRepository,
   );
+  const apiHandlers = GitApiHandlers.map((Handler) => new Handler());
+  const fetcher = new Fetcher(apiHandlers);
 
-  bot.use(initLinkClientConversation(databaseService));
+  bot.use(initLinkClientConversation(databaseService, fetcher));
 
   bot.catch(async (error) => {
     await error.ctx.reply('Произошла ошибка');
