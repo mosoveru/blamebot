@@ -1,5 +1,5 @@
 import { Repository } from 'typeorm';
-import { DatabaseService, RemoteServiceInfo, RemoteUserData, TelegramUserInfo } from '@types';
+import { DatabaseService, RemoteServiceInfo, InstanceUserData, TelegramUserInfo } from '@types';
 import { Instance } from '@entities';
 import { InstanceUser } from '@entities';
 import { TelegramUser } from '@entities';
@@ -22,7 +22,7 @@ class PostgresDatabaseService implements DatabaseService {
     });
   }
 
-  async saveInstanceUser(info: RemoteUserData) {
+  async saveInstanceUser(info: InstanceUserData) {
     await this.serviceUserRepository.save(info);
   }
 

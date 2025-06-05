@@ -9,8 +9,8 @@ export interface ExternalGitSystemDataFetcher {
 export interface DatabaseService {
   saveTgUser(info: TelegramUserInfo): Promise<void>;
   getTgUserInfo(id: string): Promise<TelegramUserInfo | null>;
-  saveInstanceUser(info: RemoteUserData): Promise<void>;
-  getInstanceUserInfo(instanceUserId: string, instanceId: string): Promise<RemoteUserData | null>;
+  saveInstanceUser(info: InstanceUserData): Promise<void>;
+  getInstanceUserInfo(instanceUserId: string, instanceId: string): Promise<InstanceUserData | null>;
 
   saveInstance(info: RemoteServiceInfo): Promise<void>;
   getInstanceInfo(instanceId: string): Promise<RemoteServiceInfo | null>;
@@ -22,7 +22,22 @@ export interface GitApiHandler {
   requestUserData(origin: string, token: string): Promise<ApiResponse>;
 }
 
-export type RemoteUserData = {
+export interface LinkingService {
+  linkClient(data: LinkClientRequiredData): Promise<boolean>;
+}
+
+export type LinkClientRequiredData = {
+  instanceUserId: string;
+  telegramUserId: string;
+  instanceUsername: string;
+  email: string;
+  pathname: string;
+  instanceUrl: string;
+  telegramUsername: string;
+  telegramName: string;
+};
+
+export type InstanceUserData = {
   instanceUserId: string;
   instanceId: string;
   telegramUserId: string;
@@ -70,9 +85,13 @@ type ParserFlavor<C extends Context> = C & {
   fetcher: ExternalGitSystemDataFetcher;
 };
 
-export type BlamebotContext = ParserFlavor<DatabaseServiceFlavor<ConversationFlavor<Context>>>;
+type LinkerFlavor<C extends Context> = C & {
+  linker: LinkingService;
+};
 
-export type ConversationInsideContext = ParserFlavor<DatabaseServiceFlavor<Context>>;
+export type BlamebotContext = LinkerFlavor<ParserFlavor<DatabaseServiceFlavor<ConversationFlavor<Context>>>>;
+
+export type ConversationInsideContext = LinkerFlavor<ParserFlavor<DatabaseServiceFlavor<Context>>>;
 
 export type BlamebotConversation = Conversation<BlamebotContext, ConversationInsideContext>;
 

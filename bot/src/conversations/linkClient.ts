@@ -48,7 +48,6 @@ async function linkClient(conversation: BlamebotConversation, ctx: ConversationI
     otherwise: (ctx) => ctx.reply('Пришлите текст с токеном доступа'),
     action: (ctx) => ctx.deleteMessage(),
   });
-  console.log(token);
   const instanceUserInfo = await conversation.external(async () => {
     return await ctx.fetcher.fetchUserData({
       origin,
@@ -56,10 +55,37 @@ async function linkClient(conversation: BlamebotConversation, ctx: ConversationI
       provider: chosenProvider,
     });
   });
-  if (instanceUserInfo.ok) {
-    await ctx.reply(`Instance User Id ${instanceUserInfo.instanceUserId}, username ${instanceUserInfo.username}`);
+  if (!instanceUserInfo.ok) {
+    return await ctx.reply(`Не получилось получить информацию о пользователе. По причине: ${instanceUserInfo.message}`);
+  }
+  const linkStatus = await conversation.external(async () => {
+    const isTelegramUserInfoNotExist = !(!!ctx.from?.id && !!ctx.from.username);
+    if (isTelegramUserInfoNotExist) {
+      console.log('Telegram Info Not Exist!');
+      return false;
+    }
+    return await ctx.linker.linkClient({
+      telegramUserId: String(ctx.from!.id),
+      telegramName: ctx.from.first_name,
+      telegramUsername: ctx.from.username!,
+      instanceUsername: instanceUserInfo.username,
+      instanceUserId: instanceUserInfo.instanceUserId,
+      instanceUrl: origin,
+      email: instanceUserInfo.email,
+      pathname: instanceUserInfo.pathname,
+    });
+  });
+  if (linkStatus) {
+    await ctx.reply(
+      'Вы успешно связали клиент с удалённым репозиторием! Теперь вы будете получать уведомления о событиях',
+      {
+        reply_markup: new Keyboard().text(ReplyMessages.LINK_CLIENT).resized(),
+      },
+    );
+    await conversation.halt();
   } else {
-    await ctx.reply(`Не получилось получить информацию о пользователе. По причине: ${instanceUserInfo.message}`);
+    await ctx.reply('Не удалось связать клиент в результате непредвиденной ошибки');
+    await conversation.halt();
   }
 }
 

@@ -1,7 +1,7 @@
 import { Bot } from 'grammy';
 import { BlamebotContext } from '@types';
-import { AppDataSource, Fetcher, GitApiHandlers } from '@services';
-import initLinkClientConversation from '@composers';
+import { AppDataSource, Fetcher, GitApiHandlers, Linker } from '@services';
+import buildLinkClientConversation from '@composers';
 import PostgresDatabaseService from '@services';
 import { Instance } from '@entities';
 import { TelegramUser } from '@entities';
@@ -22,8 +22,9 @@ import Config from '@config';
   );
   const apiHandlers = GitApiHandlers.map((Handler) => new Handler());
   const fetcher = new Fetcher(apiHandlers);
+  const linker = new Linker(databaseService);
 
-  bot.use(initLinkClientConversation(databaseService, fetcher));
+  bot.use(buildLinkClientConversation(databaseService)(fetcher)(linker));
 
   bot.catch(async (error) => {
     await error.ctx.reply('Произошла ошибка');
