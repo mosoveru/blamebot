@@ -7,9 +7,9 @@ export class TelegramUser {
   @PrimaryColumn()
   telegramUserId: string;
 
-  @Column()
+  @Column({ nullable: true })
   username: string;
 
-  @Column()
+  @Column({ nullable: true })
   name: string;
 }
