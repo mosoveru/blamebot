@@ -1,5 +1,6 @@
 import { ApiResponse, ExternalGitSystemDataFetcher, GitApiHandler } from '@types';
 import { GitProviders } from '@constants';
+import { PossibleCauses } from '../constants/enums';
 
 type RequiredInfo = {
   origin: string;
@@ -22,10 +23,10 @@ export class Fetcher implements ExternalGitSystemDataFetcher {
     try {
       return await apiHandler.requestUserData(origin, token);
     } catch (error) {
+      console.log(error);
       return {
         ok: false,
-        cause: 'Bad Request',
-        message: (error as Error).message,
+        cause: PossibleCauses.EXTERNAL_SERVICE_FETCH_ERROR,
       } satisfies ApiResponse;
     }
   }

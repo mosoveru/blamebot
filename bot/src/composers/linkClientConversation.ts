@@ -37,10 +37,6 @@ function buildLinkClientConversation(dbService: DatabaseService) {
         await ctx.conversation.enter(linkClient.name);
       });
 
-      composer.on('callback_query:data', async (ctx) => {
-        await ctx.reply(`Callback data: ${ctx.callbackQuery.data}`);
-      });
-
       return composer;
     };
   };

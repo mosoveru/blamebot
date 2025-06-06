@@ -1,6 +1,7 @@
 import { Conversation, ConversationFlavor } from '@grammyjs/conversations';
 import type { Context } from 'grammy';
 import { GitProviders } from '@constants';
+import { PossibleCauses } from '../constants/enums';
 
 export interface ExternalGitSystemDataFetcher {
   fetchUserData(info: RequiredInfo): Promise<ApiResponse>;
@@ -23,18 +24,33 @@ export interface GitApiHandler {
 }
 
 export interface LinkingService {
-  linkClient(data: LinkClientRequiredData): Promise<boolean>;
+  linkClient(data: LinkClientRequiredData): Promise<LinkingServiceResponse>;
 }
+
+export type LinkingServiceResponse = LinkingServiceOKResponse | LinkingServiceErrorResponse;
+
+type LinkingServiceOKResponse = {
+  ok: true;
+};
+
+type LinkingServiceErrorResponse = {
+  ok: false;
+  cause: PossibleCauses;
+};
+
+export type RepliesForPossibleErrors<K extends keyof Record<string, string>> = {
+  [Key in K]: string;
+};
 
 export type LinkClientRequiredData = {
   instanceUserId: string;
-  telegramUserId: string;
   instanceUsername: string;
+  instanceUrl: string;
   email: string;
   pathname: string;
-  instanceUrl: string;
-  telegramUsername: string;
-  telegramName: string;
+  telegramUserId?: string;
+  telegramUsername?: string;
+  telegramName?: string;
 };
 
 export type InstanceUserData = {
@@ -48,8 +64,8 @@ export type InstanceUserData = {
 
 export type TelegramUserInfo = {
   telegramUserId: string;
-  username: string;
-  name: string;
+  username?: string;
+  name?: string;
 };
 
 export type RemoteServiceInfo = {
@@ -105,8 +121,7 @@ type SuccessfulResponse = {
 
 type FailedResponse = {
   ok: false;
-  cause: string;
-  message: string;
+  cause: PossibleCauses;
 };
 
 export type ApiResponse = SuccessfulResponse | FailedResponse;
