@@ -1,6 +1,6 @@
 import { Repository } from 'typeorm';
 import { DatabaseService, RemoteServiceInfo, InstanceUserData, TelegramUserInfo } from '@types';
-import { Instance } from '@entities';
+import { Instance, UserSubscription } from '@entities';
 import { InstanceUser } from '@entities';
 import { TelegramUser } from '@entities';
 
@@ -9,6 +9,7 @@ class PostgresDatabaseService implements DatabaseService {
     private readonly telegramUserRepository: Repository<TelegramUser>,
     private readonly serviceUserRepository: Repository<InstanceUser>,
     private readonly serviceRepository: Repository<Instance>,
+    private readonly subscriptionRepository: Repository<UserSubscription>,
   ) {}
 
   async saveTgUser(info: TelegramUserInfo) {
@@ -46,6 +47,30 @@ class PostgresDatabaseService implements DatabaseService {
     return await this.serviceRepository.findOneBy({
       serviceBaseUrl: url,
     });
+  }
+
+  async unsubscribeUser(subscriptionUuid: string) {
+    console.log(subscriptionUuid);
+    await this.subscriptionRepository.update(
+      {
+        uuid: subscriptionUuid,
+      },
+      {
+        isSubscribed: false,
+      },
+    );
+  }
+
+  async subscribeUser(subscriptionUuid: string) {
+    console.log(subscriptionUuid);
+    await this.subscriptionRepository.update(
+      {
+        uuid: subscriptionUuid,
+      },
+      {
+        isSubscribed: true,
+      },
+    );
   }
 }
 

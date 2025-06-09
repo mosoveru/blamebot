@@ -16,6 +16,9 @@ export interface DatabaseService {
   saveInstance(info: RemoteServiceInfo): Promise<void>;
   getInstanceInfo(instanceId: string): Promise<RemoteServiceInfo | null>;
   findInstanceInfoByUrl(url: string): Promise<RemoteServiceInfo | null>;
+
+  unsubscribeUser(uuid: string): Promise<void>;
+  subscribeUser(uuid: string): Promise<void>;
 }
 
 export interface GitApiHandler {

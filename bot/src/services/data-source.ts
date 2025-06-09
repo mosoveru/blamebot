@@ -1,8 +1,6 @@
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
-import { Instance } from '@entities';
-import { TelegramUser } from '@entities';
-import { InstanceUser } from '@entities';
+import { Instance, UserSubscription, TelegramUser, InstanceUser } from '@entities';
 import Config from '@config';
 
 export const AppDataSource = new DataSource({
@@ -13,5 +11,5 @@ export const AppDataSource = new DataSource({
   password: Config.get('DB_USER_PASSWORD'),
   database: Config.get('DB_NAME'),
   synchronize: false,
-  entities: [Instance, TelegramUser, InstanceUser],
+  entities: [Instance, TelegramUser, InstanceUser, UserSubscription],
 });

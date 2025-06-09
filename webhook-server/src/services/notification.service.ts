@@ -45,6 +45,7 @@ export class NotificationService {
         chatId: recipient.instanceUsers.telegramUserId,
         subscriptionInfo: {
           ...recipient.observableObjects,
+          uuid: recipient.uuid,
           instanceUserId: recipient.instanceUserId,
         },
       };
