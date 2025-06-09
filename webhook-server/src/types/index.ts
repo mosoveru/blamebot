@@ -92,6 +92,11 @@ export type SubscriptionIdentifier = Omit<ObservableObjectEntity, 'objectUrl'> &
   instanceUserId: string;
 };
 
+export type SubscriptionInfo = Omit<ObservableObjectEntity, 'objectUrl'> & {
+  uuid: string;
+  instanceUserId: string;
+};
+
 export interface DataParser<T> {
   readonly eventType: GitLabEventTypes;
   readonly gitProvider: RemoteGitServices;

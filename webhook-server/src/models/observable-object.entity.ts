@@ -1,22 +1,25 @@
-import { Column, Entity, OneToOne, PrimaryColumn, JoinColumn } from 'typeorm';
-import { Instance } from './instance.entity';
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, Unique } from 'typeorm';
 import { Project } from './project.entity';
 import { ObjectType } from './object-type.entity';
 
 @Entity({
   name: 'observable_objects',
 })
+@Unique(['objectId', 'instanceId', 'projectId', 'objectType'])
 export class ObservableObject {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn('uuid')
+  uuid: string;
+
+  @Column()
   objectId: string;
 
-  @PrimaryColumn()
+  @Column()
   instanceId: string;
 
-  @PrimaryColumn()
+  @Column()
   projectId: string;
 
-  @PrimaryColumn()
+  @Column()
   objectType: string;
 
   @OneToOne(() => Project)

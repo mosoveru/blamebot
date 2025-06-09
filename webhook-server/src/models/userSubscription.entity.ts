@@ -1,24 +1,28 @@
-import { Column, Entity, PrimaryColumn, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Unique } from 'typeorm';
 import { InstanceUser } from './instanceUser.entity';
 import { ObservableObject } from './observable-object.entity';
 
 @Entity({
   name: 'subscriptions',
 })
+@Unique(['instanceUserId', 'objectId', 'instanceId', 'projectId', 'objectType'])
 export class UserSubscription {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn('uuid')
+  uuid: string;
+
+  @Column()
   instanceUserId: string;
 
-  @PrimaryColumn()
+  @Column()
   objectId: string;
 
-  @PrimaryColumn()
+  @Column()
   instanceId: string;
 
-  @PrimaryColumn()
+  @Column()
   projectId: string;
 
-  @PrimaryColumn()
+  @Column()
   objectType: string;
 
   @ManyToOne(() => ObservableObject)

@@ -11,6 +11,8 @@ export class Linker implements LinkingService {
         return this.generateFailedResponse(PossibleCauses.TELEGRAM_INFO_NOT_EXISTS);
       }
       const instance = await this.dbService.findInstanceInfoByUrl(data.instanceUrl);
+      console.log(data.instanceUrl);
+      console.log(data);
       if (!instance) {
         return this.generateFailedResponse(PossibleCauses.INSTANCE_NOT_FOUND);
       }

@@ -1,14 +1,18 @@
-import { Column, Entity, OneToOne, PrimaryColumn, JoinColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, Unique } from 'typeorm';
 import { Instance } from './instance.entity';
 
 @Entity({
   name: 'projects',
 })
+@Unique(['projectId', 'instanceId'])
 export class Project {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn('uuid')
+  uuid: string;
+
+  @Column()
   projectId: string;
 
-  @PrimaryColumn()
+  @Column()
   instanceId: string;
 
   @OneToOne(() => Instance)

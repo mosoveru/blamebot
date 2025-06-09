@@ -1,15 +1,19 @@
-import { Column, Entity, OneToOne, PrimaryColumn, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn, Unique } from 'typeorm';
 import { Instance } from './instance.entity';
 import { TelegramUser } from './telegram-user.entity';
 
 @Entity({
   name: 'instance_users',
 })
+@Unique(['instanceUserId', 'instanceId'])
 export class InstanceUser {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn('uuid')
+  uuid: string;
+
+  @Column()
   instanceUserId: string;
 
-  @PrimaryColumn()
+  @Column()
   instanceId: string;
 
   @Column()

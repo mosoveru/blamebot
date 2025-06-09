@@ -27,7 +27,7 @@ import Config from '@config';
   bot.use(buildLinkClientConversation(databaseService)(fetcher)(linker));
 
   bot.catch(async (error) => {
-    await error.ctx.reply('Произошла ошибка');
+    await error.ctx.reply('Произошла неизвестная ошибка.');
   });
 
   bot.start({
