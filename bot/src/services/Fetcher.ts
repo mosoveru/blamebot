@@ -19,15 +19,13 @@ export class Fetcher implements ExternalGitSystemDataFetcher {
   }
 
   async fetchUserData({ origin, provider, token }: RequiredInfo) {
-    const apiHandler = this.gitApiHandlers.get(provider)!;
-    try {
-      return await apiHandler.requestUserData(origin, token);
-    } catch (error) {
-      console.log(error);
+    const apiHandler = this.gitApiHandlers.get(provider);
+    if (!apiHandler) {
       return {
-        ok: false,
-        cause: PossibleCauses.EXTERNAL_SERVICE_FETCH_ERROR,
-      } satisfies ApiResponse;
+        ok: false as const,
+        cause: PossibleCauses.NO_API_HANDLER_FOUND,
+      };
     }
+    return await apiHandler.requestUserData(origin, token);
   }
 }

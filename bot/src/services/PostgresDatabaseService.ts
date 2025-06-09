@@ -3,7 +3,6 @@ import { DatabaseService, RemoteServiceInfo, InstanceUserData, TelegramUserInfo 
 import { Instance } from '@entities';
 import { InstanceUser } from '@entities';
 import { TelegramUser } from '@entities';
-import { DuplicateRemoteServiceURLException } from '@exceptions';
 
 class PostgresDatabaseService implements DatabaseService {
   constructor(
@@ -33,24 +32,8 @@ class PostgresDatabaseService implements DatabaseService {
     });
   }
 
-  /**
-   * @throws {DuplicateRemoteServiceURLException} Ошибка выбрасывается, если уже существует экземпляр с таким же serviceUrl
-   */
-
   async saveInstance(info: RemoteServiceInfo) {
-    const isServiceWithSameUrlNotExist = await this.serviceRepository
-      .find({
-        where: {
-          serviceBaseUrl: info.serviceBaseUrl,
-        },
-      })
-      .then((services) => !services.length);
-    if (isServiceWithSameUrlNotExist) {
-      await this.serviceRepository.save(info);
-    } else {
-      // TODO: В банке уже есть Unique Constraint. Переписать на try catch
-      throw new DuplicateRemoteServiceURLException();
-    }
+    await this.serviceRepository.save(info);
   }
 
   async getInstanceInfo(instanceId: string) {

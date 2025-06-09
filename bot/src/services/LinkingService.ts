@@ -29,12 +29,10 @@ export class Linker implements LinkingService {
       });
       return this.generateSuccessResponse();
     } catch (error) {
-      console.log(error);
       if (error instanceof TypeORMError) {
         return this.generateFailedResponse(PossibleCauses.DATABASE_ERROR);
-      } else {
-        return this.generateFailedResponse(PossibleCauses.UNKNOWN_ERROR);
       }
+      return this.generateFailedResponse(PossibleCauses.UNKNOWN_ERROR);
     }
   }
 

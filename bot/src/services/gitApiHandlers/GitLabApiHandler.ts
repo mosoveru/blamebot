@@ -3,6 +3,10 @@ import { GitbeakerRequestError, Gitlab } from '@gitbeaker/rest';
 import { GitProviders } from '@constants';
 import { PossibleCauses } from '../../constants/enums';
 
+interface ErrorWithCode extends Error {
+  code: string;
+}
+
 export class GitLabApiHandler implements GitApiHandler {
   readonly meantFor = GitProviders.GITLAB;
 
@@ -21,21 +25,16 @@ export class GitLabApiHandler implements GitApiHandler {
         pathname: new URL(response.web_url).pathname,
       } as const;
     } catch (error) {
-      // TODO: Описать понятные ошибки на стандартные юз кейсы
-      const possibleErrors = {
-        insufficient_scope: PossibleCauses.NOT_VALID_TOKEN_SCOPE,
-      };
-      if (error instanceof GitbeakerRequestError && error.cause) {
-        const key = error.cause.description as keyof typeof possibleErrors;
-        const reason = possibleErrors[key];
-        if (reason) {
-          return this.generateFailedResponse(reason);
-        } else {
-          return this.generateFailedResponse(PossibleCauses.UNKNOWN_ERROR);
-        }
-      } else {
-        return this.generateFailedResponse(PossibleCauses.UNKNOWN_ERROR);
+      if (this.isUnsufficientScope(error)) {
+        return this.generateFailedResponse(PossibleCauses.NOT_VALID_TOKEN_SCOPE);
       }
+      if (this.isUnauthorizedError(error)) {
+        return this.generateFailedResponse(PossibleCauses.CANNOT_AUTHORIZE_CLIENT);
+      }
+      if (this.isConnectionError(error)) {
+        return this.generateFailedResponse(PossibleCauses.CONNECTION_ERROR);
+      }
+      return this.generateFailedResponse(PossibleCauses.UNKNOWN_ERROR);
     }
   }
 
@@ -44,5 +43,32 @@ export class GitLabApiHandler implements GitApiHandler {
       ok: false,
       cause,
     } as const;
+  }
+
+  private isConnectionError(error: unknown): boolean {
+    if (error instanceof TypeError && error.cause instanceof Error) {
+      return (error.cause as ErrorWithCode).code === 'ECONNREFUSED';
+    }
+    return false;
+  }
+
+  private isUnsufficientScope(error: unknown) {
+    if (error instanceof GitbeakerRequestError && error.cause) {
+      const description = error.cause.description as string;
+      if (description === 'insufficient_scope') {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private isUnauthorizedError(error: unknown) {
+    if (error instanceof GitbeakerRequestError && error.cause) {
+      const description = error.cause.description as string;
+      if (description === '401 Unauthorized') {
+        return true;
+      }
+    }
+    return false;
   }
 }

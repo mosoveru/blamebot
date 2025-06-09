@@ -16,8 +16,10 @@ export enum PossibleCauses {
   INSTANCE_NOT_FOUND = 'INSTANCE_NOT_FOUND',
   UNKNOWN_ERROR = 'UNKNOWN_ERROR',
   TELEGRAM_INFO_NOT_EXISTS = 'TELEGRAM_INFO_NOT_EXISTS',
-  EXTERNAL_SERVICE_FETCH_ERROR = 'EXTERNAL_SERVICE_FETCH_ERROR',
+  NO_API_HANDLER_FOUND = 'NO_API_HANDLER_FOUND',
   NOT_VALID_TOKEN_SCOPE = 'NOT_VALID_TOKEN_SCOPE',
+  CONNECTION_ERROR = 'CONNECTION_ERROR',
+  CANNOT_AUTHORIZE_CLIENT = 'CANNOT_AUTHORIZE_CLIENT',
 }
 
 export const repliesForErrors: RepliesForPossibleErrors<PossibleCauses> = {
@@ -25,9 +27,12 @@ export const repliesForErrors: RepliesForPossibleErrors<PossibleCauses> = {
   [PossibleCauses.DATABASE_ERROR]: 'Ошибка при работе с базой данных',
   [PossibleCauses.TELEGRAM_INFO_NOT_EXISTS]: 'Не найден ваш Telegram User ID',
   [PossibleCauses.UNKNOWN_ERROR]: 'Произошла неизвестная ошибка',
-  [PossibleCauses.EXTERNAL_SERVICE_FETCH_ERROR]: 'Ошибка при запросе информации о пользователе',
+  [PossibleCauses.NO_API_HANDLER_FOUND]: 'Не найден обработчик запросов к выбранному провайдеру Git',
   [PossibleCauses.NOT_VALID_TOKEN_SCOPE]:
     'Вы выбрали некорректные разрешения в токене. Создайте новый токен и выберете разрешение на чтение информации о пользователе.',
+  [PossibleCauses.CONNECTION_ERROR]: 'Возникли проблемы с подключением. Правильно ли вы указали адрес для подключения?',
+  [PossibleCauses.CANNOT_AUTHORIZE_CLIENT]:
+    'Невозможно авторизоваться с текущим токеном доступа. Проверьте правильность токена доступа.',
 };
 
 export default ReplyMessages;
