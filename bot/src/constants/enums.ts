@@ -6,6 +6,7 @@ enum ReplyMessages {
   LINK_CLIENT = 'Связать клиент с сервисом',
   HELLO_ADMIN_MESSAGE = 'Приветствуем, админ! Вы можете создать новый инстанс здесь или связать свой клиент с уже существующим.',
   CREATE_NEW_INSTANCE = 'Создать новый инстанс',
+  NAME_FOR_NEW_INSTANCE = 'Вы создаёте новый инстанс. Пожалуйста, напишите желаемое имя инстанса.',
 }
 
 export enum GitProviders {

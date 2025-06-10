@@ -1,8 +1,9 @@
-import { InlineKeyboard, Keyboard } from 'grammy';
+import { Keyboard } from 'grammy';
 import { BlamebotConversation, ConversationInsideContext } from '@types';
-import ReplyMessages, { GitProviders } from '@constants';
+import ReplyMessages from '@constants';
 import { isValidHttpURL } from '@utils';
 import { repliesForErrors } from '../constants/enums';
+import { chooseGitProvider } from './chooseGitProvider';
 
 async function linkClient(conversation: BlamebotConversation, ctx: ConversationInsideContext) {
   const returnBackButton = new Keyboard().text(ReplyMessages.GO_BACK).resized();
@@ -24,25 +25,7 @@ async function linkClient(conversation: BlamebotConversation, ctx: ConversationI
     await conversation.rewind(urlCheckpoint);
   }
   const origin = new URL(url).origin;
-  const gitProvidersKeyboard = new InlineKeyboard()
-    .text('GitLab', GitProviders.GITLAB)
-    .row()
-    .text('Gitea', GitProviders.GITEA);
-  const gitProvidersMessage = await ctx.reply('Выберите провайдера Git', {
-    reply_markup: gitProvidersKeyboard,
-  });
-  const gitProviderChoiceCheckpoint = conversation.checkpoint();
-  const answer = await conversation.wait();
-  const isNotSameMessage = gitProvidersMessage.message_id !== answer.callbackQuery?.message?.message_id;
-  const isCallbackDataNotExist = !(!!answer.callbackQuery && !!answer.callbackQuery.data);
-  if (isNotSameMessage && isCallbackDataNotExist) {
-    await conversation.rewind(gitProviderChoiceCheckpoint);
-  }
-  const chosenProvider = answer.callbackQuery!.data! as GitProviders;
-  await answer.editMessageReplyMarkup({
-    reply_markup: undefined,
-  });
-  await answer.editMessageText(`Вы выбрали ${chosenProvider}`);
+  const chosenProvider = await chooseGitProvider(conversation, ctx);
   await ctx.reply('Пришлите персональный токен доступа', {
     reply_markup: returnBackButton,
   });

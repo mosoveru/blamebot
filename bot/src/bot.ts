@@ -1,6 +1,6 @@
 import { Bot } from 'grammy';
 import { BlamebotContext } from '@types';
-import { AppDataSource, Fetcher, GitApiHandlers, Linker } from '@services';
+import { AppDataSource, Fetcher, GitApiHandlers, InstanceManager, Linker } from '@services';
 import buildLinkClientConversation, { buildAdminComposer, buildCommonComposer } from '@composers';
 import PostgresDatabaseService from '@services';
 import { Instance, UserSubscription } from '@entities';
@@ -27,6 +27,8 @@ import provideDatabaseService from '@middlewares';
   const apiHandlers = GitApiHandlers.map((Handler) => new Handler());
   const fetcher = new Fetcher(apiHandlers);
   const linker = new Linker(databaseService);
+  const sercretJwtKey = Config.get('PRIVATE_JWT_KEY');
+  const instanceManager = new InstanceManager(databaseService, sercretJwtKey);
 
   bot.use(provideDatabaseService(databaseService));
   const router = new Router<BlamebotContext>(async (ctx) => {
@@ -36,7 +38,7 @@ import provideDatabaseService from '@middlewares';
     }
   });
 
-  router.route('admin', buildAdminComposer(fetcher)(linker));
+  router.route('admin', buildAdminComposer(fetcher)(linker)(instanceManager));
   router.otherwise(buildCommonComposer(databaseService), buildLinkClientConversation(fetcher)(linker));
 
   bot.use(router);

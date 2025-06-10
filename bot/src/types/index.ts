@@ -2,6 +2,7 @@ import { Conversation, ConversationFlavor } from '@grammyjs/conversations';
 import type { Context } from 'grammy';
 import { GitProviders } from '@constants';
 import { PossibleCauses } from '../constants/enums';
+import { InstanceManagerFlavor } from '../services/InstanceManager';
 
 export interface ExternalGitSystemDataFetcher {
   fetchUserData(info: RequiredInfo): Promise<ApiResponse>;
@@ -15,7 +16,7 @@ export interface DatabaseService {
   saveInstanceUser(info: InstanceUserData): Promise<void>;
   getInstanceUserInfo(instanceUserId: string, instanceId: string): Promise<InstanceUserData | null>;
 
-  saveInstance(info: RemoteServiceInfo): Promise<void>;
+  saveInstance(info: Omit<RemoteServiceInfo, 'instanceId'>): Promise<void>;
   getInstanceInfo(instanceId: string): Promise<RemoteServiceInfo | null>;
   findInstanceInfoByUrl(url: string): Promise<RemoteServiceInfo | null>;
 
@@ -86,19 +87,6 @@ type RequiredInfo = {
   token: string;
 };
 
-export type DatabaseDrivers = 'postgres';
-
-export type ConfigOptions = {
-  DB_DRIVER: DatabaseDrivers;
-  DB_USER_LOGIN: string;
-  DB_USER_PASSWORD: string;
-  DB_NAME: string;
-  DB_HOST: string;
-  DB_PORT: number;
-  BOT_SECRET_TOKEN: string;
-  TG_ADMIN_ID: string;
-};
-
 type DatabaseServiceFlavor<C extends Context> = C & {
   dbService: DatabaseService;
 };
@@ -111,9 +99,15 @@ type LinkerFlavor<C extends Context> = C & {
   linker: LinkingService;
 };
 
-export type BlamebotContext = LinkerFlavor<ParserFlavor<DatabaseServiceFlavor<ConversationFlavor<Context>>>>;
+export type BlamebotContext = InstanceManagerFlavor<
+  LinkerFlavor<ParserFlavor<DatabaseServiceFlavor<ConversationFlavor<Context>>>>,
+  GitProviders
+>;
 
-export type ConversationInsideContext = LinkerFlavor<ParserFlavor<DatabaseServiceFlavor<Context>>>;
+export type ConversationInsideContext = InstanceManagerFlavor<
+  LinkerFlavor<ParserFlavor<DatabaseServiceFlavor<Context>>>,
+  GitProviders
+>;
 
 export type BlamebotConversation = Conversation<BlamebotContext, ConversationInsideContext>;
 

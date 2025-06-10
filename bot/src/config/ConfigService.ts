@@ -1,4 +1,4 @@
-import { ConfigOptions } from '@types';
+import { ConfigOptions } from './types';
 
 class ConfigService {
   private readonly configuration: ConfigOptions;
