@@ -14,6 +14,9 @@ export class TelegramUser {
   @Column({ nullable: true })
   name: string;
 
+  @Column({ default: false })
+  isAdmin: boolean;
+
   @OneToMany(() => InstanceUser, (instanceUser) => instanceUser.telegramUser)
   instanceUsers: InstanceUser[];
 }

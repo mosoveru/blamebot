@@ -12,4 +12,7 @@ export class TelegramUser {
 
   @Column({ nullable: true })
   name: string;
+
+  @Column({ default: false })
+  isAdmin: boolean;
 }
