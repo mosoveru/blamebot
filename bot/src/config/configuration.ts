@@ -1,21 +1,21 @@
 import 'dotenv/config';
 import { BadConfigurationException } from '@exceptions';
 import { ConfigOptions, DatabaseDrivers } from '@types';
+import * as process from 'node:process';
 
-// TODO: Проверить все env значения на существование
+type EnvVariables = Omit<ConfigOptions, 'DB_PORT'> & { DB_PORT: string };
 
 export default (): ConfigOptions => {
-  const botSecretToken = process.env.BOT_SECRET_TOKEN;
-  const databaseDriver = process.env.DB_DRIVER;
-  if (botSecretToken && checkDatabaseDriver(databaseDriver)) {
+  if (checkEnvVariablesIsDefined(process.env)) {
     return {
-      DB_DRIVER: databaseDriver,
-      DB_HOST: process.env.DB_HOST ?? 'localhost',
-      DB_USER_LOGIN: process.env.DB_USER_LOGIN ?? 'git_event_db_admin',
-      DB_USER_PASSWORD: process.env.DB_USER_PASSWORD ?? '12345678',
-      DB_PORT: Number(process.env.DB_PORT ?? 5432),
-      DB_NAME: process.env.DB_NAME ?? 'git_event_subscribers',
-      BOT_SECRET_TOKEN: botSecretToken,
+      DB_DRIVER: process.env.DB_DRIVER,
+      DB_HOST: process.env.DB_HOST,
+      DB_USER_LOGIN: process.env.DB_USER_LOGIN,
+      DB_USER_PASSWORD: process.env.DB_USER_PASSWORD,
+      DB_PORT: Number(process.env.DB_PORT),
+      DB_NAME: process.env.DB_NAME,
+      BOT_SECRET_TOKEN: process.env.BOT_SECRET_TOKEN,
+      TG_ADMIN_ID: process.env.TG_ADMIN_ID,
     };
   } else {
     throw new BadConfigurationException();
@@ -24,4 +24,11 @@ export default (): ConfigOptions => {
 
 const checkDatabaseDriver = (driver?: string): driver is DatabaseDrivers => {
   return driver === 'postgres';
+};
+
+const checkEnvVariablesIsDefined = (env: NodeJS.ProcessEnv): env is EnvVariables => {
+  const isDbHostDefined = !!env.DB_HOST && !!env.DB_PORT && !!env.DB_NAME;
+  const isDbCredentialsDefined = !!env.DB_USER_LOGIN && !!env.DB_USER_PASSWORD;
+  const isTgInfoDefined = !!env.BOT_SECRET_TOKEN && !!env.TG_ADMIN_ID;
+  return checkDatabaseDriver(env.DB_DRIVER) && isDbHostDefined && isDbCredentialsDefined && isTgInfoDefined;
 };

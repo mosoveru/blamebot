@@ -10,6 +10,8 @@ export interface ExternalGitSystemDataFetcher {
 export interface DatabaseService {
   saveTgUser(info: TelegramUserInfo): Promise<void>;
   getTgUserInfo(id: string): Promise<TelegramUserInfo | null>;
+  isTgUserAdmin(id: string): Promise<boolean>;
+
   saveInstanceUser(info: InstanceUserData): Promise<void>;
   getInstanceUserInfo(instanceUserId: string, instanceId: string): Promise<InstanceUserData | null>;
 
@@ -94,6 +96,7 @@ export type ConfigOptions = {
   DB_HOST: string;
   DB_PORT: number;
   BOT_SECRET_TOKEN: string;
+  TG_ADMIN_ID: string;
 };
 
 type DatabaseServiceFlavor<C extends Context> = C & {

@@ -22,6 +22,13 @@ class PostgresDatabaseService implements DatabaseService {
     });
   }
 
+  async isTgUserAdmin(id: string) {
+    const user = await this.telegramUserRepository.findOneBy({
+      telegramUserId: id,
+    });
+    return !!(user && user.isAdmin);
+  }
+
   async saveInstanceUser(info: InstanceUserData) {
     await this.serviceUserRepository.save(info);
   }
@@ -50,7 +57,6 @@ class PostgresDatabaseService implements DatabaseService {
   }
 
   async unsubscribeUser(subscriptionUuid: string) {
-    console.log(subscriptionUuid);
     await this.subscriptionRepository.update(
       {
         uuid: subscriptionUuid,
@@ -62,7 +68,6 @@ class PostgresDatabaseService implements DatabaseService {
   }
 
   async subscribeUser(subscriptionUuid: string) {
-    console.log(subscriptionUuid);
     await this.subscriptionRepository.update(
       {
         uuid: subscriptionUuid,

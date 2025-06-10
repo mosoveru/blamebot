@@ -1,12 +1,14 @@
 import { Bot } from 'grammy';
 import { BlamebotContext } from '@types';
 import { AppDataSource, Fetcher, GitApiHandlers, Linker } from '@services';
-import buildLinkClientConversation, { buildCommonComposer } from '@composers';
+import buildLinkClientConversation, { buildAdminComposer, buildCommonComposer } from '@composers';
 import PostgresDatabaseService from '@services';
 import { Instance, UserSubscription } from '@entities';
 import { TelegramUser } from '@entities';
 import { InstanceUser } from '@entities';
 import Config from '@config';
+import { Router } from '@grammyjs/router';
+import provideDatabaseService from '@middlewares';
 
 (async () => {
   const bot = new Bot<BlamebotContext>(Config.get('BOT_SECRET_TOKEN'));
@@ -26,8 +28,18 @@ import Config from '@config';
   const fetcher = new Fetcher(apiHandlers);
   const linker = new Linker(databaseService);
 
-  bot.use(buildCommonComposer(databaseService));
-  bot.use(buildLinkClientConversation(fetcher)(linker));
+  bot.use(provideDatabaseService(databaseService));
+  const router = new Router<BlamebotContext>(async (ctx) => {
+    const isAdmin = !!ctx.chatId && (await ctx.dbService.isTgUserAdmin(String(ctx.chatId)));
+    if (isAdmin) {
+      return 'admin';
+    }
+  });
+
+  router.route('admin', buildAdminComposer(fetcher)(linker));
+  router.otherwise(buildCommonComposer(databaseService), buildLinkClientConversation(fetcher)(linker));
+
+  bot.use(router);
 
   bot.catch(async (error) => {
     await error.ctx.reply('Произошла неизвестная ошибка.');
