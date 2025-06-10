@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Unique } from 'typeorm';
 import { Project } from './project.entity';
 import { ObjectType } from './object-type.entity';
 
@@ -22,14 +22,14 @@ export class ObservableObject {
   @Column()
   objectType: string;
 
-  @OneToOne(() => Project)
+  @ManyToOne(() => Project)
   @JoinColumn([
     { name: 'projectId', referencedColumnName: 'projectId' },
     { name: 'instanceId', referencedColumnName: 'instanceId' },
   ])
   project: Project;
 
-  @OneToOne(() => ObjectType)
+  @ManyToOne(() => ObjectType)
   @JoinColumn({ name: 'objectType', referencedColumnName: 'objectType' })
   objectTypeRelation: ObjectType;
 

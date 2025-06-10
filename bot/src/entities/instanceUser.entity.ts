@@ -1,5 +1,6 @@
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Unique } from 'typeorm';
 import { Instance } from './instance.entity';
+import { TelegramUser } from './telegram-user.entity';
 
 @Entity({
   name: 'instance_users',
@@ -27,7 +28,14 @@ export class InstanceUser {
   @Column()
   pathname: string;
 
-  @OneToOne(() => Instance)
+  @ManyToOne(() => TelegramUser)
+  @JoinColumn({
+    name: 'telegramUserId',
+    referencedColumnName: 'telegramUserId',
+  })
+  telegramUser: TelegramUser;
+
+  @ManyToOne(() => Instance)
   @JoinColumn({ name: 'instanceId', referencedColumnName: 'instanceId' })
   instance: Instance;
 }

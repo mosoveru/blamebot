@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Unique } from 'typeorm';
 import { Instance } from './instance.entity';
 
 @Entity({
@@ -15,7 +15,7 @@ export class Project {
   @Column()
   instanceId: string;
 
-  @OneToOne(() => Instance)
+  @ManyToOne(() => Instance)
   @JoinColumn({ name: 'instanceId', referencedColumnName: 'instanceId' })
   instance: Instance;
 

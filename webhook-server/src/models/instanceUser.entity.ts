@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, Unique } from 'typeorm';
 import { Instance } from './instance.entity';
 import { TelegramUser } from './telegram-user.entity';
 
@@ -35,7 +35,7 @@ export class InstanceUser {
   })
   telegramUser: TelegramUser;
 
-  @OneToOne(() => Instance)
+  @ManyToOne(() => Instance)
   @JoinColumn({ name: 'instanceId', referencedColumnName: 'instanceId' })
   instance: Instance;
 }
