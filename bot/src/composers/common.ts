@@ -1,19 +1,11 @@
 import { BlamebotContext, DatabaseService } from '@types';
-import { Composer, InlineKeyboard, Keyboard } from 'grammy';
-import ReplyMessages from '@constants';
+import { Composer, InlineKeyboard } from 'grammy';
 import provideDatabaseService from '@middlewares';
 
 export function buildCommonComposer(dbService: DatabaseService) {
   const composer = new Composer<BlamebotContext>();
 
   composer.use(provideDatabaseService(dbService));
-
-  composer.command('start', async (ctx) => {
-    const keyboard = new Keyboard().text(ReplyMessages.LINK_CLIENT).resized();
-    await ctx.reply(ReplyMessages.HELLO_MESSAGE, {
-      reply_markup: keyboard,
-    });
-  });
 
   composer.callbackQuery(/(?<=UNSUB=).+/, async (ctx) => {
     const id = ctx.callbackQuery.data.replace('UNSUB=', '');

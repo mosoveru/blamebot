@@ -23,6 +23,7 @@ export enum PossibleCauses {
   NOT_VALID_TOKEN_SCOPE = 'NOT_VALID_TOKEN_SCOPE',
   CONNECTION_ERROR = 'CONNECTION_ERROR',
   CANNOT_AUTHORIZE_CLIENT = 'CANNOT_AUTHORIZE_CLIENT',
+  INSTANCE_WITH_SAME_URL = 'INSTANCE_WITH_SAME_URL',
 }
 
 export const repliesForErrors: RepliesForPossibleErrors<PossibleCauses> = {
@@ -36,6 +37,7 @@ export const repliesForErrors: RepliesForPossibleErrors<PossibleCauses> = {
   [PossibleCauses.CONNECTION_ERROR]: 'Возникли проблемы с подключением. Правильно ли вы указали адрес для подключения?',
   [PossibleCauses.CANNOT_AUTHORIZE_CLIENT]:
     'Невозможно авторизоваться с текущим токеном доступа. Проверьте правильность токена доступа.',
+  [PossibleCauses.INSTANCE_WITH_SAME_URL]: 'Инстанс с таким же URL уже существует.',
 };
 
 export default ReplyMessages;

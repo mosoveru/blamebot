@@ -2,7 +2,7 @@ import { Conversation, ConversationFlavor } from '@grammyjs/conversations';
 import type { Context } from 'grammy';
 import { GitProviders } from '@constants';
 import { PossibleCauses } from '../constants/enums';
-import { InstanceManagerFlavor } from '../services/InstanceManager';
+import { InstanceManagerFlavor } from '@services';
 
 export interface ExternalGitSystemDataFetcher {
   fetchUserData(info: RequiredInfo): Promise<ApiResponse>;
@@ -100,13 +100,11 @@ type LinkerFlavor<C extends Context> = C & {
 };
 
 export type BlamebotContext = InstanceManagerFlavor<
-  LinkerFlavor<ParserFlavor<DatabaseServiceFlavor<ConversationFlavor<Context>>>>,
-  GitProviders
+  LinkerFlavor<ParserFlavor<DatabaseServiceFlavor<ConversationFlavor<Context>>>>
 >;
 
 export type ConversationInsideContext = InstanceManagerFlavor<
-  LinkerFlavor<ParserFlavor<DatabaseServiceFlavor<Context>>>,
-  GitProviders
+  LinkerFlavor<ParserFlavor<DatabaseServiceFlavor<Context>>>
 >;
 
 export type BlamebotConversation = Conversation<BlamebotContext, ConversationInsideContext>;
@@ -125,3 +123,23 @@ type FailedResponse = {
 };
 
 export type ApiResponse = SuccessfulResponse | FailedResponse;
+
+export interface PgError extends Error {
+  length: number;
+  severity: string;
+  code: string;
+  detail?: string;
+  hint?: string;
+  position?: string;
+  internalPosition?: string;
+  internalQuery?: string;
+  where?: string;
+  schema?: string;
+  table?: string;
+  column?: string;
+  dataType?: string;
+  constraint?: string;
+  file: string;
+  line: string;
+  routine: string;
+}
