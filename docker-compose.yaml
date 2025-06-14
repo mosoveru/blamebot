@@ -1,0 +1,53 @@
+name: blamebot
+
+services:
+  webhook-server:
+    build:
+      context: ./webhook-server
+    image: blamebot-webkook-server
+    container_name: webhook-server
+    ports:
+      - "3000:3000"
+    depends_on:
+      - blamebot-db
+    networks:
+      - database
+      - internet
+    restart: on-failure
+    env_file:
+      - .env
+  blamebot-db:
+    build:
+      context: ./sql
+    image: blamebot-db
+    container_name: blamebot-database
+    ports:
+      - "5432:5432"
+    volumes:
+      - blamebot_data:/var/lib/postgresql/data
+    networks:
+      - database
+    restart: on-failure
+    env_file:
+      - .env
+  bot:
+    build:
+      context: ./bot
+    image: blamebot-telegram-bot
+    container_name: telegram-bot
+    depends_on:
+      - blamebot-db
+    networks:
+      - database
+    restart: on-failure
+    env_file:
+      - .env
+
+networks:
+  database:
+    name: blamebot_database_network
+  internet:
+
+volumes:
+  blamebot_data:
+    name: blamebot_data
