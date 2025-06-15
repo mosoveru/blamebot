@@ -2,7 +2,9 @@ name: blamebot
 
 services:
   webhook-server:
-    image: ghcr.io/mosoveru/webhook-server:latest
+    build:
+      context: ./webhook-server
+    image: blamebot-webkook-server
     container_name: webhook-server
     ports:
       - "3000:3000"
@@ -15,7 +17,9 @@ services:
     env_file:
       - .env
   blamebot-db:
-    image: ghcr.io/mosoveru/blamebot-db:latest
+    build:
+      context: ./sql
+    image: blamebot-db
     container_name: blamebot-database
     ports:
       - "5432:5432"
@@ -27,7 +31,9 @@ services:
     env_file:
       - .env
   bot:
-    image: ghcr.io/mosoveru/telegram-bot:latest
+    build:
+      context: ./bot
+    image: blamebot-telegram-bot
     container_name: telegram-bot
     depends_on:
       - blamebot-db
