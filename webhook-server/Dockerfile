@@ -1,4 +1,9 @@
 FROM node:20-slim AS base
+
+LABEL org.opencontainers.image.source=https://github.com/mosoveru/blamebot
+LABEL org.opencontainers.image.description="Webhook-Server for handling remote git events."
+LABEL org.opencontainers.image.licenses=MIT
+
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable

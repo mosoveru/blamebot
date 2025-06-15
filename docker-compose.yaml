@@ -39,6 +39,7 @@ services:
       - blamebot-db
     networks:
       - database
+      - internet
     restart: on-failure
     env_file:
       - .env
@@ -47,6 +48,7 @@ networks:
   database:
     name: blamebot_database_network
   internet:
+    name: blamebot_global_network
 
 volumes:
   blamebot_data:
