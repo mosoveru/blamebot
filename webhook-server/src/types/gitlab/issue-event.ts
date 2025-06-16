@@ -23,7 +23,7 @@ export interface Label {
   group_id: null | number;
 }
 
-interface User {
+export interface User {
   id: number;
   name: string;
   username: string;

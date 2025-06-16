@@ -14,14 +14,32 @@ export type EventPayload<T> = {
   instanceId: string;
 };
 
+type UserInfo = {
+  id: string;
+  name: string;
+};
+
 export type IssueChanges = {
   forAuthor?: boolean;
   forAssignee?: boolean;
   isNewAssignment?: boolean;
-  isNewAssignmentWithDeadline?: {
-    deadline: string;
+  isUnassigned?: boolean;
+  isAssigneesAdded?: {
+    added: UserInfo[];
   };
-  isNewObject: boolean;
+  isAssigneesDeleted?: {
+    deleted: UserInfo[];
+  };
+  isAssigneesAddedAndDeleted?: {
+    added: UserInfo[];
+    deleted: UserInfo[];
+  };
+  isNewObject?: {
+    isNewAssignment?: boolean;
+    isNewAssignmentWithDeadline?: {
+      deadline: string;
+    };
+  };
   isClosed?: boolean;
   isReopened?: boolean;
   isDescriptionChanged?: boolean;
@@ -43,7 +61,6 @@ export type IssueChanges = {
     due_date: string;
   };
   isDueDateDeleted?: boolean;
-  haveChanges: boolean;
 };
 
 export type ChangesMap = {

@@ -17,7 +17,7 @@ export class NotificationComposerService {
       );
       return null;
     }
-    if (!commonChanges.changes.haveChanges) {
+    if (!commonChanges.changes) {
       this.logger.warn(
         "There is no changes in common changes object. Maybe we've encountered unknown changes in event payload?",
       );
