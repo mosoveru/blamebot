@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { NotificationMessage } from '../types';
-import { UserSubscription } from '../models/userSubscription.entity';
+import { UserSubscription } from '../models';
 
 type SubscriptionWithMessage = UserSubscription & {
   message: string;

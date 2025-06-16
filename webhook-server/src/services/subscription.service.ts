@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserSubscription } from '../models/userSubscription.entity';
+import { UserSubscription } from '../models';
 import { Repository } from 'typeorm';
 import { SubscriptionIdentifier, ObservableObjectEntity } from '../types';
 import { ServiceUserService } from './service-user.service';

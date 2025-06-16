@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ObservableObject } from '../models/observable-object.entity';
+import { ObservableObject } from '../models';
 import { Repository } from 'typeorm';
 import { ObservableObjectEntity } from '../types';
 

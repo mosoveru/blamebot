@@ -22,7 +22,9 @@ export class ObservableObject {
   @Column()
   objectType: string;
 
-  @ManyToOne(() => Project)
+  @ManyToOne(() => Project, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn([
     { name: 'projectId', referencedColumnName: 'projectId' },
     { name: 'instanceId', referencedColumnName: 'instanceId' },

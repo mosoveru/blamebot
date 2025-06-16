@@ -25,7 +25,9 @@ export class UserSubscription {
   @Column()
   objectType: string;
 
-  @ManyToOne(() => ObservableObject)
+  @ManyToOne(() => ObservableObject, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn([
     { name: 'objectId', referencedColumnName: 'objectId' },
     { name: 'instanceId', referencedColumnName: 'instanceId' },
@@ -34,7 +36,9 @@ export class UserSubscription {
   ])
   observableObjects: ObservableObject;
 
-  @ManyToOne(() => InstanceUser)
+  @ManyToOne(() => InstanceUser, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn([
     { name: 'instanceId', referencedColumnName: 'instanceId' },
     { name: 'instanceUserId', referencedColumnName: 'instanceUserId' },

@@ -15,7 +15,9 @@ export class Project {
   @Column()
   instanceId: string;
 
-  @ManyToOne(() => Instance)
+  @ManyToOne(() => Instance, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'instanceId', referencedColumnName: 'instanceId' })
   instance: Instance;
 
