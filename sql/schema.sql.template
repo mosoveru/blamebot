@@ -25,7 +25,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA public;
 
 
 --
--- Name: EXTENSION "uuid-ossp"; Type: COMMENT; Schema: -; Owner:
+-- Name: EXTENSION "uuid-ossp"; Type: COMMENT; Schema: -; Owner: 
 --
 
 COMMENT ON EXTENSION "uuid-ossp" IS 'generate universally unique identifiers (UUIDs)';
@@ -38,7 +38,7 @@ COMMENT ON EXTENSION "uuid-ossp" IS 'generate universally unique identifiers (UU
 CREATE TYPE public."GitProviders" AS ENUM (
     'GITLAB',
     'GITEA'
-    );
+);
 
 
 ALTER TYPE public."GitProviders" OWNER TO blamebot_admin;
@@ -52,13 +52,13 @@ SET default_table_access_method = heap;
 --
 
 CREATE TABLE public.instance_users (
-                                       uuid uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-                                       "instanceUserId" character varying NOT NULL,
-                                       "instanceId" uuid NOT NULL,
-                                       "telegramUserId" character varying NOT NULL,
-                                       username character varying NOT NULL,
-                                       email character varying NOT NULL,
-                                       pathname character varying NOT NULL
+    uuid uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    "instanceUserId" character varying NOT NULL,
+    "instanceId" uuid NOT NULL,
+    "telegramUserId" character varying NOT NULL,
+    username character varying NOT NULL,
+    email character varying NOT NULL,
+    pathname character varying NOT NULL
 );
 
 
@@ -69,10 +69,10 @@ ALTER TABLE public.instance_users OWNER TO blamebot_admin;
 --
 
 CREATE TABLE public.instances (
-                                  "instanceId" uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-                                  "instanceName" character varying NOT NULL,
-                                  "gitProvider" public."GitProviders" NOT NULL,
-                                  "serviceBaseUrl" character varying NOT NULL
+    "instanceId" uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    "instanceName" character varying NOT NULL,
+    "gitProvider" public."GitProviders" NOT NULL,
+    "serviceBaseUrl" character varying NOT NULL
 );
 
 
@@ -83,9 +83,9 @@ ALTER TABLE public.instances OWNER TO blamebot_admin;
 --
 
 CREATE TABLE public.migrations (
-                                   id integer NOT NULL,
-                                   "timestamp" bigint NOT NULL,
-                                   name character varying NOT NULL
+    id integer NOT NULL,
+    "timestamp" bigint NOT NULL,
+    name character varying NOT NULL
 );
 
 
@@ -118,7 +118,7 @@ ALTER SEQUENCE public.migrations_id_seq OWNED BY public.migrations.id;
 --
 
 CREATE TABLE public.object_types (
-                                     "objectType" character varying NOT NULL
+    "objectType" character varying NOT NULL
 );
 
 
@@ -129,12 +129,12 @@ ALTER TABLE public.object_types OWNER TO blamebot_admin;
 --
 
 CREATE TABLE public.observable_objects (
-                                           uuid uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-                                           "objectId" character varying NOT NULL,
-                                           "instanceId" uuid NOT NULL,
-                                           "projectId" character varying NOT NULL,
-                                           "objectType" character varying NOT NULL,
-                                           pathname character varying NOT NULL
+    uuid uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    "objectId" character varying NOT NULL,
+    "instanceId" uuid NOT NULL,
+    "projectId" character varying NOT NULL,
+    "objectType" character varying NOT NULL,
+    pathname character varying NOT NULL
 );
 
 
@@ -145,11 +145,11 @@ ALTER TABLE public.observable_objects OWNER TO blamebot_admin;
 --
 
 CREATE TABLE public.projects (
-                                 uuid uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-                                 "projectId" character varying NOT NULL,
-                                 "instanceId" uuid NOT NULL,
-                                 name character varying NOT NULL,
-                                 pathname character varying NOT NULL
+    uuid uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    "projectId" character varying NOT NULL,
+    "instanceId" uuid NOT NULL,
+    name character varying NOT NULL,
+    pathname character varying NOT NULL
 );
 
 
@@ -160,13 +160,13 @@ ALTER TABLE public.projects OWNER TO blamebot_admin;
 --
 
 CREATE TABLE public.subscriptions (
-                                      uuid uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-                                      "instanceUserId" character varying NOT NULL,
-                                      "objectId" character varying NOT NULL,
-                                      "instanceId" uuid NOT NULL,
-                                      "projectId" character varying NOT NULL,
-                                      "objectType" character varying NOT NULL,
-                                      "isSubscribed" boolean NOT NULL
+    uuid uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    "instanceUserId" character varying NOT NULL,
+    "objectId" character varying NOT NULL,
+    "instanceId" uuid NOT NULL,
+    "projectId" character varying NOT NULL,
+    "objectType" character varying NOT NULL,
+    "isSubscribed" boolean NOT NULL
 );
 
 
@@ -177,10 +177,10 @@ ALTER TABLE public.subscriptions OWNER TO blamebot_admin;
 --
 
 CREATE TABLE public.telegram_users (
-                                       "telegramUserId" character varying NOT NULL,
-                                       username character varying,
-                                       name character varying,
-                                       "isAdmin" boolean DEFAULT false NOT NULL
+    "telegramUserId" character varying NOT NULL,
+    username character varying,
+    name character varying,
+    "isAdmin" boolean DEFAULT false NOT NULL
 );
 
 
@@ -302,7 +302,7 @@ ALTER TABLE ONLY public.instances
 --
 
 ALTER TABLE ONLY public.projects
-    ADD CONSTRAINT "FK_135a45ff7462c17b96482c3da44" FOREIGN KEY ("instanceId") REFERENCES public.instances("instanceId");
+    ADD CONSTRAINT "FK_135a45ff7462c17b96482c3da44" FOREIGN KEY ("instanceId") REFERENCES public.instances("instanceId") ON DELETE CASCADE;
 
 
 --
@@ -326,7 +326,7 @@ ALTER TABLE ONLY public.instance_users
 --
 
 ALTER TABLE ONLY public.subscriptions
-    ADD CONSTRAINT "FK_94304a1614c818d53db55ae9a72" FOREIGN KEY ("instanceId", "instanceUserId") REFERENCES public.instance_users("instanceId", "instanceUserId");
+    ADD CONSTRAINT "FK_94304a1614c818d53db55ae9a72" FOREIGN KEY ("instanceId", "instanceUserId") REFERENCES public.instance_users("instanceId", "instanceUserId") ON DELETE CASCADE;
 
 
 --
@@ -334,7 +334,7 @@ ALTER TABLE ONLY public.subscriptions
 --
 
 ALTER TABLE ONLY public.observable_objects
-    ADD CONSTRAINT "FK_b0556d711a022cbbe9c6fdbbbd6" FOREIGN KEY ("projectId", "instanceId") REFERENCES public.projects("projectId", "instanceId");
+    ADD CONSTRAINT "FK_b0556d711a022cbbe9c6fdbbbd6" FOREIGN KEY ("projectId", "instanceId") REFERENCES public.projects("projectId", "instanceId") ON DELETE CASCADE;
 
 
 --
@@ -342,7 +342,7 @@ ALTER TABLE ONLY public.observable_objects
 --
 
 ALTER TABLE ONLY public.instance_users
-    ADD CONSTRAINT "FK_c29663fe3fdf0965b33f9734ef1" FOREIGN KEY ("instanceId") REFERENCES public.instances("instanceId");
+    ADD CONSTRAINT "FK_c29663fe3fdf0965b33f9734ef1" FOREIGN KEY ("instanceId") REFERENCES public.instances("instanceId") ON DELETE CASCADE;
 
 
 --
@@ -350,7 +350,7 @@ ALTER TABLE ONLY public.instance_users
 --
 
 ALTER TABLE ONLY public.subscriptions
-    ADD CONSTRAINT "FK_c9573274c5dcdbfde949510c0f6" FOREIGN KEY ("objectId", "instanceId", "projectId", "objectType") REFERENCES public.observable_objects("objectId", "instanceId", "projectId", "objectType");
+    ADD CONSTRAINT "FK_c9573274c5dcdbfde949510c0f6" FOREIGN KEY ("objectId", "instanceId", "projectId", "objectType") REFERENCES public.observable_objects("objectId", "instanceId", "projectId", "objectType") ON DELETE CASCADE;
 
 
 --
