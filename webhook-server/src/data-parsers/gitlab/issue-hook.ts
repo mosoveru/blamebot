@@ -61,14 +61,15 @@ export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
       isCommon: true,
     };
     const individualChanges = eventMembersIds.reduce<ChangesForIssue[]>((acc, memberId) => {
-      if (this.checkIsNewAssignee(eventChanges, String(memberId))) {
+      const isAssignee = eventPayload.assignees?.some((assignee) => memberId === assignee.id);
+      if (isAssignee) {
         acc.push({
           ...eventChangesTemplate,
           instanceUserId: String(memberId),
           isCommon: false,
           changes: {
             ...eventChanges,
-            isNewAssignment: true,
+            isNewAssignment: this.checkIsNewAssignee(eventChanges, String(memberId)),
             forAssignee: true,
           },
         });
