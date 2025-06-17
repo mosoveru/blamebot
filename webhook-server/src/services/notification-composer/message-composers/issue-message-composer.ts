@@ -110,51 +110,32 @@ export class IssueMessageComposer implements MessageComposer {
     if (eventChanges.changes.isTitleChanged) {
       preparedCommonMessage.push('изменился заголовок, ');
     }
-    if (eventChanges.changes.isAssigneesAddedAndDeleted) {
-      const newAssignees = eventChanges.changes.isAssigneesAddedAndDeleted.added;
-      const deletedAssignees = eventChanges.changes.isAssigneesAddedAndDeleted.deleted;
+    if (eventChanges.changes.isAssigneesChanges) {
+      const newAssignees = eventChanges.changes.isAssigneesChanges.added;
+      const deletedAssignees = eventChanges.changes.isAssigneesChanges.deleted;
       const sentence = this.composeStringForAssigneesChanges(newAssignees, deletedAssignees);
       preparedCommonMessage.push(sentence);
     }
-    if (eventChanges.changes.isAssigneesAdded) {
-      const newAssignees = eventChanges.changes.isAssigneesAdded.added;
-      const sentence = this.composeStringForAssigneesChanges(newAssignees, undefined);
-      preparedCommonMessage.push(sentence);
-    }
-    if (eventChanges.changes.isAssigneesDeleted) {
-      const deletedAssignees = eventChanges.changes.isAssigneesDeleted.deleted;
-      const sentence = this.composeStringForAssigneesChanges(undefined, deletedAssignees);
-      preparedCommonMessage.push(sentence);
-    }
-    if (eventChanges.changes.isLabelsAddedAndDeleted) {
-      const addedLabels = eventChanges.changes.isLabelsAddedAndDeleted.addedLabels;
-      const deletedLabels = eventChanges.changes.isLabelsAddedAndDeleted.deletedLabels;
+    if (eventChanges.changes.isLabelsChanged) {
+      const addedLabels = eventChanges.changes.isLabelsChanged.added;
+      const deletedLabels = eventChanges.changes.isLabelsChanged.deleted;
       const sentence = this.composeStringForLabelChanges(addedLabels, deletedLabels);
       preparedCommonMessage.push(sentence);
     }
-    if (eventChanges.changes.isLabelsAdded) {
-      const addedLabels = eventChanges.changes.isLabelsAdded.labels;
-      const sentence = this.composeStringForLabelChanges(addedLabels);
-      preparedCommonMessage.push(sentence);
-    }
-    if (eventChanges.changes.isLabelsDeleted) {
-      const deletedLabels = eventChanges.changes.isLabelsDeleted.labels;
-      const sentence = this.composeStringForLabelChanges(undefined, deletedLabels);
-      preparedCommonMessage.push(sentence);
-    }
-    if (eventChanges.changes.isDueDateAdded) {
-      const date = eventChanges.changes.isDueDateAdded.due_date;
-      const sentence = this.composeStringForDueDateChanges('added', date);
-      preparedCommonMessage.push(sentence);
-    }
-    if (eventChanges.changes.isDueDateUpdated) {
-      const date = eventChanges.changes.isDueDateUpdated.due_date;
-      const sentence = this.composeStringForDueDateChanges('updated', date);
-      preparedCommonMessage.push(sentence);
-    }
-    if (eventChanges.changes.isDueDateDeleted) {
-      const sentence = this.composeStringForDueDateChanges('deleted');
-      preparedCommonMessage.push(sentence);
+    if (eventChanges.changes.isDueDateChanged) {
+      const dueDateChanges = eventChanges.changes.isDueDateChanged;
+      if (dueDateChanges.isAdded) {
+        const sentence = this.composeStringForDueDateChanges('added', dueDateChanges.isAdded.due_date);
+        preparedCommonMessage.push(sentence);
+      }
+      if (dueDateChanges.isUpdated) {
+        const sentence = this.composeStringForDueDateChanges('added', dueDateChanges.isUpdated.due_date);
+        preparedCommonMessage.push(sentence);
+      }
+      if (dueDateChanges.isDeleted) {
+        const sentence = this.composeStringForDueDateChanges('deleted');
+        preparedCommonMessage.push(sentence);
+      }
     }
   }
 

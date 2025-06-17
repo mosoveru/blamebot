@@ -135,7 +135,7 @@ interface ObjectAttributes {
   state: string;
   severity: string;
   customer_relations_contacts: any[];
-  action: string;
+  action: 'close' | 'update' | 'reopen';
 }
 
 interface Project {

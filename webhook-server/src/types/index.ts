@@ -24,15 +24,9 @@ export type IssueChanges = {
   forAssignee?: boolean;
   isNewAssignment?: boolean;
   isUnassigned?: boolean;
-  isAssigneesAdded?: {
-    added: UserInfo[];
-  };
-  isAssigneesDeleted?: {
-    deleted: UserInfo[];
-  };
-  isAssigneesAddedAndDeleted?: {
-    added: UserInfo[];
-    deleted: UserInfo[];
+  isAssigneesChanges?: {
+    added?: UserInfo[];
+    deleted?: UserInfo[];
   };
   isNewObject?: {
     isNewAssignment?: boolean;
@@ -44,23 +38,19 @@ export type IssueChanges = {
   isReopened?: boolean;
   isDescriptionChanged?: boolean;
   isTitleChanged?: boolean;
-  isLabelsAdded?: {
-    labels: string[];
+  isLabelsChanged?: {
+    added?: string[];
+    deleted?: string[];
   };
-  isLabelsDeleted?: {
-    labels: string[];
+  isDueDateChanged?: {
+    isUpdated?: {
+      due_date: string;
+    };
+    isAdded?: {
+      due_date: string;
+    };
+    isDeleted?: boolean;
   };
-  isLabelsAddedAndDeleted?: {
-    addedLabels: string[];
-    deletedLabels: string[];
-  };
-  isDueDateUpdated?: {
-    due_date: string;
-  };
-  isDueDateAdded?: {
-    due_date: string;
-  };
-  isDueDateDeleted?: boolean;
 };
 
 export type ChangesMap = {

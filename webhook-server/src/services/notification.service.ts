@@ -17,8 +17,6 @@ export class NotificationService {
   ) {}
 
   async notify(eventPayload: EventPayload<any>) {
-    console.log(JSON.stringify(eventPayload, null, 2), JSON.stringify(eventPayload, null, 2));
-
     const recipients = await this.notificationRecipientsService.retrieveRecipientsList(eventPayload);
 
     if (!recipients || !recipients.length) {
