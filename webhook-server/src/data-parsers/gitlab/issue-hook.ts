@@ -65,6 +65,10 @@ export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
 
   parseEventChanges({ eventMembersIds, eventPayload }: DataForParsingChanges<GitLabIssueEvent>): ChangesForIssue[] {
     this.eventPayload = eventPayload;
+    const changes = this.parseChanges();
+    if (!changes) {
+      return [];
+    }
     const eventChangesTemplate = {
       objectType: this.objectType,
       objectUrl: eventPayload.object_attributes.url,
@@ -72,7 +76,6 @@ export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
       projectUrl: eventPayload.project.web_url,
       projectName: eventPayload.project.name,
     };
-    const changes = this.parseChanges();
     const commonChanges = {
       ...eventChangesTemplate,
       changes: {
@@ -81,49 +84,37 @@ export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
       isCommon: true,
     };
     const individualChanges = eventMembersIds.reduce<ChangesForIssue[]>((acc, memberId) => {
-      const isAssignee = eventPayload.assignees?.some((assignee) => memberId === assignee.id);
-      if (isAssignee) {
+      const formIndividualChanges = (particularChanges: Partial<IssueChanges>) => {
         acc.push({
           ...eventChangesTemplate,
           instanceUserId: String(memberId),
           isCommon: false,
           changes: {
             ...changes,
-            isNewAssignment: this.checkIsNewAssignee(String(memberId)),
-            forAssignee: true,
+            ...particularChanges,
           },
         });
-        return acc;
+      };
+      if (this.isAssignee(memberId)) {
+        formIndividualChanges({
+          isNewAssignment: this.checkIsNewAssignee(String(memberId)),
+          forAssignee: true,
+        });
       }
       if (this.checkIsDeletedAssignee(String(memberId))) {
-        acc.push({
-          ...eventChangesTemplate,
-          instanceUserId: String(memberId),
-          isCommon: false,
-          changes: {
-            ...changes,
-            isUnassigned: true,
-            forAssignee: true,
-          },
+        formIndividualChanges({
+          isUnassigned: true,
+          forAssignee: true,
         });
-        return acc;
       }
-      const isAuthor = eventPayload.object_attributes.author_id === memberId;
-      if (isAuthor) {
-        acc.push({
-          ...eventChangesTemplate,
-          instanceUserId: String(memberId),
-          isCommon: false,
-          changes: {
-            ...changes,
-            forAuthor: true,
-          },
+      if (this.isAuthor(memberId)) {
+        formIndividualChanges({
+          forAuthor: true,
         });
-        return acc;
       }
       return acc;
     }, []);
-    this.resetAll();
+    this.resetContext();
     return [...individualChanges, commonChanges];
   }
 
@@ -139,7 +130,21 @@ export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
         this.eventChangesParsers[key]();
       }
     }
+    const isThereNoChangesInEventPayload = !Object.keys(this.issueChanges).length;
+    if (isThereNoChangesInEventPayload) {
+      return null;
+    }
     return this.issueChanges;
+  }
+
+  private isAssignee(assigneeId: number) {
+    const eventPayload = this.eventPayload;
+    return eventPayload.assignees?.some((a) => a.id === assigneeId);
+  }
+
+  private isAuthor(memberId: number) {
+    const eventPayload = this.eventPayload;
+    return eventPayload.object_attributes.author_id === memberId;
   }
 
   private checkIsNewAssignee(id: string) {
@@ -156,7 +161,7 @@ export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
     }
   }
 
-  private isNewCreatedIssueWithChanges() {
+  private parseChangesForNewCreatedIssue() {
     const eventPayload = this.eventPayload;
     const changes = this.issueChanges;
     if (eventPayload.assignees?.length && eventPayload.changes.due_date && eventPayload.changes.due_date.current) {
@@ -175,24 +180,20 @@ export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
   private isNewObject() {
     const eventPayload = this.eventPayload;
     if (!!eventPayload.changes.id) {
-      this.isNewCreatedIssueWithChanges();
+      this.parseChangesForNewCreatedIssue();
       return true;
     }
     return false;
   }
 
   private parseIssueStatus() {
-    // TODO: Использовать атрибут action. Решить проблему с двойным вебхуком
     const eventPayload = this.eventPayload;
     const changes = this.issueChanges;
-    const stateId = eventPayload.changes.state_id;
-    const isIssueClosed = !!(stateId && stateId.current === 2);
-    if (isIssueClosed) {
+    if (eventPayload.object_attributes.action === 'close') {
       changes.isClosed = true;
       return;
     }
-    const isIssueReopened = !!(stateId && !eventPayload.changes.created_at);
-    if (isIssueReopened) {
+    if (eventPayload.object_attributes.action === 'reopen') {
       changes.isReopened = true;
     }
   }
@@ -237,8 +238,6 @@ export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
   private parseChangesForAssignees() {
     const eventPayload = this.eventPayload;
     const changes = this.issueChanges;
-    console.log(eventPayload);
-    console.log(changes);
     const currentAssignees = [...eventPayload.changes.assignees!.current];
     const previousAssignees = [...eventPayload.changes.assignees!.previous];
     const parsedChanges = this.performBinarySearchInLists(currentAssignees, previousAssignees);
@@ -265,8 +264,8 @@ export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
     };
   }
 
-  private performBinarySearchInLists<T extends Label | User>(currentSortedList: T[], previousList: T[]) {
-    const addedEntities: T[] = [...currentSortedList].sort((a, b) => a.id - b.id);
+  private performBinarySearchInLists<T extends Label | User>(currentUnsortedList: T[], previousList: T[]) {
+    const addedEntities: T[] = [...currentUnsortedList].sort((a, b) => a.id - b.id);
     const deletedEntities: T[] = [];
 
     while (previousList.length) {
@@ -337,7 +336,7 @@ export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
     this._issueChanges = issueChanges;
   }
 
-  private resetAll(): void {
+  private resetContext(): void {
     this._issueChanges = null;
     this._eventPayload = null;
   }
