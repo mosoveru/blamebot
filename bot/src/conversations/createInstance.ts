@@ -30,10 +30,7 @@ export async function createInstance(conversation: BlamebotConversation, ctx: Co
     });
   });
   if (!instanceCreationResult.ok) {
-    // TODO: Добавить человеческую ошибку, если serviceBaseUrl уже существует
-    await ctx.reply(
-      `Не получилось получить информацию о пользователе. ${repliesForErrors[instanceCreationResult.cause]}`,
-    );
+    await ctx.reply(`${repliesForErrors[instanceCreationResult.cause]}`);
     await conversation.halt();
   } else {
     await ctx.reply(
