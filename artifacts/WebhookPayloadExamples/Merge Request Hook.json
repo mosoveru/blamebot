@@ -1,0 +1,567 @@
+[
+  {
+    "service": "GITLAB",
+    "eventType": "Merge Request Hook",
+    "eventPayload": {
+      "object_kind": "merge_request",
+      "event_type": "merge_request",
+      "user": {
+        "id": 2,
+        "name": "Moso Veru",
+        "username": "mosoveru",
+        "avatar_url": "https://www.gravatar.com/avatar/b569d7d68d81fc486e7948b4fd432db7744c930d80e82630a3e85ff0eddb0034?s=80&d=identicon",
+        "email": "[REDACTED]"
+      },
+      "project": {
+        "id": 1,
+        "name": "blamebot-tests",
+        "description": null,
+        "web_url": "http://127.0.0.1:8929/mosoveru/blamebot-tests",
+        "avatar_url": null,
+        "git_ssh_url": "ssh://git@127.0.0.1:2424/mosoveru/blamebot-tests.git",
+        "git_http_url": "http://127.0.0.1:8929/mosoveru/blamebot-tests.git",
+        "namespace": "Moso Veru",
+        "visibility_level": 20,
+        "path_with_namespace": "mosoveru/blamebot-tests",
+        "default_branch": "main",
+        "ci_config_path": null,
+        "homepage": "http://127.0.0.1:8929/mosoveru/blamebot-tests",
+        "url": "ssh://git@127.0.0.1:2424/mosoveru/blamebot-tests.git",
+        "ssh_url": "ssh://git@127.0.0.1:2424/mosoveru/blamebot-tests.git",
+        "http_url": "http://127.0.0.1:8929/mosoveru/blamebot-tests.git"
+      },
+      "object_attributes": {
+        "assignee_id": 2,
+        "author_id": 2,
+        "created_at": "2025-06-19 08:49:07 UTC",
+        "description": "Test 3 Description",
+        "draft": false,
+        "head_pipeline_id": null,
+        "id": 3,
+        "iid": 3,
+        "last_edited_at": null,
+        "last_edited_by_id": null,
+        "merge_commit_sha": null,
+        "merge_error": null,
+        "merge_params": {
+          "force_remove_source_branch": "1"
+        },
+        "merge_status": "checking",
+        "merge_user_id": null,
+        "merge_when_pipeline_succeeds": false,
+        "milestone_id": null,
+        "source_branch": "test-3",
+        "source_project_id": 1,
+        "state_id": 1,
+        "target_branch": "main",
+        "target_project_id": 1,
+        "time_estimate": 0,
+        "title": "Test 3 MR",
+        "updated_at": "2025-06-19 08:49:09 UTC",
+        "updated_by_id": null,
+        "prepared_at": "2025-06-19 08:49:09 UTC",
+        "assignee_ids": [
+          2
+        ],
+        "blocking_discussions_resolved": true,
+        "detailed_merge_status": "checking",
+        "first_contribution": true,
+        "human_time_change": null,
+        "human_time_estimate": null,
+        "human_total_time_spent": null,
+        "labels": [
+          {
+            "id": 2,
+            "title": "Test Label #2",
+            "color": "#c21e56",
+            "project_id": 1,
+            "created_at": "2025-06-18 12:25:46 UTC",
+            "updated_at": "2025-06-18 12:25:46 UTC",
+            "template": false,
+            "description": null,
+            "type": "ProjectLabel",
+            "group_id": null
+          }
+        ],
+        "last_commit": {
+          "id": "52bb4242a25f446a85f52de87bf9aa86ec30503c",
+          "message": "Test 3\n",
+          "title": "Test 3",
+          "timestamp": "2025-06-19T11:48:34+03:00",
+          "url": "http://127.0.0.1:8929/mosoveru/blamebot-tests/-/commit/52bb4242a25f446a85f52de87bf9aa86ec30503c",
+          "author": {
+            "name": "Mosoveru",
+            "email": "mosoveru@gmail.com"
+          }
+        },
+        "reviewer_ids": [
+          3
+        ],
+        "source": {
+          "id": 1,
+          "name": "blamebot-tests",
+          "description": null,
+          "web_url": "http://127.0.0.1:8929/mosoveru/blamebot-tests",
+          "avatar_url": null,
+          "git_ssh_url": "ssh://git@127.0.0.1:2424/mosoveru/blamebot-tests.git",
+          "git_http_url": "http://127.0.0.1:8929/mosoveru/blamebot-tests.git",
+          "namespace": "Moso Veru",
+          "visibility_level": 20,
+          "path_with_namespace": "mosoveru/blamebot-tests",
+          "default_branch": "main",
+          "ci_config_path": null,
+          "homepage": "http://127.0.0.1:8929/mosoveru/blamebot-tests",
+          "url": "ssh://git@127.0.0.1:2424/mosoveru/blamebot-tests.git",
+          "ssh_url": "ssh://git@127.0.0.1:2424/mosoveru/blamebot-tests.git",
+          "http_url": "http://127.0.0.1:8929/mosoveru/blamebot-tests.git"
+        },
+        "state": "opened",
+        "target": {
+          "id": 1,
+          "name": "blamebot-tests",
+          "description": null,
+          "web_url": "http://127.0.0.1:8929/mosoveru/blamebot-tests",
+          "avatar_url": null,
+          "git_ssh_url": "ssh://git@127.0.0.1:2424/mosoveru/blamebot-tests.git",
+          "git_http_url": "http://127.0.0.1:8929/mosoveru/blamebot-tests.git",
+          "namespace": "Moso Veru",
+          "visibility_level": 20,
+          "path_with_namespace": "mosoveru/blamebot-tests",
+          "default_branch": "main",
+          "ci_config_path": null,
+          "homepage": "http://127.0.0.1:8929/mosoveru/blamebot-tests",
+          "url": "ssh://git@127.0.0.1:2424/mosoveru/blamebot-tests.git",
+          "ssh_url": "ssh://git@127.0.0.1:2424/mosoveru/blamebot-tests.git",
+          "http_url": "http://127.0.0.1:8929/mosoveru/blamebot-tests.git"
+        },
+        "time_change": 0,
+        "total_time_spent": 0,
+        "url": "http://127.0.0.1:8929/mosoveru/blamebot-tests/-/merge_requests/3",
+        "work_in_progress": false,
+        "action": "open"
+      },
+      "labels": [
+        {
+          "id": 2,
+          "title": "Test Label #2",
+          "color": "#c21e56",
+          "project_id": 1,
+          "created_at": "2025-06-18 12:25:46 UTC",
+          "updated_at": "2025-06-18 12:25:46 UTC",
+          "template": false,
+          "description": null,
+          "type": "ProjectLabel",
+          "group_id": null
+        }
+      ],
+      "changes": {
+        "merge_status": {
+          "previous": "preparing",
+          "current": "checking"
+        },
+        "updated_at": {
+          "previous": "2025-06-19 08:49:07 UTC",
+          "current": "2025-06-19 08:49:09 UTC"
+        },
+        "prepared_at": {
+          "previous": null,
+          "current": "2025-06-19 08:49:09 UTC"
+        }
+      },
+      "repository": {
+        "name": "blamebot-tests",
+        "url": "ssh://git@127.0.0.1:2424/mosoveru/blamebot-tests.git",
+        "description": null,
+        "homepage": "http://127.0.0.1:8929/mosoveru/blamebot-tests"
+      },
+      "assignees": [
+        {
+          "id": 2,
+          "name": "Moso Veru",
+          "username": "mosoveru",
+          "avatar_url": "https://www.gravatar.com/avatar/b569d7d68d81fc486e7948b4fd432db7744c930d80e82630a3e85ff0eddb0034?s=80&d=identicon",
+          "email": "[REDACTED]"
+        }
+      ],
+      "reviewers": [
+        {
+          "id": 3,
+          "name": "Adam Smasher",
+          "username": "smasher",
+          "avatar_url": "https://www.gravatar.com/avatar/1615dc6d9c4eea20f8370d563abf940048a2251c8dae622e58247a634ebe589a?s=80&d=identicon",
+          "email": "[REDACTED]"
+        }
+      ]
+    },
+    "instanceId": "14bfe6b6-a93c-4f7d-90b7-5b3db5dbbd8f"
+  },
+  {
+    "service": "GITLAB",
+    "eventType": "Merge Request Hook",
+    "eventPayload": {
+      "object_kind": "merge_request",
+      "event_type": "merge_request",
+      "user": {
+        "id": 2,
+        "name": "Moso Veru",
+        "username": "mosoveru",
+        "avatar_url": "https://www.gravatar.com/avatar/b569d7d68d81fc486e7948b4fd432db7744c930d80e82630a3e85ff0eddb0034?s=80&d=identicon",
+        "email": "[REDACTED]"
+      },
+      "project": {
+        "id": 1,
+        "name": "blamebot-tests",
+        "description": null,
+        "web_url": "http://127.0.0.1:8929/mosoveru/blamebot-tests",
+        "avatar_url": null,
+        "git_ssh_url": "ssh://git@127.0.0.1:2424/mosoveru/blamebot-tests.git",
+        "git_http_url": "http://127.0.0.1:8929/mosoveru/blamebot-tests.git",
+        "namespace": "Moso Veru",
+        "visibility_level": 20,
+        "path_with_namespace": "mosoveru/blamebot-tests",
+        "default_branch": "main",
+        "ci_config_path": null,
+        "homepage": "http://127.0.0.1:8929/mosoveru/blamebot-tests",
+        "url": "ssh://git@127.0.0.1:2424/mosoveru/blamebot-tests.git",
+        "ssh_url": "ssh://git@127.0.0.1:2424/mosoveru/blamebot-tests.git",
+        "http_url": "http://127.0.0.1:8929/mosoveru/blamebot-tests.git"
+      },
+      "object_attributes": {
+        "assignee_id": 2,
+        "author_id": 2,
+        "created_at": "2025-06-19 08:49:07 UTC",
+        "description": "Test 3 Description",
+        "draft": false,
+        "head_pipeline_id": null,
+        "id": 3,
+        "iid": 3,
+        "last_edited_at": null,
+        "last_edited_by_id": null,
+        "merge_commit_sha": null,
+        "merge_error": null,
+        "merge_params": {
+          "force_remove_source_branch": "1"
+        },
+        "merge_status": "can_be_merged",
+        "merge_user_id": null,
+        "merge_when_pipeline_succeeds": false,
+        "milestone_id": null,
+        "source_branch": "test-3",
+        "source_project_id": 1,
+        "state_id": 1,
+        "target_branch": "main",
+        "target_project_id": 1,
+        "time_estimate": 0,
+        "title": "Test 3 MRR",
+        "updated_at": "2025-06-19 09:12:20 UTC",
+        "updated_by_id": 2,
+        "prepared_at": "2025-06-19 08:49:09 UTC",
+        "assignee_ids": [
+          2
+        ],
+        "blocking_discussions_resolved": true,
+        "detailed_merge_status": "mergeable",
+        "first_contribution": true,
+        "human_time_change": null,
+        "human_time_estimate": null,
+        "human_total_time_spent": null,
+        "labels": [
+          {
+            "id": 2,
+            "title": "Test Label #2",
+            "color": "#c21e56",
+            "project_id": 1,
+            "created_at": "2025-06-18 12:25:46 UTC",
+            "updated_at": "2025-06-18 12:25:46 UTC",
+            "template": false,
+            "description": null,
+            "type": "ProjectLabel",
+            "group_id": null
+          }
+        ],
+        "last_commit": {
+          "id": "52bb4242a25f446a85f52de87bf9aa86ec30503c",
+          "message": "Test 3\n",
+          "title": "Test 3",
+          "timestamp": "2025-06-19T11:48:34+03:00",
+          "url": "http://127.0.0.1:8929/mosoveru/blamebot-tests/-/commit/52bb4242a25f446a85f52de87bf9aa86ec30503c",
+          "author": {
+            "name": "Mosoveru",
+            "email": "mosoveru@gmail.com"
+          }
+        },
+        "reviewer_ids": [
+          3
+        ],
+        "source": {
+          "id": 1,
+          "name": "blamebot-tests",
+          "description": null,
+          "web_url": "http://127.0.0.1:8929/mosoveru/blamebot-tests",
+          "avatar_url": null,
+          "git_ssh_url": "ssh://git@127.0.0.1:2424/mosoveru/blamebot-tests.git",
+          "git_http_url": "http://127.0.0.1:8929/mosoveru/blamebot-tests.git",
+          "namespace": "Moso Veru",
+          "visibility_level": 20,
+          "path_with_namespace": "mosoveru/blamebot-tests",
+          "default_branch": "main",
+          "ci_config_path": null,
+          "homepage": "http://127.0.0.1:8929/mosoveru/blamebot-tests",
+          "url": "ssh://git@127.0.0.1:2424/mosoveru/blamebot-tests.git",
+          "ssh_url": "ssh://git@127.0.0.1:2424/mosoveru/blamebot-tests.git",
+          "http_url": "http://127.0.0.1:8929/mosoveru/blamebot-tests.git"
+        },
+        "state": "opened",
+        "target": {
+          "id": 1,
+          "name": "blamebot-tests",
+          "description": null,
+          "web_url": "http://127.0.0.1:8929/mosoveru/blamebot-tests",
+          "avatar_url": null,
+          "git_ssh_url": "ssh://git@127.0.0.1:2424/mosoveru/blamebot-tests.git",
+          "git_http_url": "http://127.0.0.1:8929/mosoveru/blamebot-tests.git",
+          "namespace": "Moso Veru",
+          "visibility_level": 20,
+          "path_with_namespace": "mosoveru/blamebot-tests",
+          "default_branch": "main",
+          "ci_config_path": null,
+          "homepage": "http://127.0.0.1:8929/mosoveru/blamebot-tests",
+          "url": "ssh://git@127.0.0.1:2424/mosoveru/blamebot-tests.git",
+          "ssh_url": "ssh://git@127.0.0.1:2424/mosoveru/blamebot-tests.git",
+          "http_url": "http://127.0.0.1:8929/mosoveru/blamebot-tests.git"
+        },
+        "time_change": 0,
+        "total_time_spent": 0,
+        "url": "http://127.0.0.1:8929/mosoveru/blamebot-tests/-/merge_requests/3",
+        "work_in_progress": false,
+        "action": "update"
+      },
+      "labels": [
+        {
+          "id": 2,
+          "title": "Test Label #2",
+          "color": "#c21e56",
+          "project_id": 1,
+          "created_at": "2025-06-18 12:25:46 UTC",
+          "updated_at": "2025-06-18 12:25:46 UTC",
+          "template": false,
+          "description": null,
+          "type": "ProjectLabel",
+          "group_id": null
+        }
+      ],
+      "changes": {
+        "title": {
+          "previous": "Test 3 MR",
+          "current": "Test 3 MRR"
+        },
+        "updated_at": {
+          "previous": "2025-06-19 08:49:09 UTC",
+          "current": "2025-06-19 09:12:20 UTC"
+        },
+        "updated_by_id": {
+          "previous": null,
+          "current": 2
+        },
+        "reviewers": {
+          "previous": [
+            {
+              "id": 3,
+              "name": "Adam Smasher",
+              "username": "smasher",
+              "avatar_url": "https://www.gravatar.com/avatar/1615dc6d9c4eea20f8370d563abf940048a2251c8dae622e58247a634ebe589a?s=80&d=identicon",
+              "email": "[REDACTED]"
+            }
+          ],
+          "current": []
+        }
+      },
+      "repository": {
+        "name": "blamebot-tests",
+        "url": "ssh://git@127.0.0.1:2424/mosoveru/blamebot-tests.git",
+        "description": null,
+        "homepage": "http://127.0.0.1:8929/mosoveru/blamebot-tests"
+      },
+      "assignees": [
+        {
+          "id": 2,
+          "name": "Moso Veru",
+          "username": "mosoveru",
+          "avatar_url": "https://www.gravatar.com/avatar/b569d7d68d81fc486e7948b4fd432db7744c930d80e82630a3e85ff0eddb0034?s=80&d=identicon",
+          "email": "[REDACTED]"
+        }
+      ],
+      "reviewers": [
+        {
+          "id": 3,
+          "name": "Adam Smasher",
+          "username": "smasher",
+          "avatar_url": "https://www.gravatar.com/avatar/1615dc6d9c4eea20f8370d563abf940048a2251c8dae622e58247a634ebe589a?s=80&d=identicon",
+          "email": "[REDACTED]"
+        }
+      ]
+    },
+    "instanceId": "14bfe6b6-a93c-4f7d-90b7-5b3db5dbbd8f"
+  },
+  {
+    "service": "GITLAB",
+    "eventType": "Merge Request Hook",
+    "eventPayload": {
+      "object_kind": "merge_request",
+      "event_type": "merge_request",
+      "user": {
+        "id": 2,
+        "name": "Moso Veru",
+        "username": "mosoveru",
+        "avatar_url": "https://www.gravatar.com/avatar/b569d7d68d81fc486e7948b4fd432db7744c930d80e82630a3e85ff0eddb0034?s=80&d=identicon",
+        "email": "[REDACTED]"
+      },
+      "project": {
+        "id": 1,
+        "name": "blamebot-tests",
+        "description": null,
+        "web_url": "http://127.0.0.1:8929/mosoveru/blamebot-tests",
+        "avatar_url": null,
+        "git_ssh_url": "ssh://git@127.0.0.1:2424/mosoveru/blamebot-tests.git",
+        "git_http_url": "http://127.0.0.1:8929/mosoveru/blamebot-tests.git",
+        "namespace": "Moso Veru",
+        "visibility_level": 20,
+        "path_with_namespace": "mosoveru/blamebot-tests",
+        "default_branch": "main",
+        "ci_config_path": null,
+        "homepage": "http://127.0.0.1:8929/mosoveru/blamebot-tests",
+        "url": "ssh://git@127.0.0.1:2424/mosoveru/blamebot-tests.git",
+        "ssh_url": "ssh://git@127.0.0.1:2424/mosoveru/blamebot-tests.git",
+        "http_url": "http://127.0.0.1:8929/mosoveru/blamebot-tests.git"
+      },
+      "object_attributes": {
+        "assignee_id": null,
+        "author_id": 2,
+        "created_at": "2025-06-19 08:49:07 UTC",
+        "description": "Test 3 Description",
+        "draft": false,
+        "head_pipeline_id": null,
+        "id": 3,
+        "iid": 3,
+        "last_edited_at": null,
+        "last_edited_by_id": null,
+        "merge_commit_sha": null,
+        "merge_error": null,
+        "merge_params": {
+          "force_remove_source_branch": "1"
+        },
+        "merge_status": "can_be_merged",
+        "merge_user_id": null,
+        "merge_when_pipeline_succeeds": false,
+        "milestone_id": null,
+        "source_branch": "test-3",
+        "source_project_id": 1,
+        "state_id": 1,
+        "target_branch": "main",
+        "target_project_id": 1,
+        "time_estimate": 0,
+        "title": "Test 3 MR",
+        "updated_at": "2025-06-19 09:33:57 UTC",
+        "updated_by_id": 2,
+        "prepared_at": "2025-06-19 08:49:09 UTC",
+        "assignee_ids": [],
+        "blocking_discussions_resolved": true,
+        "detailed_merge_status": "mergeable",
+        "first_contribution": true,
+        "human_time_change": null,
+        "human_time_estimate": null,
+        "human_total_time_spent": null,
+        "labels": [
+          {
+            "id": 2,
+            "title": "Test Label #2",
+            "color": "#c21e56",
+            "project_id": 1,
+            "created_at": "2025-06-18 12:25:46 UTC",
+            "updated_at": "2025-06-18 12:25:46 UTC",
+            "template": false,
+            "description": null,
+            "type": "ProjectLabel",
+            "group_id": null
+          }
+        ],
+        "last_commit": {
+          "id": "52bb4242a25f446a85f52de87bf9aa86ec30503c",
+          "message": "Test 3\n",
+          "title": "Test 3",
+          "timestamp": "2025-06-19T11:48:34+03:00",
+          "url": "http://127.0.0.1:8929/mosoveru/blamebot-tests/-/commit/52bb4242a25f446a85f52de87bf9aa86ec30503c",
+          "author": {
+            "name": "Mosoveru",
+            "email": "mosoveru@gmail.com"
+          }
+        },
+        "reviewer_ids": [],
+        "source": {
+          "id": 1,
+          "name": "blamebot-tests",
+          "description": null,
+          "web_url": "http://127.0.0.1:8929/mosoveru/blamebot-tests",
+          "avatar_url": null,
+          "git_ssh_url": "ssh://git@127.0.0.1:2424/mosoveru/blamebot-tests.git",
+          "git_http_url": "http://127.0.0.1:8929/mosoveru/blamebot-tests.git",
+          "namespace": "Moso Veru",
+          "visibility_level": 20,
+          "path_with_namespace": "mosoveru/blamebot-tests",
+          "default_branch": "main",
+          "ci_config_path": null,
+          "homepage": "http://127.0.0.1:8929/mosoveru/blamebot-tests",
+          "url": "ssh://git@127.0.0.1:2424/mosoveru/blamebot-tests.git",
+          "ssh_url": "ssh://git@127.0.0.1:2424/mosoveru/blamebot-tests.git",
+          "http_url": "http://127.0.0.1:8929/mosoveru/blamebot-tests.git"
+        },
+        "state": "opened",
+        "target": {
+          "id": 1,
+          "name": "blamebot-tests",
+          "description": null,
+          "web_url": "http://127.0.0.1:8929/mosoveru/blamebot-tests",
+          "avatar_url": null,
+          "git_ssh_url": "ssh://git@127.0.0.1:2424/mosoveru/blamebot-tests.git",
+          "git_http_url": "http://127.0.0.1:8929/mosoveru/blamebot-tests.git",
+          "namespace": "Moso Veru",
+          "visibility_level": 20,
+          "path_with_namespace": "mosoveru/blamebot-tests",
+          "default_branch": "main",
+          "ci_config_path": null,
+          "homepage": "http://127.0.0.1:8929/mosoveru/blamebot-tests",
+          "url": "ssh://git@127.0.0.1:2424/mosoveru/blamebot-tests.git",
+          "ssh_url": "ssh://git@127.0.0.1:2424/mosoveru/blamebot-tests.git",
+          "http_url": "http://127.0.0.1:8929/mosoveru/blamebot-tests.git"
+        },
+        "time_change": 0,
+        "total_time_spent": 0,
+        "url": "http://127.0.0.1:8929/mosoveru/blamebot-tests/-/merge_requests/3",
+        "work_in_progress": false,
+        "action": "approved"
+      },
+      "labels": [
+        {
+          "id": 2,
+          "title": "Test Label #2",
+          "color": "#c21e56",
+          "project_id": 1,
+          "created_at": "2025-06-18 12:25:46 UTC",
+          "updated_at": "2025-06-18 12:25:46 UTC",
+          "template": false,
+          "description": null,
+          "type": "ProjectLabel",
+          "group_id": null
+        }
+      ],
+      "changes": {},
+      "repository": {
+        "name": "blamebot-tests",
+        "url": "ssh://git@127.0.0.1:2424/mosoveru/blamebot-tests.git",
+        "description": null,
+        "homepage": "http://127.0.0.1:8929/mosoveru/blamebot-tests"
+      }
+    },
+    "instanceId": "14bfe6b6-a93c-4f7d-90b7-5b3db5dbbd8f"
+  }
+]
