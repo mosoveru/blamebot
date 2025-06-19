@@ -1,6 +1,8 @@
+import { Label, Project, Repository, User } from './common';
+
 export interface GitLabIssueEvent {
-  object_kind: string;
-  event_type: string;
+  object_kind: 'issue';
+  event_type: 'issue';
   user: User;
   project: Project;
   object_attributes: ObjectAttributes;
@@ -8,96 +10,6 @@ export interface GitLabIssueEvent {
   changes: Changes;
   repository: Repository;
   assignees?: User[];
-}
-
-export interface Label {
-  id: number;
-  title: string;
-  color: string;
-  project_id: number;
-  created_at: string;
-  updated_at: string;
-  template: boolean;
-  description: null | string;
-  type: string;
-  group_id: null | number;
-}
-
-export interface User {
-  id: number;
-  name: string;
-  username: string;
-  avatar_url: string;
-  email: string;
-}
-
-interface Changes {
-  author_id?: AuthorID;
-  created_at?: CreatedAt;
-  description?: CreatedAt;
-  id?: AuthorID;
-  iid?: AuthorID;
-  project_id?: AuthorID;
-  title?: CreatedAt;
-  updated_at?: CreatedAt;
-  closed_at?: ClosedAt;
-  state_id?: StateID;
-  assignees?: Assignee;
-  labels?: LabelChanges;
-  due_date?: DueDate;
-  total_time_spent?: TotalTimeSpend;
-  time_change?: TimeChange;
-  time_estimate?: TimeEstimate;
-}
-
-interface LabelChanges {
-  previous: Label[];
-  current: Label[];
-}
-
-interface Assignee {
-  previous: User[];
-  current: User[];
-}
-
-interface StateID {
-  previous: number;
-  current: number;
-}
-
-interface ClosedAt {
-  previous: string | null;
-  current: string;
-}
-
-interface AuthorID {
-  previous: null;
-  current: number;
-}
-
-interface CreatedAt {
-  previous: null;
-  current: string;
-}
-
-interface DueDate {
-  previous: string | null;
-  current: string | null;
-}
-
-interface TotalTimeSpend {
-  previous: number;
-  current: number;
-}
-
-interface TimeChange {
-  previous: number;
-  current: number;
-}
-
-interface TimeEstimate {
-  previous: number;
-  current: number;
 }
 
 interface ObjectAttributes {
@@ -138,28 +50,69 @@ interface ObjectAttributes {
   action: 'close' | 'update' | 'reopen';
 }
 
-interface Project {
-  id: number;
-  name: string;
-  description: null;
-  web_url: string;
-  avatar_url: null;
-  git_ssh_url: string;
-  git_http_url: string;
-  namespace: string;
-  visibility_level: number;
-  path_with_namespace: string;
-  default_branch: string;
-  ci_config_path: null;
-  homepage: string;
-  url: string;
-  ssh_url: string;
-  http_url: string;
-}
-
-interface Repository {
-  name: string;
-  url: string;
-  description: null | string;
-  homepage: string;
+interface Changes {
+  author_id?: {
+    previous: null;
+    current: number;
+  };
+  created_at?: {
+    previous: null;
+    current: string;
+  };
+  description?: {
+    previous: null;
+    current: string;
+  };
+  id?: {
+    previous: null;
+    current: number;
+  };
+  iid?: {
+    previous: null;
+    current: number;
+  };
+  project_id?: {
+    previous: null;
+    current: number;
+  };
+  title?: {
+    previous: null;
+    current: string;
+  };
+  updated_at?: {
+    previous: null;
+    current: string;
+  };
+  closed_at?: {
+    previous: string | null;
+    current: string;
+  };
+  state_id?: {
+    previous: number;
+    current: number;
+  };
+  assignees?: {
+    previous: User[];
+    current: User[];
+  };
+  labels?: {
+    previous: Label[];
+    current: Label[];
+  };
+  due_date?: {
+    previous: string | null;
+    current: string | null;
+  };
+  total_time_spent?: {
+    previous: number;
+    current: number;
+  };
+  time_change?: {
+    previous: number;
+    current: number;
+  };
+  time_estimate?: {
+    previous: number;
+    current: number;
+  };
 }

@@ -1,5 +1,5 @@
 import { DataForParsingChanges, DataParser, EventChanges, EventPayload, IssueChanges } from '../../types';
-import { GitLabIssueEvent, Label, User } from '../../types/gitlab/issue-event';
+import { GitLabIssueEvent, Label, User } from '../../types/gitlab';
 import { GitLabEventTypes, ObjectTypes, RemoteGitServices } from '../../constants/enums';
 
 type ChangesForIssue = EventChanges<ObjectTypes.ISSUE>;
