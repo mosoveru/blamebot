@@ -1,4 +1,5 @@
 import { IssueHookDataParser } from './issue-hook';
-import type { DataParserConstructor } from '../../types';
+import { DataParserConstructor } from '../types';
+import { MergeRequestHookDataParser } from './merge-request-hook';
 
-export const GitLabDataParsers: DataParserConstructor[] = [IssueHookDataParser];
+export const GitLabDataParsers: DataParserConstructor[] = [IssueHookDataParser, MergeRequestHookDataParser];

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { UserSubscription } from 'src/models/userSubscription.entity';
 import { EventPayload } from '../types';
 import { SubscriptionService } from './subscription.service';
-import { DataParsersRepository } from '../repositories/data-parsers.repository';
+import { DataParsersRepository } from '../data-parsers/data-parsers.repository';
 import { ObservableObjectService } from './observable-object.service';
 import { ProjectService } from './project.service';
 

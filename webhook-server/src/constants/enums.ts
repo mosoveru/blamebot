@@ -1,4 +1,4 @@
-export enum RemoteGitServices {
+export enum GitProviders {
   GITLAB = 'GITLAB',
   GITEA = 'GITEA',
 }
@@ -15,6 +15,7 @@ export enum EventHeaders {
 
 export enum GitLabEventTypes {
   ISSUE = 'Issue Hook',
+  MERGE_REQUEST = 'Merge Request Hook',
 }
 
 export enum ObjectTypes {

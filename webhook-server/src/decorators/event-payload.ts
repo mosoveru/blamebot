@@ -1,6 +1,6 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import type { NullableEventPayload } from '../types';
-import { EventHeaders, RemoteGitServices, SecretTokenHeaders } from '../constants/enums';
+import { EventHeaders, GitProviders, SecretTokenHeaders } from '../constants/enums';
 import { verify } from 'jsonwebtoken';
 
 export const Payload = createParamDecorator((data: unknown, ctx: ExecutionContext) => {
@@ -19,12 +19,12 @@ export const Payload = createParamDecorator((data: unknown, ctx: ExecutionContex
   };
 
   const eventHeaders = new Map([
-    [EventHeaders.GITLAB, RemoteGitServices.GITLAB],
-    [EventHeaders.GITEA, RemoteGitServices.GITEA],
+    [EventHeaders.GITLAB, GitProviders.GITLAB],
+    [EventHeaders.GITEA, GitProviders.GITEA],
   ]);
   const secretTokenHeaders = new Map([
-    [SecretTokenHeaders.GITLAB, RemoteGitServices.GITLAB],
-    [SecretTokenHeaders.GITEA, RemoteGitServices.GITEA],
+    [SecretTokenHeaders.GITLAB, GitProviders.GITLAB],
+    [SecretTokenHeaders.GITEA, GitProviders.GITEA],
   ]);
 
   for (const eventHeader of eventHeaders.keys()) {

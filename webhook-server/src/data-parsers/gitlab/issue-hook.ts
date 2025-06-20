@@ -1,6 +1,7 @@
 import { DataForParsingChanges, DataParser, EventChanges, EventPayload, IssueChanges } from '../../types';
 import { GitLabIssueEvent, Label, User } from '../../types/gitlab';
-import { GitLabEventTypes, ObjectTypes, RemoteGitServices } from '../../constants/enums';
+import { GitLabEventTypes, ObjectTypes, GitProviders } from '../../constants/enums';
+import { BinarySearcher } from '../types';
 
 type ChangesForIssue = EventChanges<ObjectTypes.ISSUE>;
 type PossibleChanges = 'title' | 'description' | 'assignees' | 'state_id' | 'due_date' | 'labels';
@@ -8,7 +9,7 @@ type ChangesParser = () => void;
 
 export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
   readonly eventType = GitLabEventTypes.ISSUE;
-  readonly gitProvider = RemoteGitServices.GITLAB;
+  readonly gitProvider = GitProviders.GITLAB;
   readonly objectType = ObjectTypes.ISSUE as const;
   private readonly eventChangesParsers: Record<PossibleChanges, ChangesParser> = {
     due_date: this.parseChangesForDueDate.bind(this),
@@ -20,6 +21,10 @@ export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
   };
   private _issueChanges: IssueChanges | null;
   private _eventPayload: GitLabIssueEvent | null;
+
+  constructor(searcher: BinarySearcher) {
+    this.performBinarySearchInLists = searcher;
+  }
 
   parseProjectInfo(eventPayload: EventPayload<GitLabIssueEvent>) {
     return {
@@ -240,7 +245,7 @@ export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
     const changes = this.issueChanges;
     const currentAssignees = [...eventPayload.changes.assignees!.current];
     const previousAssignees = [...eventPayload.changes.assignees!.previous];
-    const parsedChanges = this.performBinarySearchInLists(currentAssignees, previousAssignees);
+    const parsedChanges = this.performBinarySearchInLists<User>(currentAssignees, previousAssignees);
     const reduceAssignees = (assignee: User) => ({
       id: String(assignee.id),
       name: assignee.name,
@@ -256,7 +261,7 @@ export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
     const changes = this.issueChanges;
     const currentLabels = [...eventPayload.changes.labels!.current];
     const previousLabels = [...eventPayload.changes.labels!.previous];
-    const parsedChanges = this.performBinarySearchInLists(currentLabels, previousLabels);
+    const parsedChanges = this.performBinarySearchInLists<Label>(currentLabels, previousLabels);
     const reduceLabels = (label: Label) => label.title;
     changes.isLabelsChanged = {
       added: parsedChanges.added?.map(reduceLabels),
@@ -264,51 +269,7 @@ export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
     };
   }
 
-  private performBinarySearchInLists<T extends Label | User>(currentUnsortedList: T[], previousList: T[]) {
-    const addedEntities: T[] = [...currentUnsortedList].sort((a, b) => a.id - b.id);
-    const deletedEntities: T[] = [];
-
-    while (previousList.length) {
-      const element = previousList.pop()!;
-
-      let left = 0;
-      let right = addedEntities.length - 1;
-      let isChanged = false;
-
-      while (left <= right) {
-        const mid = Math.floor((left + right) / 2);
-
-        if (addedEntities[mid].id === element.id) {
-          addedEntities.splice(mid, 1);
-          isChanged = true;
-          break;
-        }
-
-        if (addedEntities[mid].id < element.id) {
-          left = mid + 1;
-        } else {
-          right = mid - 1;
-        }
-      }
-      if (!isChanged) {
-        deletedEntities.push(element);
-      }
-    }
-    if (!deletedEntities.length) {
-      return {
-        added: addedEntities,
-      };
-    }
-    if (!addedEntities.length) {
-      return {
-        deleted: deletedEntities,
-      };
-    }
-    return {
-      added: addedEntities,
-      deleted: deletedEntities,
-    };
-  }
+  private readonly performBinarySearchInLists: BinarySearcher;
 
   private get eventPayload(): GitLabIssueEvent {
     if (this._eventPayload === null) {

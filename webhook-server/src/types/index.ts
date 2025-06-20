@@ -1,14 +1,14 @@
-import { GitLabEventTypes, ObjectTypes, RemoteGitServices } from '../constants/enums';
+import { GitLabEventTypes, ObjectTypes, GitProviders } from '../constants/enums';
 
 export type NullableEventPayload<T> = {
-  service: RemoteGitServices | null;
+  service: GitProviders | null;
   eventType: string | null;
   eventPayload: T | null;
   instanceId: string | null;
 };
 
 export type EventPayload<T> = {
-  service: RemoteGitServices;
+  service: GitProviders;
   eventType: string;
   eventPayload: T;
   instanceId: string;
@@ -53,9 +53,46 @@ export type IssueChanges = {
   };
 };
 
+export type RequestChanges = {
+  forAuthor?: boolean;
+  forAssignee?: boolean;
+  forReviewer?: boolean;
+  isNewAssignment?: boolean;
+  isUnassigned?: boolean;
+  isNewReviewer?: boolean;
+  isUnassignedReviewer?: boolean;
+  isAssigneesChanges?: {
+    added?: UserInfo[];
+    deleted?: UserInfo[];
+  };
+  isReviewerChanges?: {
+    added?: UserInfo[];
+    deleted?: UserInfo[];
+  };
+  isNewObject?: {
+    withAssignment?: boolean;
+    withReviewer?: boolean;
+  };
+  isTitleChanged?: boolean;
+  isDescriptionChanged?: boolean;
+  isLabelsChanged?: {
+    added?: string[];
+    deleted?: string[];
+  };
+  isClosed?: boolean;
+  isReopened?: boolean;
+  isMerged?: boolean;
+  isApproved?: {
+    by: string;
+  };
+  isUnapproved?: {
+    by: string;
+  };
+};
+
 export type ChangesMap = {
   [ObjectTypes.ISSUE]: IssueChanges;
-  [ObjectTypes.REQUEST]: 'not-implemented';
+  [ObjectTypes.REQUEST]: RequestChanges;
 };
 
 type ObjectTypeValues = (typeof ObjectTypes)[keyof typeof ObjectTypes];
@@ -106,17 +143,13 @@ export type SubscriptionInfo = Omit<ObservableObjectEntity, 'objectUrl'> & {
 
 export interface DataParser<T> {
   readonly eventType: GitLabEventTypes;
-  readonly gitProvider: RemoteGitServices;
+  readonly gitProvider: GitProviders;
   readonly objectType: ObjectTypes;
   parseObservableObjectInfo(eventPayload: EventPayload<T>): ObservableObjectEntity;
   parseProjectInfo(eventPayload: EventPayload<T>): ProjectEntity;
   parseEventMembersIds(eventPayload: EventPayload<T>): number[];
   parseEventInitiatorId(eventPayload: EventPayload<T>): string;
   parseEventChanges(data: DataForParsingChanges<T>): EventChanges<ObjectTypeValues>[];
-}
-
-export interface DataParserConstructor {
-  new (): DataParser<any>;
 }
 
 export interface MessageComposer {

@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
-import { DataParsersRepository } from '../repositories/data-parsers.repository';
+import { DataParsersRepository } from '../data-parsers/data-parsers.repository';
 import { DataParsers } from '../data-parsers';
 import { ChangesAnalyserService } from '../services/changes-analyser.service';
+import { performBinarySearchInLists } from '../utils';
 
 @Module({
   providers: [
@@ -10,7 +11,7 @@ import { ChangesAnalyserService } from '../services/changes-analyser.service';
       useFactory: () => {
         const repository = new DataParsersRepository();
         for (const parsers of DataParsers) {
-          repository.registerDataParsers(parsers);
+          repository.registerDataParsers(parsers, performBinarySearchInLists);
         }
         return repository;
       },

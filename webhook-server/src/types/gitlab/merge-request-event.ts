@@ -137,6 +137,10 @@ export interface Changes {
     previous: boolean;
     current: boolean;
   };
+  labels?: {
+    previous: Label[];
+    current: Label[];
+  };
 }
 
 export interface CommitAuthor {

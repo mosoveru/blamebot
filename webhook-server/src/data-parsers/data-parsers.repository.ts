@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { DataParser, DataParserConstructor } from '../types';
-import { RemoteGitServices } from '../constants/enums';
+import { DataParser } from '../types';
+import { GitProviders } from '../constants/enums';
+import { BinarySearcher, DataParserConstructor } from './types';
 
 @Injectable()
 export class DataParsersRepository {
   private readonly store: Map<string, DataParser<any>> = new Map();
 
-  registerDataParsers(dataParsers: DataParserConstructor[]) {
+  registerDataParsers(dataParsers: DataParserConstructor[], searcher: BinarySearcher) {
     for (const DataParser of dataParsers) {
-      const instantiatedDataParser = new DataParser();
+      const instantiatedDataParser = new DataParser(searcher);
       this.store.set(
         `${instantiatedDataParser.gitProvider}:${instantiatedDataParser.eventType}`,
         instantiatedDataParser,
@@ -16,7 +17,7 @@ export class DataParsersRepository {
     }
   }
 
-  getDataParser(gitProvider: RemoteGitServices, eventType: string) {
+  getDataParser(gitProvider: GitProviders, eventType: string) {
     return this.store.get(`${gitProvider}:${eventType}`);
   }
 }
