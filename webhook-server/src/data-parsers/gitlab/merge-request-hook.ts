@@ -246,7 +246,10 @@ export class MergeRequestHookDataParser implements DataParser<GitLabMergeRequest
       changes.isReopened = true;
     }
     if (eventPayload.object_attributes.action === 'merge') {
-      changes.isMerged = true;
+      changes.isMerged = {
+        source_branch: eventPayload.object_attributes.source_branch,
+        target_branch: eventPayload.object_attributes.target_branch,
+      };
     }
   }
 

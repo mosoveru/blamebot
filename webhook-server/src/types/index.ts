@@ -81,7 +81,10 @@ export type RequestChanges = {
   };
   isClosed?: boolean;
   isReopened?: boolean;
-  isMerged?: boolean;
+  isMerged?: {
+    source_branch: string;
+    target_branch: string;
+  };
   isApproved?: {
     by: string;
   };
