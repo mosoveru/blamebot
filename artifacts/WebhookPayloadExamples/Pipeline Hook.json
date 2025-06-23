@@ -1,0 +1,1193 @@
+[
+  {
+    "service": "GITLAB",
+    "eventType": "Pipeline Hook",
+    "eventPayload": {
+      "object_kind": "pipeline",
+      "object_attributes": {
+        "id": 7,
+        "iid": 7,
+        "name": null,
+        "ref": "test",
+        "tag": false,
+        "sha": "022163cf4fabe9ce597fa53cad5dbd7d317c3c2a",
+        "before_sha": "0000000000000000000000000000000000000000",
+        "source": "merge_request_event",
+        "status": "pending",
+        "detailed_status": "pending",
+        "stages": [
+          "check"
+        ],
+        "created_at": "2025-06-23 06:12:25 UTC",
+        "finished_at": null,
+        "duration": null,
+        "queued_duration": null,
+        "variables": [],
+        "url": "http://127.0.0.1:8929/mosoveru/blamebot-tests/-/pipelines/7"
+      },
+      "merge_request": {
+        "id": 4,
+        "iid": 4,
+        "title": "Pipelines",
+        "source_branch": "test",
+        "source_project_id": 1,
+        "target_branch": "main",
+        "target_project_id": 1,
+        "state": "opened",
+        "merge_status": "can_be_merged",
+        "detailed_merge_status": "mergeable",
+        "url": "http://127.0.0.1:8929/mosoveru/blamebot-tests/-/merge_requests/4"
+      },
+      "user": {
+        "id": 2,
+        "name": "Sergey Mosienko",
+        "username": "mosoveru",
+        "avatar_url": "https://www.gravatar.com/avatar/b569d7d68d81fc486e7948b4fd432db7744c930d80e82630a3e85ff0eddb0034?s=80&d=identicon",
+        "email": "[REDACTED]"
+      },
+      "project": {
+        "id": 1,
+        "name": "Blamebot Tests",
+        "description": null,
+        "web_url": "http://127.0.0.1:8929/mosoveru/blamebot-tests",
+        "avatar_url": null,
+        "git_ssh_url": "ssh://git@127.0.0.1:2424/mosoveru/blamebot-tests.git",
+        "git_http_url": "http://127.0.0.1:8929/mosoveru/blamebot-tests.git",
+        "namespace": "Sergey Mosienko",
+        "visibility_level": 20,
+        "path_with_namespace": "mosoveru/blamebot-tests",
+        "default_branch": "main",
+        "ci_config_path": null
+      },
+      "commit": {
+        "id": "022163cf4fabe9ce597fa53cad5dbd7d317c3c2a",
+        "message": "test\n",
+        "title": "test",
+        "timestamp": "2025-06-23T09:11:39+03:00",
+        "url": "http://127.0.0.1:8929/mosoveru/blamebot-tests/-/commit/022163cf4fabe9ce597fa53cad5dbd7d317c3c2a",
+        "author": {
+          "name": "Mosoveru",
+          "email": "mosoveru@gmail.com"
+        }
+      },
+      "builds": [
+        {
+          "id": 7,
+          "stage": "check",
+          "name": "check_commit",
+          "status": "pending",
+          "created_at": "2025-06-23 06:12:25 UTC",
+          "started_at": null,
+          "finished_at": null,
+          "duration": null,
+          "queued_duration": 0.614031571,
+          "failure_reason": null,
+          "when": "always",
+          "manual": false,
+          "allow_failure": false,
+          "user": {
+            "id": 2,
+            "name": "Sergey Mosienko",
+            "username": "mosoveru",
+            "avatar_url": "https://www.gravatar.com/avatar/b569d7d68d81fc486e7948b4fd432db7744c930d80e82630a3e85ff0eddb0034?s=80&d=identicon",
+            "email": "[REDACTED]"
+          },
+          "runner": null,
+          "artifacts_file": {
+            "filename": null,
+            "size": null
+          },
+          "environment": null
+        }
+      ]
+    },
+    "instanceId": "54e97f63-df7f-4157-973e-df10785f3062"
+  },
+  {
+    "service": "GITLAB",
+    "eventType": "Pipeline Hook",
+    "eventPayload": {
+      "object_kind": "pipeline",
+      "object_attributes": {
+        "id": 7,
+        "iid": 7,
+        "name": null,
+        "ref": "test",
+        "tag": false,
+        "sha": "022163cf4fabe9ce597fa53cad5dbd7d317c3c2a",
+        "before_sha": "0000000000000000000000000000000000000000",
+        "source": "merge_request_event",
+        "status": "running",
+        "detailed_status": "running",
+        "stages": [
+          "check"
+        ],
+        "created_at": "2025-06-23 06:12:25 UTC",
+        "finished_at": null,
+        "duration": null,
+        "queued_duration": 2,
+        "variables": [],
+        "url": "http://127.0.0.1:8929/mosoveru/blamebot-tests/-/pipelines/7"
+      },
+      "merge_request": {
+        "id": 4,
+        "iid": 4,
+        "title": "Pipelines",
+        "source_branch": "test",
+        "source_project_id": 1,
+        "target_branch": "main",
+        "target_project_id": 1,
+        "state": "opened",
+        "merge_status": "can_be_merged",
+        "detailed_merge_status": "mergeable",
+        "url": "http://127.0.0.1:8929/mosoveru/blamebot-tests/-/merge_requests/4"
+      },
+      "user": {
+        "id": 2,
+        "name": "Sergey Mosienko",
+        "username": "mosoveru",
+        "avatar_url": "https://www.gravatar.com/avatar/b569d7d68d81fc486e7948b4fd432db7744c930d80e82630a3e85ff0eddb0034?s=80&d=identicon",
+        "email": "[REDACTED]"
+      },
+      "project": {
+        "id": 1,
+        "name": "Blamebot Tests",
+        "description": null,
+        "web_url": "http://127.0.0.1:8929/mosoveru/blamebot-tests",
+        "avatar_url": null,
+        "git_ssh_url": "ssh://git@127.0.0.1:2424/mosoveru/blamebot-tests.git",
+        "git_http_url": "http://127.0.0.1:8929/mosoveru/blamebot-tests.git",
+        "namespace": "Sergey Mosienko",
+        "visibility_level": 20,
+        "path_with_namespace": "mosoveru/blamebot-tests",
+        "default_branch": "main",
+        "ci_config_path": null
+      },
+      "commit": {
+        "id": "022163cf4fabe9ce597fa53cad5dbd7d317c3c2a",
+        "message": "test\n",
+        "title": "test",
+        "timestamp": "2025-06-23T09:11:39+03:00",
+        "url": "http://127.0.0.1:8929/mosoveru/blamebot-tests/-/commit/022163cf4fabe9ce597fa53cad5dbd7d317c3c2a",
+        "author": {
+          "name": "Mosoveru",
+          "email": "mosoveru@gmail.com"
+        }
+      },
+      "builds": [
+        {
+          "id": 7,
+          "stage": "check",
+          "name": "check_commit",
+          "status": "running",
+          "created_at": "2025-06-23 06:12:25 UTC",
+          "started_at": "2025-06-23 06:12:27 UTC",
+          "finished_at": null,
+          "duration": 0.294322446,
+          "queued_duration": 1.22846,
+          "failure_reason": null,
+          "when": "always",
+          "manual": false,
+          "allow_failure": false,
+          "user": {
+            "id": 2,
+            "name": "Sergey Mosienko",
+            "username": "mosoveru",
+            "avatar_url": "https://www.gravatar.com/avatar/b569d7d68d81fc486e7948b4fd432db7744c930d80e82630a3e85ff0eddb0034?s=80&d=identicon",
+            "email": "[REDACTED]"
+          },
+          "runner": {
+            "id": 1,
+            "description": "Local GitLab runner",
+            "runner_type": "instance_type",
+            "active": true,
+            "is_shared": true,
+            "tags": [
+              "worker"
+            ]
+          },
+          "artifacts_file": {
+            "filename": null,
+            "size": null
+          },
+          "environment": null
+        }
+      ]
+    },
+    "instanceId": "54e97f63-df7f-4157-973e-df10785f3062"
+  },
+  {
+    "service": "GITLAB",
+    "eventType": "Pipeline Hook",
+    "eventPayload": {
+      "object_kind": "pipeline",
+      "object_attributes": {
+        "id": 7,
+        "iid": 7,
+        "name": null,
+        "ref": "test",
+        "tag": false,
+        "sha": "022163cf4fabe9ce597fa53cad5dbd7d317c3c2a",
+        "before_sha": "0000000000000000000000000000000000000000",
+        "source": "merge_request_event",
+        "status": "success",
+        "detailed_status": "passed",
+        "stages": [
+          "check"
+        ],
+        "created_at": "2025-06-23 06:12:25 UTC",
+        "finished_at": "2025-06-23 06:12:45 UTC",
+        "duration": 17,
+        "queued_duration": 2,
+        "variables": [],
+        "url": "http://127.0.0.1:8929/mosoveru/blamebot-tests/-/pipelines/7"
+      },
+      "merge_request": {
+        "id": 4,
+        "iid": 4,
+        "title": "Pipelines",
+        "source_branch": "test",
+        "source_project_id": 1,
+        "target_branch": "main",
+        "target_project_id": 1,
+        "state": "opened",
+        "merge_status": "can_be_merged",
+        "detailed_merge_status": "mergeable",
+        "url": "http://127.0.0.1:8929/mosoveru/blamebot-tests/-/merge_requests/4"
+      },
+      "user": {
+        "id": 2,
+        "name": "Sergey Mosienko",
+        "username": "mosoveru",
+        "avatar_url": "https://www.gravatar.com/avatar/b569d7d68d81fc486e7948b4fd432db7744c930d80e82630a3e85ff0eddb0034?s=80&d=identicon",
+        "email": "[REDACTED]"
+      },
+      "project": {
+        "id": 1,
+        "name": "Blamebot Tests",
+        "description": null,
+        "web_url": "http://127.0.0.1:8929/mosoveru/blamebot-tests",
+        "avatar_url": null,
+        "git_ssh_url": "ssh://git@127.0.0.1:2424/mosoveru/blamebot-tests.git",
+        "git_http_url": "http://127.0.0.1:8929/mosoveru/blamebot-tests.git",
+        "namespace": "Sergey Mosienko",
+        "visibility_level": 20,
+        "path_with_namespace": "mosoveru/blamebot-tests",
+        "default_branch": "main",
+        "ci_config_path": null
+      },
+      "commit": {
+        "id": "022163cf4fabe9ce597fa53cad5dbd7d317c3c2a",
+        "message": "test\n",
+        "title": "test",
+        "timestamp": "2025-06-23T09:11:39+03:00",
+        "url": "http://127.0.0.1:8929/mosoveru/blamebot-tests/-/commit/022163cf4fabe9ce597fa53cad5dbd7d317c3c2a",
+        "author": {
+          "name": "Mosoveru",
+          "email": "mosoveru@gmail.com"
+        }
+      },
+      "builds": [
+        {
+          "id": 7,
+          "stage": "check",
+          "name": "check_commit",
+          "status": "success",
+          "created_at": "2025-06-23 06:12:25 UTC",
+          "started_at": "2025-06-23 06:12:27 UTC",
+          "finished_at": "2025-06-23 06:12:45 UTC",
+          "duration": 17.281351,
+          "queued_duration": 1.22846,
+          "failure_reason": null,
+          "when": "always",
+          "manual": false,
+          "allow_failure": false,
+          "user": {
+            "id": 2,
+            "name": "Sergey Mosienko",
+            "username": "mosoveru",
+            "avatar_url": "https://www.gravatar.com/avatar/b569d7d68d81fc486e7948b4fd432db7744c930d80e82630a3e85ff0eddb0034?s=80&d=identicon",
+            "email": "[REDACTED]"
+          },
+          "runner": {
+            "id": 1,
+            "description": "Local GitLab runner",
+            "runner_type": "instance_type",
+            "active": true,
+            "is_shared": true,
+            "tags": [
+              "worker"
+            ]
+          },
+          "artifacts_file": {
+            "filename": null,
+            "size": null
+          },
+          "environment": null
+        }
+      ]
+    },
+    "instanceId": "54e97f63-df7f-4157-973e-df10785f3062"
+  },
+  {
+    "service": "GITLAB",
+    "eventType": "Pipeline Hook",
+    "eventPayload": {
+      "object_kind": "pipeline",
+      "object_attributes": {
+        "id": 8,
+        "iid": 8,
+        "name": null,
+        "ref": "test",
+        "tag": false,
+        "sha": "da0a2b15af36b1760c1e6a631ce5b3b68c0a7dcb",
+        "before_sha": "0000000000000000000000000000000000000000",
+        "source": "merge_request_event",
+        "status": "pending",
+        "detailed_status": "pending",
+        "stages": [
+          "check",
+          "another_check"
+        ],
+        "created_at": "2025-06-23 06:37:31 UTC",
+        "finished_at": null,
+        "duration": null,
+        "queued_duration": null,
+        "variables": [],
+        "url": "http://127.0.0.1:8929/mosoveru/blamebot-tests/-/pipelines/8"
+      },
+      "merge_request": {
+        "id": 4,
+        "iid": 4,
+        "title": "Pipelines",
+        "source_branch": "test",
+        "source_project_id": 1,
+        "target_branch": "main",
+        "target_project_id": 1,
+        "state": "opened",
+        "merge_status": "unchecked",
+        "detailed_merge_status": "unchecked",
+        "url": "http://127.0.0.1:8929/mosoveru/blamebot-tests/-/merge_requests/4"
+      },
+      "user": {
+        "id": 2,
+        "name": "Sergey Mosienko",
+        "username": "mosoveru",
+        "avatar_url": "https://www.gravatar.com/avatar/b569d7d68d81fc486e7948b4fd432db7744c930d80e82630a3e85ff0eddb0034?s=80&d=identicon",
+        "email": "[REDACTED]"
+      },
+      "project": {
+        "id": 1,
+        "name": "Blamebot Tests",
+        "description": null,
+        "web_url": "http://127.0.0.1:8929/mosoveru/blamebot-tests",
+        "avatar_url": null,
+        "git_ssh_url": "ssh://git@127.0.0.1:2424/mosoveru/blamebot-tests.git",
+        "git_http_url": "http://127.0.0.1:8929/mosoveru/blamebot-tests.git",
+        "namespace": "Sergey Mosienko",
+        "visibility_level": 20,
+        "path_with_namespace": "mosoveru/blamebot-tests",
+        "default_branch": "main",
+        "ci_config_path": null
+      },
+      "commit": {
+        "id": "da0a2b15af36b1760c1e6a631ce5b3b68c0a7dcb",
+        "message": "test\n",
+        "title": "test",
+        "timestamp": "2025-06-23T09:37:23+03:00",
+        "url": "http://127.0.0.1:8929/mosoveru/blamebot-tests/-/commit/da0a2b15af36b1760c1e6a631ce5b3b68c0a7dcb",
+        "author": {
+          "name": "Mosoveru",
+          "email": "mosoveru@gmail.com"
+        }
+      },
+      "builds": [
+        {
+          "id": 9,
+          "stage": "another_check",
+          "name": "check_commit_2",
+          "status": "created",
+          "created_at": "2025-06-23 06:37:31 UTC",
+          "started_at": null,
+          "finished_at": null,
+          "duration": null,
+          "queued_duration": null,
+          "failure_reason": null,
+          "when": "always",
+          "manual": false,
+          "allow_failure": false,
+          "user": {
+            "id": 2,
+            "name": "Sergey Mosienko",
+            "username": "mosoveru",
+            "avatar_url": "https://www.gravatar.com/avatar/b569d7d68d81fc486e7948b4fd432db7744c930d80e82630a3e85ff0eddb0034?s=80&d=identicon",
+            "email": "[REDACTED]"
+          },
+          "runner": null,
+          "artifacts_file": {
+            "filename": null,
+            "size": null
+          },
+          "environment": null
+        },
+        {
+          "id": 8,
+          "stage": "check",
+          "name": "check_commit",
+          "status": "pending",
+          "created_at": "2025-06-23 06:37:31 UTC",
+          "started_at": null,
+          "finished_at": null,
+          "duration": null,
+          "queued_duration": 0.202859184,
+          "failure_reason": null,
+          "when": "always",
+          "manual": false,
+          "allow_failure": false,
+          "user": {
+            "id": 2,
+            "name": "Sergey Mosienko",
+            "username": "mosoveru",
+            "avatar_url": "https://www.gravatar.com/avatar/b569d7d68d81fc486e7948b4fd432db7744c930d80e82630a3e85ff0eddb0034?s=80&d=identicon",
+            "email": "[REDACTED]"
+          },
+          "runner": null,
+          "artifacts_file": {
+            "filename": null,
+            "size": null
+          },
+          "environment": null
+        }
+      ]
+    },
+    "instanceId": "54e97f63-df7f-4157-973e-df10785f3062"
+  },
+  {
+    "service": "GITLAB",
+    "eventType": "Pipeline Hook",
+    "eventPayload": {
+      "object_kind": "pipeline",
+      "object_attributes": {
+        "id": 8,
+        "iid": 8,
+        "name": null,
+        "ref": "test",
+        "tag": false,
+        "sha": "da0a2b15af36b1760c1e6a631ce5b3b68c0a7dcb",
+        "before_sha": "0000000000000000000000000000000000000000",
+        "source": "merge_request_event",
+        "status": "running",
+        "detailed_status": "running",
+        "stages": [
+          "check",
+          "another_check"
+        ],
+        "created_at": "2025-06-23 06:37:31 UTC",
+        "finished_at": null,
+        "duration": null,
+        "queued_duration": 2,
+        "variables": [],
+        "url": "http://127.0.0.1:8929/mosoveru/blamebot-tests/-/pipelines/8"
+      },
+      "merge_request": {
+        "id": 4,
+        "iid": 4,
+        "title": "Pipelines",
+        "source_branch": "test",
+        "source_project_id": 1,
+        "target_branch": "main",
+        "target_project_id": 1,
+        "state": "opened",
+        "merge_status": "unchecked",
+        "detailed_merge_status": "unchecked",
+        "url": "http://127.0.0.1:8929/mosoveru/blamebot-tests/-/merge_requests/4"
+      },
+      "user": {
+        "id": 2,
+        "name": "Sergey Mosienko",
+        "username": "mosoveru",
+        "avatar_url": "https://www.gravatar.com/avatar/b569d7d68d81fc486e7948b4fd432db7744c930d80e82630a3e85ff0eddb0034?s=80&d=identicon",
+        "email": "[REDACTED]"
+      },
+      "project": {
+        "id": 1,
+        "name": "Blamebot Tests",
+        "description": null,
+        "web_url": "http://127.0.0.1:8929/mosoveru/blamebot-tests",
+        "avatar_url": null,
+        "git_ssh_url": "ssh://git@127.0.0.1:2424/mosoveru/blamebot-tests.git",
+        "git_http_url": "http://127.0.0.1:8929/mosoveru/blamebot-tests.git",
+        "namespace": "Sergey Mosienko",
+        "visibility_level": 20,
+        "path_with_namespace": "mosoveru/blamebot-tests",
+        "default_branch": "main",
+        "ci_config_path": null
+      },
+      "commit": {
+        "id": "da0a2b15af36b1760c1e6a631ce5b3b68c0a7dcb",
+        "message": "test\n",
+        "title": "test",
+        "timestamp": "2025-06-23T09:37:23+03:00",
+        "url": "http://127.0.0.1:8929/mosoveru/blamebot-tests/-/commit/da0a2b15af36b1760c1e6a631ce5b3b68c0a7dcb",
+        "author": {
+          "name": "Mosoveru",
+          "email": "mosoveru@gmail.com"
+        }
+      },
+      "builds": [
+        {
+          "id": 9,
+          "stage": "another_check",
+          "name": "check_commit_2",
+          "status": "created",
+          "created_at": "2025-06-23 06:37:31 UTC",
+          "started_at": null,
+          "finished_at": null,
+          "duration": null,
+          "queued_duration": null,
+          "failure_reason": null,
+          "when": "always",
+          "manual": false,
+          "allow_failure": false,
+          "user": {
+            "id": 2,
+            "name": "Sergey Mosienko",
+            "username": "mosoveru",
+            "avatar_url": "https://www.gravatar.com/avatar/b569d7d68d81fc486e7948b4fd432db7744c930d80e82630a3e85ff0eddb0034?s=80&d=identicon",
+            "email": "[REDACTED]"
+          },
+          "runner": null,
+          "artifacts_file": {
+            "filename": null,
+            "size": null
+          },
+          "environment": null
+        },
+        {
+          "id": 8,
+          "stage": "check",
+          "name": "check_commit",
+          "status": "running",
+          "created_at": "2025-06-23 06:37:31 UTC",
+          "started_at": "2025-06-23 06:37:34 UTC",
+          "finished_at": null,
+          "duration": 0.186716644,
+          "queued_duration": 2.440179,
+          "failure_reason": null,
+          "when": "always",
+          "manual": false,
+          "allow_failure": false,
+          "user": {
+            "id": 2,
+            "name": "Sergey Mosienko",
+            "username": "mosoveru",
+            "avatar_url": "https://www.gravatar.com/avatar/b569d7d68d81fc486e7948b4fd432db7744c930d80e82630a3e85ff0eddb0034?s=80&d=identicon",
+            "email": "[REDACTED]"
+          },
+          "runner": {
+            "id": 1,
+            "description": "Local GitLab runner",
+            "runner_type": "instance_type",
+            "active": true,
+            "is_shared": true,
+            "tags": [
+              "worker"
+            ]
+          },
+          "artifacts_file": {
+            "filename": null,
+            "size": null
+          },
+          "environment": null
+        }
+      ]
+    },
+    "instanceId": "54e97f63-df7f-4157-973e-df10785f3062"
+  },
+  {
+    "service": "GITLAB",
+    "eventType": "Pipeline Hook",
+    "eventPayload": {
+      "object_kind": "pipeline",
+      "object_attributes": {
+        "id": 8,
+        "iid": 8,
+        "name": null,
+        "ref": "test",
+        "tag": false,
+        "sha": "da0a2b15af36b1760c1e6a631ce5b3b68c0a7dcb",
+        "before_sha": "0000000000000000000000000000000000000000",
+        "source": "merge_request_event",
+        "status": "success",
+        "detailed_status": "passed",
+        "stages": [
+          "check",
+          "another_check"
+        ],
+        "created_at": "2025-06-23 06:37:31 UTC",
+        "finished_at": "2025-06-23 06:38:09 UTC",
+        "duration": 32,
+        "queued_duration": 2,
+        "variables": [],
+        "url": "http://127.0.0.1:8929/mosoveru/blamebot-tests/-/pipelines/8"
+      },
+      "merge_request": {
+        "id": 4,
+        "iid": 4,
+        "title": "Pipelines",
+        "source_branch": "test",
+        "source_project_id": 1,
+        "target_branch": "main",
+        "target_project_id": 1,
+        "state": "opened",
+        "merge_status": "unchecked",
+        "detailed_merge_status": "unchecked",
+        "url": "http://127.0.0.1:8929/mosoveru/blamebot-tests/-/merge_requests/4"
+      },
+      "user": {
+        "id": 2,
+        "name": "Sergey Mosienko",
+        "username": "mosoveru",
+        "avatar_url": "https://www.gravatar.com/avatar/b569d7d68d81fc486e7948b4fd432db7744c930d80e82630a3e85ff0eddb0034?s=80&d=identicon",
+        "email": "[REDACTED]"
+      },
+      "project": {
+        "id": 1,
+        "name": "Blamebot Tests",
+        "description": null,
+        "web_url": "http://127.0.0.1:8929/mosoveru/blamebot-tests",
+        "avatar_url": null,
+        "git_ssh_url": "ssh://git@127.0.0.1:2424/mosoveru/blamebot-tests.git",
+        "git_http_url": "http://127.0.0.1:8929/mosoveru/blamebot-tests.git",
+        "namespace": "Sergey Mosienko",
+        "visibility_level": 20,
+        "path_with_namespace": "mosoveru/blamebot-tests",
+        "default_branch": "main",
+        "ci_config_path": null
+      },
+      "commit": {
+        "id": "da0a2b15af36b1760c1e6a631ce5b3b68c0a7dcb",
+        "message": "test\n",
+        "title": "test",
+        "timestamp": "2025-06-23T09:37:23+03:00",
+        "url": "http://127.0.0.1:8929/mosoveru/blamebot-tests/-/commit/da0a2b15af36b1760c1e6a631ce5b3b68c0a7dcb",
+        "author": {
+          "name": "Mosoveru",
+          "email": "mosoveru@gmail.com"
+        }
+      },
+      "builds": [
+        {
+          "id": 8,
+          "stage": "check",
+          "name": "check_commit",
+          "status": "success",
+          "created_at": "2025-06-23 06:37:31 UTC",
+          "started_at": "2025-06-23 06:37:34 UTC",
+          "finished_at": "2025-06-23 06:37:50 UTC",
+          "duration": 16.096561,
+          "queued_duration": 2.440179,
+          "failure_reason": null,
+          "when": "always",
+          "manual": false,
+          "allow_failure": false,
+          "user": {
+            "id": 2,
+            "name": "Sergey Mosienko",
+            "username": "mosoveru",
+            "avatar_url": "https://www.gravatar.com/avatar/b569d7d68d81fc486e7948b4fd432db7744c930d80e82630a3e85ff0eddb0034?s=80&d=identicon",
+            "email": "[REDACTED]"
+          },
+          "runner": {
+            "id": 1,
+            "description": "Local GitLab runner",
+            "runner_type": "instance_type",
+            "active": true,
+            "is_shared": true,
+            "tags": [
+              "worker"
+            ]
+          },
+          "artifacts_file": {
+            "filename": null,
+            "size": null
+          },
+          "environment": null
+        },
+        {
+          "id": 9,
+          "stage": "another_check",
+          "name": "check_commit_2",
+          "status": "success",
+          "created_at": "2025-06-23 06:37:31 UTC",
+          "started_at": "2025-06-23 06:37:53 UTC",
+          "finished_at": "2025-06-23 06:38:09 UTC",
+          "duration": 16.075538,
+          "queued_duration": 3.036451,
+          "failure_reason": null,
+          "when": "always",
+          "manual": false,
+          "allow_failure": false,
+          "user": {
+            "id": 2,
+            "name": "Sergey Mosienko",
+            "username": "mosoveru",
+            "avatar_url": "https://www.gravatar.com/avatar/b569d7d68d81fc486e7948b4fd432db7744c930d80e82630a3e85ff0eddb0034?s=80&d=identicon",
+            "email": "[REDACTED]"
+          },
+          "runner": {
+            "id": 1,
+            "description": "Local GitLab runner",
+            "runner_type": "instance_type",
+            "active": true,
+            "is_shared": true,
+            "tags": [
+              "worker"
+            ]
+          },
+          "artifacts_file": {
+            "filename": null,
+            "size": null
+          },
+          "environment": null
+        }
+      ]
+    },
+    "instanceId": "54e97f63-df7f-4157-973e-df10785f3062"
+  },
+  {
+    "service": "GITLAB",
+    "eventType": "Pipeline Hook",
+    "eventPayload": {
+      "object_kind": "pipeline",
+      "object_attributes": {
+        "id": 10,
+        "iid": 10,
+        "name": null,
+        "ref": "test",
+        "tag": false,
+        "sha": "886c1f86d1dd0a54f4ac6fc2c8761bd53d7cc507",
+        "before_sha": "0000000000000000000000000000000000000000",
+        "source": "merge_request_event",
+        "status": "pending",
+        "detailed_status": "pending",
+        "stages": [
+          "check",
+          "another_check"
+        ],
+        "created_at": "2025-06-23 06:58:03 UTC",
+        "finished_at": null,
+        "duration": null,
+        "queued_duration": null,
+        "variables": [],
+        "url": "http://127.0.0.1:8929/mosoveru/blamebot-tests/-/pipelines/10"
+      },
+      "merge_request": {
+        "id": 4,
+        "iid": 4,
+        "title": "Pipelines",
+        "source_branch": "test",
+        "source_project_id": 1,
+        "target_branch": "main",
+        "target_project_id": 1,
+        "state": "opened",
+        "merge_status": "can_be_merged",
+        "detailed_merge_status": "mergeable",
+        "url": "http://127.0.0.1:8929/mosoveru/blamebot-tests/-/merge_requests/4"
+      },
+      "user": {
+        "id": 2,
+        "name": "Sergey Mosienko",
+        "username": "mosoveru",
+        "avatar_url": "https://www.gravatar.com/avatar/b569d7d68d81fc486e7948b4fd432db7744c930d80e82630a3e85ff0eddb0034?s=80&d=identicon",
+        "email": "[REDACTED]"
+      },
+      "project": {
+        "id": 1,
+        "name": "Blamebot Tests",
+        "description": null,
+        "web_url": "http://127.0.0.1:8929/mosoveru/blamebot-tests",
+        "avatar_url": null,
+        "git_ssh_url": "ssh://git@127.0.0.1:2424/mosoveru/blamebot-tests.git",
+        "git_http_url": "http://127.0.0.1:8929/mosoveru/blamebot-tests.git",
+        "namespace": "Sergey Mosienko",
+        "visibility_level": 20,
+        "path_with_namespace": "mosoveru/blamebot-tests",
+        "default_branch": "main",
+        "ci_config_path": null
+      },
+      "commit": {
+        "id": "886c1f86d1dd0a54f4ac6fc2c8761bd53d7cc507",
+        "message": "fail\n",
+        "title": "fail",
+        "timestamp": "2025-06-23T09:57:49+03:00",
+        "url": "http://127.0.0.1:8929/mosoveru/blamebot-tests/-/commit/886c1f86d1dd0a54f4ac6fc2c8761bd53d7cc507",
+        "author": {
+          "name": "Mosoveru",
+          "email": "mosoveru@gmail.com"
+        }
+      },
+      "builds": [
+        {
+          "id": 14,
+          "stage": "another_check",
+          "name": "check_commit_2",
+          "status": "created",
+          "created_at": "2025-06-23 06:58:03 UTC",
+          "started_at": null,
+          "finished_at": null,
+          "duration": null,
+          "queued_duration": null,
+          "failure_reason": null,
+          "when": "always",
+          "manual": false,
+          "allow_failure": false,
+          "user": {
+            "id": 2,
+            "name": "Sergey Mosienko",
+            "username": "mosoveru",
+            "avatar_url": "https://www.gravatar.com/avatar/b569d7d68d81fc486e7948b4fd432db7744c930d80e82630a3e85ff0eddb0034?s=80&d=identicon",
+            "email": "[REDACTED]"
+          },
+          "runner": null,
+          "artifacts_file": {
+            "filename": null,
+            "size": null
+          },
+          "environment": null
+        },
+        {
+          "id": 13,
+          "stage": "check",
+          "name": "check_commit",
+          "status": "running",
+          "created_at": "2025-06-23 06:58:03 UTC",
+          "started_at": "2025-06-23 06:58:04 UTC",
+          "finished_at": null,
+          "duration": 0.374210847,
+          "queued_duration": 0.64608,
+          "failure_reason": null,
+          "when": "always",
+          "manual": false,
+          "allow_failure": false,
+          "user": {
+            "id": 2,
+            "name": "Sergey Mosienko",
+            "username": "mosoveru",
+            "avatar_url": "https://www.gravatar.com/avatar/b569d7d68d81fc486e7948b4fd432db7744c930d80e82630a3e85ff0eddb0034?s=80&d=identicon",
+            "email": "[REDACTED]"
+          },
+          "runner": {
+            "id": 1,
+            "description": "Local GitLab runner",
+            "runner_type": "instance_type",
+            "active": true,
+            "is_shared": true,
+            "tags": [
+              "worker"
+            ]
+          },
+          "artifacts_file": {
+            "filename": null,
+            "size": null
+          },
+          "environment": null
+        }
+      ]
+    },
+    "instanceId": "54e97f63-df7f-4157-973e-df10785f3062"
+  },
+  {
+    "service": "GITLAB",
+    "eventType": "Pipeline Hook",
+    "eventPayload": {
+      "object_kind": "pipeline",
+      "object_attributes": {
+        "id": 10,
+        "iid": 10,
+        "name": null,
+        "ref": "test",
+        "tag": false,
+        "sha": "886c1f86d1dd0a54f4ac6fc2c8761bd53d7cc507",
+        "before_sha": "0000000000000000000000000000000000000000",
+        "source": "merge_request_event",
+        "status": "running",
+        "detailed_status": "running",
+        "stages": [
+          "check",
+          "another_check"
+        ],
+        "created_at": "2025-06-23 06:58:03 UTC",
+        "finished_at": null,
+        "duration": null,
+        "queued_duration": 1,
+        "variables": [],
+        "url": "http://127.0.0.1:8929/mosoveru/blamebot-tests/-/pipelines/10"
+      },
+      "merge_request": {
+        "id": 4,
+        "iid": 4,
+        "title": "Pipelines",
+        "source_branch": "test",
+        "source_project_id": 1,
+        "target_branch": "main",
+        "target_project_id": 1,
+        "state": "opened",
+        "merge_status": "can_be_merged",
+        "detailed_merge_status": "mergeable",
+        "url": "http://127.0.0.1:8929/mosoveru/blamebot-tests/-/merge_requests/4"
+      },
+      "user": {
+        "id": 2,
+        "name": "Sergey Mosienko",
+        "username": "mosoveru",
+        "avatar_url": "https://www.gravatar.com/avatar/b569d7d68d81fc486e7948b4fd432db7744c930d80e82630a3e85ff0eddb0034?s=80&d=identicon",
+        "email": "[REDACTED]"
+      },
+      "project": {
+        "id": 1,
+        "name": "Blamebot Tests",
+        "description": null,
+        "web_url": "http://127.0.0.1:8929/mosoveru/blamebot-tests",
+        "avatar_url": null,
+        "git_ssh_url": "ssh://git@127.0.0.1:2424/mosoveru/blamebot-tests.git",
+        "git_http_url": "http://127.0.0.1:8929/mosoveru/blamebot-tests.git",
+        "namespace": "Sergey Mosienko",
+        "visibility_level": 20,
+        "path_with_namespace": "mosoveru/blamebot-tests",
+        "default_branch": "main",
+        "ci_config_path": null
+      },
+      "commit": {
+        "id": "886c1f86d1dd0a54f4ac6fc2c8761bd53d7cc507",
+        "message": "fail\n",
+        "title": "fail",
+        "timestamp": "2025-06-23T09:57:49+03:00",
+        "url": "http://127.0.0.1:8929/mosoveru/blamebot-tests/-/commit/886c1f86d1dd0a54f4ac6fc2c8761bd53d7cc507",
+        "author": {
+          "name": "Mosoveru",
+          "email": "mosoveru@gmail.com"
+        }
+      },
+      "builds": [
+        {
+          "id": 14,
+          "stage": "another_check",
+          "name": "check_commit_2",
+          "status": "created",
+          "created_at": "2025-06-23 06:58:03 UTC",
+          "started_at": null,
+          "finished_at": null,
+          "duration": null,
+          "queued_duration": null,
+          "failure_reason": null,
+          "when": "always",
+          "manual": false,
+          "allow_failure": false,
+          "user": {
+            "id": 2,
+            "name": "Sergey Mosienko",
+            "username": "mosoveru",
+            "avatar_url": "https://www.gravatar.com/avatar/b569d7d68d81fc486e7948b4fd432db7744c930d80e82630a3e85ff0eddb0034?s=80&d=identicon",
+            "email": "[REDACTED]"
+          },
+          "runner": null,
+          "artifacts_file": {
+            "filename": null,
+            "size": null
+          },
+          "environment": null
+        },
+        {
+          "id": 13,
+          "stage": "check",
+          "name": "check_commit",
+          "status": "running",
+          "created_at": "2025-06-23 06:58:03 UTC",
+          "started_at": "2025-06-23 06:58:04 UTC",
+          "finished_at": null,
+          "duration": 0.549679519,
+          "queued_duration": 0.64608,
+          "failure_reason": null,
+          "when": "always",
+          "manual": false,
+          "allow_failure": false,
+          "user": {
+            "id": 2,
+            "name": "Sergey Mosienko",
+            "username": "mosoveru",
+            "avatar_url": "https://www.gravatar.com/avatar/b569d7d68d81fc486e7948b4fd432db7744c930d80e82630a3e85ff0eddb0034?s=80&d=identicon",
+            "email": "[REDACTED]"
+          },
+          "runner": {
+            "id": 1,
+            "description": "Local GitLab runner",
+            "runner_type": "instance_type",
+            "active": true,
+            "is_shared": true,
+            "tags": [
+              "worker"
+            ]
+          },
+          "artifacts_file": {
+            "filename": null,
+            "size": null
+          },
+          "environment": null
+        }
+      ]
+    },
+    "instanceId": "54e97f63-df7f-4157-973e-df10785f3062"
+  },
+  {
+    "service": "GITLAB",
+    "eventType": "Pipeline Hook",
+    "eventPayload": {
+      "object_kind": "pipeline",
+      "object_attributes": {
+        "id": 10,
+        "iid": 10,
+        "name": null,
+        "ref": "test",
+        "tag": false,
+        "sha": "886c1f86d1dd0a54f4ac6fc2c8761bd53d7cc507",
+        "before_sha": "0000000000000000000000000000000000000000",
+        "source": "merge_request_event",
+        "status": "failed",
+        "detailed_status": "failed",
+        "stages": [
+          "check",
+          "another_check"
+        ],
+        "created_at": "2025-06-23 06:58:03 UTC",
+        "finished_at": "2025-06-23 06:58:40 UTC",
+        "duration": 32,
+        "queued_duration": 1,
+        "variables": [],
+        "url": "http://127.0.0.1:8929/mosoveru/blamebot-tests/-/pipelines/10"
+      },
+      "merge_request": {
+        "id": 4,
+        "iid": 4,
+        "title": "Pipelines",
+        "source_branch": "test",
+        "source_project_id": 1,
+        "target_branch": "main",
+        "target_project_id": 1,
+        "state": "opened",
+        "merge_status": "can_be_merged",
+        "detailed_merge_status": "mergeable",
+        "url": "http://127.0.0.1:8929/mosoveru/blamebot-tests/-/merge_requests/4"
+      },
+      "user": {
+        "id": 2,
+        "name": "Sergey Mosienko",
+        "username": "mosoveru",
+        "avatar_url": "https://www.gravatar.com/avatar/b569d7d68d81fc486e7948b4fd432db7744c930d80e82630a3e85ff0eddb0034?s=80&d=identicon",
+        "email": "[REDACTED]"
+      },
+      "project": {
+        "id": 1,
+        "name": "Blamebot Tests",
+        "description": null,
+        "web_url": "http://127.0.0.1:8929/mosoveru/blamebot-tests",
+        "avatar_url": null,
+        "git_ssh_url": "ssh://git@127.0.0.1:2424/mosoveru/blamebot-tests.git",
+        "git_http_url": "http://127.0.0.1:8929/mosoveru/blamebot-tests.git",
+        "namespace": "Sergey Mosienko",
+        "visibility_level": 20,
+        "path_with_namespace": "mosoveru/blamebot-tests",
+        "default_branch": "main",
+        "ci_config_path": null
+      },
+      "commit": {
+        "id": "886c1f86d1dd0a54f4ac6fc2c8761bd53d7cc507",
+        "message": "fail\n",
+        "title": "fail",
+        "timestamp": "2025-06-23T09:57:49+03:00",
+        "url": "http://127.0.0.1:8929/mosoveru/blamebot-tests/-/commit/886c1f86d1dd0a54f4ac6fc2c8761bd53d7cc507",
+        "author": {
+          "name": "Mosoveru",
+          "email": "mosoveru@gmail.com"
+        }
+      },
+      "builds": [
+        {
+          "id": 14,
+          "stage": "another_check",
+          "name": "check_commit_2",
+          "status": "failed",
+          "created_at": "2025-06-23 06:58:03 UTC",
+          "started_at": "2025-06-23 06:58:24 UTC",
+          "finished_at": "2025-06-23 06:58:40 UTC",
+          "duration": 16.152597,
+          "queued_duration": 3.012112,
+          "failure_reason": "script_failure",
+          "when": "always",
+          "manual": false,
+          "allow_failure": false,
+          "user": {
+            "id": 2,
+            "name": "Sergey Mosienko",
+            "username": "mosoveru",
+            "avatar_url": "https://www.gravatar.com/avatar/b569d7d68d81fc486e7948b4fd432db7744c930d80e82630a3e85ff0eddb0034?s=80&d=identicon",
+            "email": "[REDACTED]"
+          },
+          "runner": {
+            "id": 1,
+            "description": "Local GitLab runner",
+            "runner_type": "instance_type",
+            "active": true,
+            "is_shared": true,
+            "tags": [
+              "worker"
+            ]
+          },
+          "artifacts_file": {
+            "filename": null,
+            "size": null
+          },
+          "environment": null
+        },
+        {
+          "id": 13,
+          "stage": "check",
+          "name": "check_commit",
+          "status": "failed",
+          "created_at": "2025-06-23 06:58:03 UTC",
+          "started_at": "2025-06-23 06:58:04 UTC",
+          "finished_at": "2025-06-23 06:58:21 UTC",
+          "duration": 16.337359,
+          "queued_duration": 0.64608,
+          "failure_reason": "script_failure",
+          "when": "always",
+          "manual": false,
+          "allow_failure": false,
+          "user": {
+            "id": 2,
+            "name": "Sergey Mosienko",
+            "username": "mosoveru",
+            "avatar_url": "https://www.gravatar.com/avatar/b569d7d68d81fc486e7948b4fd432db7744c930d80e82630a3e85ff0eddb0034?s=80&d=identicon",
+            "email": "[REDACTED]"
+          },
+          "runner": {
+            "id": 1,
+            "description": "Local GitLab runner",
+            "runner_type": "instance_type",
+            "active": true,
+            "is_shared": true,
+            "tags": [
+              "worker"
+            ]
+          },
+          "artifacts_file": {
+            "filename": null,
+            "size": null
+          },
+          "environment": null
+        }
+      ]
+    },
+    "instanceId": "54e97f63-df7f-4157-973e-df10785f3062"
+  }
+]
