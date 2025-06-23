@@ -26,7 +26,9 @@ export interface ObjectAttributes {
   last_edited_by_id: null;
   merge_commit_sha: null | string;
   merge_error: null;
-  merge_params: MergeParams;
+  merge_params: {
+    force_remove_source_branch: '1' | string;
+  };
   merge_status: 'can_be_merged' | 'unchecked' | string;
   merge_user_id: null;
   merge_when_pipeline_succeeds: boolean;
@@ -132,8 +134,4 @@ export interface Changes {
     previous: Label[];
     current: Label[];
   };
-}
-
-export interface MergeParams {
-  force_remove_source_branch: '1' | string;
 }

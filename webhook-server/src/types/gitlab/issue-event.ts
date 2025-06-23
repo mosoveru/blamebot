@@ -12,7 +12,7 @@ export interface GitLabIssueEvent {
   assignees?: User[];
 }
 
-interface ObjectAttributes {
+export interface ObjectAttributes {
   author_id: number;
   closed_at: null;
   confidential: boolean;

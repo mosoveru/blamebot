@@ -63,6 +63,11 @@ export class RequestMessageComposer implements MessageComposer {
     if (eventChanges.changes.isMerged) {
       return `Ваш ${basePhrase} слит в ветку ${eventChanges.changes.isMerged.target_branch}`;
     }
+    if (eventChanges.changes.newComment) {
+      return `В вашем ${basePhrase} оставили комментарий.`;
+    } else if (eventChanges.changes.newCommentOnFiles) {
+      return `На изменениях в ${basePhrase} был оставлен комментарий.`;
+    }
     if (eventChanges.changes.isApproved) {
       return `Ваш ${basePhrase} был апрувнут пользователем ${eventChanges.changes.isApproved.by}`;
     }
@@ -91,6 +96,11 @@ export class RequestMessageComposer implements MessageComposer {
     }
     if (eventChanges.changes.isMerged) {
       return `${basePhrase}, в котором вы являетесь ревьюером, был слит в ветку ${eventChanges.changes.isMerged.target_branch}`;
+    }
+    if (eventChanges.changes.newComment) {
+      return `В вашем ${basePhrase}, которое вы ревьюите, оставили комментарий.`;
+    } else if (eventChanges.changes.newCommentOnFiles) {
+      return `На изменениях в ${basePhrase} был оставлен комментарий.`;
     }
     if (eventChanges.changes.isApproved) {
       return `${basePhrase}, в котором вы являетесь ревьюером, был апрувнут пользователем ${eventChanges.changes.isApproved.by}`;
@@ -121,6 +131,11 @@ export class RequestMessageComposer implements MessageComposer {
     if (eventChanges.changes.isMerged) {
       return `Ваш ${basePhrase} слит в ветку ${eventChanges.changes.isMerged.target_branch}`;
     }
+    if (eventChanges.changes.newComment) {
+      return `В вашем ${basePhrase}, оставили комментарий.`;
+    } else if (eventChanges.changes.newCommentOnFiles) {
+      return `На изменениях в ${basePhrase} был оставлен комментарий.`;
+    }
     if (eventChanges.changes.isApproved) {
       return `Ваш ${basePhrase} был апрувнут пользователем ${eventChanges.changes.isApproved.by}`;
     }
@@ -143,6 +158,11 @@ export class RequestMessageComposer implements MessageComposer {
     }
     if (eventChanges.changes.isMerged) {
       return `Связанный с Вами ${basePhrase} был снова открыт был слит в ветку ${eventChanges.changes.isMerged.target_branch}`;
+    }
+    if (eventChanges.changes.newComment) {
+      return `В связанном с вами ${basePhrase} был оставлен комментарий.`;
+    } else if (eventChanges.changes.newCommentOnFiles) {
+      return `В связанном с вами ${basePhrase} на изменениях был оставлен комментарий.`;
     }
     if (eventChanges.changes.isApproved) {
       return `Связанный с Вами ${basePhrase} был апрвнут пользователем ${eventChanges.changes.isApproved.by}`;

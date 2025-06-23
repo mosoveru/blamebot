@@ -54,6 +54,9 @@ export class IssueMessageComposer implements MessageComposer {
     if (eventChanges.changes.isReopened) {
       return `Ваша ${basePhrase} <b>снова открыта</b>`;
     }
+    if (eventChanges.changes.newComment) {
+      return `В вашем ${basePhrase} оставили комментарий.`;
+    }
     if (eventChanges.changes.isNewObject?.isNewAssignmentWithDeadline) {
       const date = eventChanges.changes.isNewObject?.isNewAssignmentWithDeadline.deadline;
       return `На Вас назначали новое ${basePhrase} с дедлайном до <b>${date}</b>`;
@@ -74,6 +77,9 @@ export class IssueMessageComposer implements MessageComposer {
     }
     if (eventChanges.changes.isReopened) {
       return `Ваша ${basePhrase} <b>снова открыта</b>`;
+    }
+    if (eventChanges.changes.newComment) {
+      return `В вашем ${basePhrase} оставили комментарий.`;
     }
     if (eventChanges.changes.isNewObject?.isNewAssignmentWithDeadline) {
       const date = eventChanges.changes.isNewObject?.isNewAssignmentWithDeadline.deadline;
@@ -99,6 +105,9 @@ export class IssueMessageComposer implements MessageComposer {
     }
     if (eventChanges.changes.isReopened) {
       return `Связанное с Вами ${basePhrase} <b>снова открылось</b>`;
+    }
+    if (eventChanges.changes.newComment) {
+      return `В связанном с вами ${basePhrase} оставили комментарий.`;
     }
     this.listMinorChanges(eventChanges, preparedCommonMessage);
     return preparedCommonMessage.join('').replace(/,\s$/, '.');

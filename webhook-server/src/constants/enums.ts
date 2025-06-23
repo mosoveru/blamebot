@@ -17,6 +17,7 @@ export enum GitLabEventTypes {
   ISSUE = 'Issue Hook',
   MERGE_REQUEST = 'Merge Request Hook',
   PIPELINE = 'Pipeline Hook',
+  NOTE = 'Note Hook',
 }
 
 export enum ObjectTypes {

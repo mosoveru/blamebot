@@ -28,6 +28,7 @@ export type IssueChanges = {
     added?: UserInfo[];
     deleted?: UserInfo[];
   };
+  newComment?: boolean;
   isNewObject?: {
     isNewAssignment?: boolean;
     isNewAssignmentWithDeadline?: {
@@ -61,6 +62,8 @@ export type RequestChanges = {
   isUnassigned?: boolean;
   isNewReviewer?: boolean;
   isUnassignedReviewer?: boolean;
+  newComment?: boolean;
+  newCommentOnFiles?: boolean;
   isAssigneesChanges?: {
     added?: UserInfo[];
     deleted?: UserInfo[];
