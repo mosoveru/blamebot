@@ -44,3 +44,17 @@ export interface Repository {
   description: null | string;
   homepage: string;
 }
+
+export interface Commit {
+  id: string;
+  message: string;
+  title: string;
+  timestamp: Date;
+  url: string;
+  author: Author;
+}
+
+export interface Author {
+  name: string;
+  email: string;
+}

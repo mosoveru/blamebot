@@ -16,9 +16,11 @@ export enum EventHeaders {
 export enum GitLabEventTypes {
   ISSUE = 'Issue Hook',
   MERGE_REQUEST = 'Merge Request Hook',
+  PIPELINE = 'Pipeline Hook',
 }
 
 export enum ObjectTypes {
   ISSUE = 'issue',
   REQUEST = 'request',
+  PIPELINE = 'pipeline',
 }

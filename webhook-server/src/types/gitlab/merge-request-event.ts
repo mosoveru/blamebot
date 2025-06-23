@@ -1,4 +1,4 @@
-import { Label, Project, Repository, User } from './common';
+import { Commit, Label, Project, Repository, User } from './common';
 
 export interface GitLabMergeRequestEvent {
   object_kind: 'merge_request';
@@ -58,7 +58,7 @@ export interface ObjectAttributes {
   human_time_change: null | string;
   human_time_estimate: null | string;
   labels: Label[];
-  last_commit: LastCommit;
+  last_commit: Commit;
   reviewer_ids: number[];
   source: Project;
   state: 'opened' | 'closed' | 'merged' | string;
@@ -69,15 +69,6 @@ export interface ObjectAttributes {
   work_in_progress: boolean;
   action: 'open' | 'reopen' | 'approved' | 'unapproved' | 'close' | 'update' | 'merge' | string;
   oldrev?: string;
-}
-
-export interface LastCommit {
-  id: string;
-  message: string;
-  title: string;
-  timestamp: Date;
-  url: string;
-  author: CommitAuthor;
 }
 
 export interface Changes {
@@ -141,11 +132,6 @@ export interface Changes {
     previous: Label[];
     current: Label[];
   };
-}
-
-export interface CommitAuthor {
-  name: string;
-  email: string;
 }
 
 export interface MergeParams {

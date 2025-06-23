@@ -93,9 +93,16 @@ export type RequestChanges = {
   };
 };
 
+export type PipelineChanges = {
+  isPipelinePassed?: boolean;
+  isPipelinePending?: boolean;
+  isPipelineFailed?: boolean;
+};
+
 export type ChangesMap = {
   [ObjectTypes.ISSUE]: IssueChanges;
   [ObjectTypes.REQUEST]: RequestChanges;
+  [ObjectTypes.PIPELINE]: PipelineChanges;
 };
 
 type ObjectTypeValues = (typeof ObjectTypes)[keyof typeof ObjectTypes];
