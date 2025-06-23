@@ -19,7 +19,7 @@ echo "✅ DDL успешно применён к $DB_NAME."
 echo "📥 Инициализируем начальные значения в $DB_NAME..."
 
 psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$DB_NAME" <<-EOSQL
-    INSERT INTO object_types VALUES ('request'), ('issue');
+    INSERT INTO object_types VALUES ('request'), ('issue'), ('pipeline');
     INSERT INTO telegram_users ("telegramUserId", "isAdmin") VALUES ('$TG_ADMIN_ID', true);
 EOSQL
 
