@@ -76,7 +76,7 @@ export class RequestMessageComposer implements MessageComposer {
   private composeMessageForRequestReviewer(eventChanges: ChangesForRequest): string {
     const preparedCommonMessage: string[] = [];
     const basePhrase = this.composeBaseIssuePhrase(eventChanges);
-    preparedCommonMessage.push(`В Вашем ${basePhrase} `);
+    preparedCommonMessage.push(`В ${basePhrase}, в котором вы являетесь ревьюером, `);
     if (eventChanges.changes.isNewReviewer || eventChanges.changes.isNewObject?.withReviewer) {
       return `На вас назначили ревью в ${basePhrase}`;
     }
@@ -93,7 +93,7 @@ export class RequestMessageComposer implements MessageComposer {
       return `${basePhrase}, в котором вы являетесь ревьюером, был слит в ветку ${eventChanges.changes.isMerged.target_branch}`;
     }
     if (eventChanges.changes.isApproved) {
-      return `В ${basePhrase}, в котором вы являетесь ревьюером, был апрувнут пользователем ${eventChanges.changes.isApproved.by}`;
+      return `${basePhrase}, в котором вы являетесь ревьюером, был апрувнут пользователем ${eventChanges.changes.isApproved.by}`;
     }
     if (eventChanges.changes.isUnapproved) {
       return `В ${basePhrase}, в котором вы являетесь ревьюером, был убран апрув пользователем ${eventChanges.changes.isUnapproved.by}`;

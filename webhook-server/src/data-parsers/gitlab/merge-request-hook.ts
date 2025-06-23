@@ -11,7 +11,7 @@ type PossibleChanges =
   | 'reviewers'
   | 'state_id'
   | 'labels'
-  | 'approve'
+  | 'approved'
   | 'unapproved';
 type ChangesParser = () => void;
 
@@ -29,7 +29,7 @@ export class MergeRequestHookDataParser implements DataParser<GitLabMergeRequest
     reviewers: this.parseChangesForUsers.bind(this, 'reviewers'),
     state_id: this.parseRequestStatus.bind(this),
     labels: this.parseChangesForLabels.bind(this),
-    approve: this.isApproved.bind(this),
+    approved: this.isApproved.bind(this),
     unapproved: this.isUnapproved.bind(this),
   };
 
@@ -125,28 +125,30 @@ export class MergeRequestHookDataParser implements DataParser<GitLabMergeRequest
       };
       if (this.isAssignee(memberId)) {
         formIndividualChanges({
-          isNewAssignment: this.checkIsNewAssignment(String(memberId)),
+          isNewAssignment: this.checkIsNewAssignee(String(memberId)),
           forAssignee: true,
         });
-        if (this.checkIsDeletedAssignment(String(memberId))) {
-          formIndividualChanges({
-            isUnassigned: true,
-            forAssignee: true,
-          });
-        }
+        return acc;
+      }
+      if (this.checkIsUnassigned(String(memberId))) {
+        formIndividualChanges({
+          isUnassigned: true,
+          forAssignee: true,
+        });
         return acc;
       }
       if (this.isReviewer(memberId)) {
         formIndividualChanges({
-          isNewReviewer: this.checkIsNewAssignment(String(memberId)),
+          isNewReviewer: this.checkIsNewReviewer(String(memberId)),
           forReviewer: true,
         });
-        if (this.checkIsDeletedAssignment(String(memberId))) {
-          formIndividualChanges({
-            isUnassigned: true,
-            forReviewer: true,
-          });
-        }
+        return acc;
+      }
+      if (this.checkIsUnassignedReviewer(String(memberId))) {
+        formIndividualChanges({
+          isUnassignedReviewer: true,
+          forReviewer: true,
+        });
         return acc;
       }
       if (this.isAuthor(memberId)) {
@@ -199,24 +201,36 @@ export class MergeRequestHookDataParser implements DataParser<GitLabMergeRequest
     return eventPayload.reviewers?.some((a) => a.id === memberId);
   }
 
-  private checkIsNewAssignment(id: string) {
+  private checkIsNewAssignee(id: string) {
     const changes = this.requestChanges;
     if (changes.isAssigneesChanges?.added) {
       return changes.isAssigneesChanges.added.some((assignee) => assignee.id === id);
     }
+    return false;
+  }
+
+  private checkIsNewReviewer(id: string) {
+    const changes = this.requestChanges;
     if (changes.isReviewerChanges?.added) {
       return changes.isReviewerChanges.added.some((assignee) => assignee.id === id);
     }
+    return false;
   }
 
-  private checkIsDeletedAssignment(id: string) {
+  private checkIsUnassigned(id: string) {
     const changes = this.requestChanges;
     if (changes.isAssigneesChanges?.deleted) {
       return changes.isAssigneesChanges.deleted.some((assignee) => assignee.id === id);
     }
+    return false;
+  }
+
+  private checkIsUnassignedReviewer(id: string) {
+    const changes = this.requestChanges;
     if (changes.isReviewerChanges?.deleted) {
       return changes.isReviewerChanges.deleted.some((assignee) => assignee.id === id);
     }
+    return false;
   }
 
   private isNewObject() {
@@ -256,7 +270,7 @@ export class MergeRequestHookDataParser implements DataParser<GitLabMergeRequest
   private isApproved() {
     const eventPayload = this.eventPayload;
     const changes = this.requestChanges;
-    if (eventPayload.object_attributes.action === 'approve') {
+    if (eventPayload.object_attributes.action === 'approved') {
       changes.isApproved = {
         by: eventPayload.user.name,
       };
