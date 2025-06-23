@@ -18,7 +18,11 @@ export function buildAdminComposer(fetcher: ExternalGitSystemDataFetcher) {
       );
 
       composer.hears(ReplyMessages.GO_BACK, async (ctx) => {
-        const keyboard = new Keyboard().text(ReplyMessages.LINK_CLIENT).resized();
+        const keyboard = new Keyboard()
+          .text(ReplyMessages.LINK_CLIENT)
+          .row()
+          .text(ReplyMessages.CREATE_NEW_INSTANCE)
+          .resized();
         await ctx.reply(ReplyMessages.HELLO_MESSAGE, {
           reply_markup: keyboard,
         });

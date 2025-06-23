@@ -2,7 +2,7 @@ import { Keyboard } from 'grammy';
 import { BlamebotConversation, ConversationInsideContext } from '@types';
 import ReplyMessages from '@constants';
 import { isValidHttpURL } from '@utils';
-import { repliesForErrors } from '../constants/enums';
+import { repliesForErrors } from '@constants';
 import { chooseGitProvider } from './chooseGitProvider';
 
 async function linkClient(conversation: BlamebotConversation, ctx: ConversationInsideContext) {
