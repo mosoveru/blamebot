@@ -19,6 +19,21 @@ type UserInfo = {
   name: string;
 };
 
+type EmojiChanges = {
+  isAdded?: {
+    isEmojiThumbUp?: boolean;
+    isEmojiThumbDown?: boolean;
+    isEmojiClown?: boolean;
+    isOther?: boolean;
+  };
+  isDeleted?: {
+    isEmojiThumbUp?: boolean;
+    isEmojiThumbDown?: boolean;
+    isEmojiClown?: boolean;
+    isOther?: boolean;
+  };
+};
+
 export type IssueChanges = {
   forAuthor?: boolean;
   forAssignee?: boolean;
@@ -52,6 +67,7 @@ export type IssueChanges = {
     };
     isDeleted?: boolean;
   };
+  isEmojiChanged?: EmojiChanges;
 };
 
 export type RequestChanges = {
@@ -94,6 +110,7 @@ export type RequestChanges = {
   isUnapproved?: {
     by: string;
   };
+  isEmojiChanged?: EmojiChanges;
 };
 
 export type PipelineChanges = {

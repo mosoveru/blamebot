@@ -18,6 +18,7 @@ export enum GitLabEventTypes {
   MERGE_REQUEST = 'Merge Request Hook',
   PIPELINE = 'Pipeline Hook',
   NOTE = 'Note Hook',
+  EMOJI = 'Emoji Hook',
 }
 
 export enum ObjectTypes {

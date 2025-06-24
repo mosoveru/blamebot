@@ -74,6 +74,9 @@ export class RequestMessageComposer implements MessageComposer {
     if (eventChanges.changes.isUnapproved) {
       return `У вашего ${basePhrase} был убран апрув пользователем ${eventChanges.changes.isUnapproved.by}`;
     }
+    if (eventChanges.changes.isEmojiChanged) {
+      return `В вашем ${basePhrase} ${this.composeStringForEmojiChanges(eventChanges)}`;
+    }
     this.listMinorChanges(eventChanges, preparedCommonMessage);
     return preparedCommonMessage.join('').replace(/,\s$/, '.');
   }
@@ -107,6 +110,9 @@ export class RequestMessageComposer implements MessageComposer {
     }
     if (eventChanges.changes.isUnapproved) {
       return `В ${basePhrase}, в котором вы являетесь ревьюером, был убран апрув пользователем ${eventChanges.changes.isUnapproved.by}`;
+    }
+    if (eventChanges.changes.isEmojiChanged) {
+      return `В вашем ${basePhrase}, которое вы ревьюите, ${this.composeStringForEmojiChanges(eventChanges)}`;
     }
     this.listMinorChanges(eventChanges, preparedCommonMessage);
     return preparedCommonMessage.join('').replace(/,\s$/, '.');
@@ -142,6 +148,9 @@ export class RequestMessageComposer implements MessageComposer {
     if (eventChanges.changes.isUnapproved) {
       return `У вашего ${basePhrase} был убран апрув пользователем ${eventChanges.changes.isUnapproved.by}`;
     }
+    if (eventChanges.changes.isEmojiChanged) {
+      return `В вашем ${basePhrase} ${this.composeStringForEmojiChanges(eventChanges)}`;
+    }
     this.listMinorChanges(eventChanges, preparedCommonMessage);
     return preparedCommonMessage.join('').replace(/,\s$/, '.');
   }
@@ -170,6 +179,9 @@ export class RequestMessageComposer implements MessageComposer {
     if (eventChanges.changes.isUnapproved) {
       return `В связанном с вами ${basePhrase} был убран апрув пользователем ${eventChanges.changes.isUnapproved.by}`;
     }
+    if (eventChanges.changes.isEmojiChanged) {
+      return `В связанном с вами ${basePhrase} ${this.composeStringForEmojiChanges(eventChanges)}`;
+    }
     this.listMinorChanges(eventChanges, preparedCommonMessage);
     return preparedCommonMessage.join('').replace(/,\s$/, '.');
   }
@@ -195,6 +207,36 @@ export class RequestMessageComposer implements MessageComposer {
       const { added, deleted } = eventChanges.changes.isReviewerChanges;
       const sentence = this.composeStringForUserChanges('reviewers', added, deleted);
       preparedCommonMessage.push(sentence);
+    }
+  }
+
+  private composeStringForEmojiChanges(emojiChanges: ChangesForRequest): string {
+    const isAdded = emojiChanges?.changes.isEmojiChanged?.isAdded;
+    const isDeleted = emojiChanges?.changes.isEmojiChanged?.isDeleted;
+    if (isAdded) {
+      if (isAdded.isEmojiThumbUp) {
+        return `поставили лайк.`;
+      }
+      if (isAdded.isEmojiThumbDown) {
+        return `поставили дизлайк.`;
+      }
+      if (isAdded.isEmojiClown) {
+        return `поставили клоуна 🤡`;
+      } else {
+        return `поставили смайлик.`;
+      }
+    } else {
+      if (isDeleted?.isEmojiThumbUp) {
+        return `убрали лайк.`;
+      }
+      if (isDeleted?.isEmojiThumbDown) {
+        return `убрали дизлайк.`;
+      }
+      if (isDeleted?.isEmojiClown) {
+        return `убрали клоуна 🤡`;
+      } else {
+        return `убрали смайлик.`;
+      }
     }
   }
 

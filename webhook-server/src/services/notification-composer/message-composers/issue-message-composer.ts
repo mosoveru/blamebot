@@ -61,6 +61,9 @@ export class IssueMessageComposer implements MessageComposer {
       const date = eventChanges.changes.isNewObject?.isNewAssignmentWithDeadline.deadline;
       return `На Вас назначали новое ${basePhrase} с дедлайном до <b>${date}</b>`;
     }
+    if (eventChanges.changes.isEmojiChanged) {
+      return `В вашем ${basePhrase} ${this.composeStringForEmojiChanges(eventChanges)}`;
+    }
     this.listMinorChanges(eventChanges, preparedCommonMessage);
     return preparedCommonMessage.join('').replace(/,\s$/, '.');
   }
@@ -85,6 +88,9 @@ export class IssueMessageComposer implements MessageComposer {
       const date = eventChanges.changes.isNewObject?.isNewAssignmentWithDeadline.deadline;
       return `В Вашем ${basePhrase} был изменён исполнитель и был назначен дедлайн до <b>${date}</b>`;
     }
+    if (eventChanges.changes.isEmojiChanged) {
+      return `В вашем ${basePhrase} ${this.composeStringForEmojiChanges(eventChanges)}`;
+    }
     this.listMinorChanges(eventChanges, preparedCommonMessage);
     return preparedCommonMessage.join('').replace(/,\s$/, '.');
   }
@@ -108,6 +114,9 @@ export class IssueMessageComposer implements MessageComposer {
     }
     if (eventChanges.changes.newComment) {
       return `В связанном с вами ${basePhrase} оставили комментарий.`;
+    }
+    if (eventChanges.changes.isEmojiChanged) {
+      return `В связанном с вами ${basePhrase} ${this.composeStringForEmojiChanges(eventChanges)}`;
     }
     this.listMinorChanges(eventChanges, preparedCommonMessage);
     return preparedCommonMessage.join('').replace(/,\s$/, '.');
@@ -145,6 +154,36 @@ export class IssueMessageComposer implements MessageComposer {
       if (dueDateChanges.isDeleted) {
         const sentence = this.composeStringForDueDateChanges('deleted');
         preparedCommonMessage.push(sentence);
+      }
+    }
+  }
+
+  private composeStringForEmojiChanges(emojiChanges: ChangesForIssue): string {
+    const isAdded = emojiChanges?.changes.isEmojiChanged?.isAdded;
+    const isDeleted = emojiChanges?.changes.isEmojiChanged?.isDeleted;
+    if (isAdded) {
+      if (isAdded.isEmojiThumbUp) {
+        return `поставили лайк.`;
+      }
+      if (isAdded.isEmojiThumbDown) {
+        return `поставили дизлайк.`;
+      }
+      if (isAdded.isEmojiClown) {
+        return `поставили клоуна 🤡`;
+      } else {
+        return `поставили смайлик.`;
+      }
+    } else {
+      if (isDeleted?.isEmojiThumbUp) {
+        return `убрали лайк.`;
+      }
+      if (isDeleted?.isEmojiThumbDown) {
+        return `убрали дизлайк.`;
+      }
+      if (isDeleted?.isEmojiClown) {
+        return `убрали клоуна 🤡`;
+      } else {
+        return `убрали смайлик.`;
       }
     }
   }
