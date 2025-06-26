@@ -92,7 +92,9 @@ export class MergeRequestHookDataParser implements DataParser<GitLabMergeRequest
     eventMembersIds,
     eventPayload,
   }: DataForParsingChanges<GitLabMergeRequestEvent>): ChangesForRequest[] {
-    this.eventPayload = eventPayload;
+    this.eventPayload = this.eventPayload = {
+      ...eventPayload,
+    };
     const changes = this.parseChanges();
     if (!changes) {
       return [];

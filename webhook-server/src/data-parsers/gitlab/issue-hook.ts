@@ -69,7 +69,9 @@ export class IssueHookDataParser implements DataParser<GitLabIssueEvent> {
   }
 
   parseEventChanges({ eventMembersIds, eventPayload }: DataForParsingChanges<GitLabIssueEvent>): ChangesForIssue[] {
-    this.eventPayload = eventPayload;
+    this.eventPayload = this.eventPayload = {
+      ...eventPayload,
+    };
     const changes = this.parseChanges();
     if (!changes) {
       return [];
