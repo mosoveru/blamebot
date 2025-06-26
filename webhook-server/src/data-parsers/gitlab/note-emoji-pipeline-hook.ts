@@ -45,7 +45,7 @@ export class NoteEmojiPipelineHookDataParser implements DataParser<SimilarGitLab
       changes: Partial<K>;
       isCommon: boolean;
       particularChanges?: Partial<K>;
-      meantFor: 'request' | 'issue';
+      meantFor: 'request' | 'issue' | 'pipeline';
     }) => {
       if (meantFor === 'request') {
         return {
@@ -60,7 +60,7 @@ export class NoteEmojiPipelineHookDataParser implements DataParser<SimilarGitLab
             ...particularChanges,
           },
         } satisfies EventChanges<ObjectTypes.REQUEST>;
-      } else {
+      } else if (meantFor === 'issue') {
         return {
           objectType: ObjectTypes.ISSUE as const,
           objectUrl: (eventPayload as WithMRsAndIssues).issue!.url,
@@ -73,6 +73,19 @@ export class NoteEmojiPipelineHookDataParser implements DataParser<SimilarGitLab
             ...particularChanges,
           },
         } satisfies EventChanges<ObjectTypes.ISSUE>;
+      } else {
+        return {
+          objectType: ObjectTypes.PIPELINE as const,
+          objectUrl: (eventPayload as GitLabPipelineEvent).object_attributes.url,
+          objectId: String((eventPayload as GitLabPipelineEvent).object_attributes.id),
+          projectUrl: eventPayload.project.web_url,
+          projectName: eventPayload.project.name,
+          isCommon,
+          changes: {
+            ...changes,
+            ...particularChanges,
+          },
+        } satisfies EventChanges<ObjectTypes.PIPELINE>;
       }
     },
     linkChangesToUser: (changes: EventChanges<any>, instanceUserId: string) => {
@@ -99,13 +112,22 @@ export class NoteEmojiPipelineHookDataParser implements DataParser<SimilarGitLab
         objectType: ObjectTypes.ISSUE,
         objectUrl: eventPayload.eventPayload.issue.url,
       };
-    } else {
+    } else if (eventPayload.eventPayload.object_kind !== 'pipeline' && eventPayload.eventPayload.merge_request) {
       return {
         instanceId: eventPayload.instanceId,
         objectId: String(eventPayload.eventPayload.merge_request!.id),
         projectId: String(eventPayload.eventPayload.project.id),
         objectType: ObjectTypes.REQUEST,
         objectUrl: eventPayload.eventPayload.merge_request!.url,
+      };
+    } else {
+      const payload = eventPayload.eventPayload as GitLabPipelineEvent;
+      return {
+        instanceId: eventPayload.instanceId,
+        objectId: String(payload.object_attributes.id),
+        projectId: String(payload.project.id),
+        objectType: ObjectTypes.PIPELINE,
+        objectUrl: payload.object_attributes.url,
       };
     }
   }
@@ -150,7 +172,7 @@ export class NoteEmojiPipelineHookDataParser implements DataParser<SimilarGitLab
     this.changes = {};
     if (eventPayload.object_kind === 'pipeline') {
       this.changesParsers.pipeline();
-      return this.findChangesInMergeRequest(eventMembersIds);
+      return this.findChangesForPipelines();
     } else {
       const parser = this.changesParsers[eventPayload.object_kind];
       if (eventPayload.merge_request) {
@@ -264,6 +286,22 @@ export class NoteEmojiPipelineHookDataParser implements DataParser<SimilarGitLab
     }, []);
     this.resetContext();
     return [...individualChanges, commonChanges];
+  }
+
+  private findChangesForPipelines() {
+    const eventPayload = this.eventPayload;
+    const changes = this.changes;
+    if (!this.checkIsThereAnyChanges()) {
+      return [];
+    }
+    const commonChanges = this.utils.formChangesObject({
+      eventPayload,
+      changes,
+      isCommon: true,
+      meantFor: 'pipeline',
+    });
+    this.resetContext();
+    return [commonChanges];
   }
 
   private checkIsThereAnyChanges() {
