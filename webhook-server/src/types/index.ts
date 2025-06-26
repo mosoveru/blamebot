@@ -111,6 +111,7 @@ export type RequestChanges = {
     by: string;
   };
   isEmojiChanged?: EmojiChanges;
+  pipelineChanges?: PipelineChanges;
 };
 
 export type PipelineChanges = {
@@ -119,11 +120,7 @@ export type PipelineChanges = {
   isPipelineFailed?: boolean;
 };
 
-export type ChangesMap = {
-  [ObjectTypes.ISSUE]: IssueChanges;
-  [ObjectTypes.REQUEST]: RequestChanges;
-  [ObjectTypes.PIPELINE]: PipelineChanges;
-};
+export type Changes = IssueChanges & RequestChanges;
 
 type ObjectTypeValues = (typeof ObjectTypes)[keyof typeof ObjectTypes];
 
@@ -135,7 +132,7 @@ export type EventChanges<T extends ObjectTypeValues> = {
   projectUrl: string;
   projectName: string;
   isCommon: boolean;
-  changes: T extends keyof ChangesMap ? ChangesMap[T] : never;
+  changes: Changes;
 };
 
 export type NotificationMessage = {
@@ -172,9 +169,9 @@ export type SubscriptionInfo = Omit<ObservableObjectEntity, 'objectUrl'> & {
 };
 
 export interface DataParser<T> {
-  readonly eventType: GitLabEventTypes;
+  readonly eventType: GitLabEventTypes | GitLabEventTypes[];
   readonly gitProvider: GitProviders;
-  readonly objectType: ObjectTypes;
+
   parseObservableObjectInfo(eventPayload: EventPayload<T>): ObservableObjectEntity;
   parseProjectInfo(eventPayload: EventPayload<T>): ProjectEntity;
   parseEventMembersIds(eventPayload: EventPayload<T>): number[];

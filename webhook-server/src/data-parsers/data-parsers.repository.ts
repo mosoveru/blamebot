@@ -10,10 +10,16 @@ export class DataParsersRepository {
   registerDataParsers(dataParsers: DataParserConstructor[], searcher: BinarySearcher) {
     for (const DataParser of dataParsers) {
       const instantiatedDataParser = new DataParser(searcher);
-      this.store.set(
-        `${instantiatedDataParser.gitProvider}:${instantiatedDataParser.eventType}`,
-        instantiatedDataParser,
-      );
+      if (instantiatedDataParser.eventType?.length) {
+        for (const eventType of instantiatedDataParser.eventType) {
+          this.store.set(`${instantiatedDataParser.gitProvider}:${eventType}`, instantiatedDataParser);
+        }
+      } else {
+        this.store.set(
+          `${instantiatedDataParser.gitProvider}:${instantiatedDataParser.eventType}`,
+          instantiatedDataParser,
+        );
+      }
     }
   }
 

@@ -77,6 +77,9 @@ export class RequestMessageComposer implements MessageComposer {
     if (eventChanges.changes.isEmojiChanged) {
       return `В вашем ${basePhrase} ${this.composeStringForEmojiChanges(eventChanges)}`;
     }
+    if (eventChanges.changes.pipelineChanges) {
+      return `В вашем ${basePhrase} ${this.composeCommonMessageForPipelineEvent(eventChanges)}`;
+    }
     this.listMinorChanges(eventChanges, preparedCommonMessage);
     return preparedCommonMessage.join('').replace(/,\s$/, '.');
   }
@@ -114,6 +117,9 @@ export class RequestMessageComposer implements MessageComposer {
     if (eventChanges.changes.isEmojiChanged) {
       return `В вашем ${basePhrase}, которое вы ревьюите, ${this.composeStringForEmojiChanges(eventChanges)}`;
     }
+    if (eventChanges.changes.pipelineChanges) {
+      return `В вашем ${basePhrase}, которое вы ревьюите, ${this.composeCommonMessageForPipelineEvent(eventChanges)}`;
+    }
     this.listMinorChanges(eventChanges, preparedCommonMessage);
     return preparedCommonMessage.join('').replace(/,\s$/, '.');
   }
@@ -150,6 +156,9 @@ export class RequestMessageComposer implements MessageComposer {
     }
     if (eventChanges.changes.isEmojiChanged) {
       return `В вашем ${basePhrase} ${this.composeStringForEmojiChanges(eventChanges)}`;
+    }
+    if (eventChanges.changes.pipelineChanges) {
+      return `В вашем ${basePhrase} ${this.composeCommonMessageForPipelineEvent(eventChanges)}`;
     }
     this.listMinorChanges(eventChanges, preparedCommonMessage);
     return preparedCommonMessage.join('').replace(/,\s$/, '.');
@@ -208,36 +217,35 @@ export class RequestMessageComposer implements MessageComposer {
       const sentence = this.composeStringForUserChanges('reviewers', added, deleted);
       preparedCommonMessage.push(sentence);
     }
+    if (eventChanges.changes.pipelineChanges) {
+      const sentence = this.composeCommonMessageForPipelineEvent(eventChanges);
+      preparedCommonMessage.push(sentence);
+    }
   }
 
   private composeStringForEmojiChanges(emojiChanges: ChangesForRequest): string {
     const isAdded = emojiChanges?.changes.isEmojiChanged?.isAdded;
     const isDeleted = emojiChanges?.changes.isEmojiChanged?.isDeleted;
-    if (isAdded) {
-      if (isAdded.isEmojiThumbUp) {
-        return `поставили лайк.`;
+
+    const emojiActionsMap: Record<string, string> = {
+      isEmojiThumbUp: 'лайк',
+      isEmojiThumbDown: 'дизлайк',
+      isEmojiClown: 'клоуна 🤡',
+    };
+
+    const actionPrefix = isAdded ? 'поставили' : 'убрали';
+    const emojiChange = isAdded ?? isDeleted;
+
+    if (emojiChange) {
+      for (const [key, label] of Object.entries(emojiActionsMap)) {
+        if (emojiChange[key as keyof typeof emojiChange]) {
+          return `${actionPrefix} ${label}.`;
+        }
       }
-      if (isAdded.isEmojiThumbDown) {
-        return `поставили дизлайк.`;
-      }
-      if (isAdded.isEmojiClown) {
-        return `поставили клоуна 🤡`;
-      } else {
-        return `поставили смайлик.`;
-      }
-    } else {
-      if (isDeleted?.isEmojiThumbUp) {
-        return `убрали лайк.`;
-      }
-      if (isDeleted?.isEmojiThumbDown) {
-        return `убрали дизлайк.`;
-      }
-      if (isDeleted?.isEmojiClown) {
-        return `убрали клоуна 🤡`;
-      } else {
-        return `убрали смайлик.`;
-      }
+      return `${actionPrefix} смайлик.`;
     }
+
+    return '';
   }
 
   private composeStringForLabelChanges(addedLabels?: string[], deletedLabels?: string[]): string {
@@ -270,34 +278,52 @@ export class RequestMessageComposer implements MessageComposer {
     meantFor: 'reviewers' | 'assignees',
     addedAssignees?: UserInfo[],
     deletedAssignees?: UserInfo[],
-  ) {
-    const addedSingle = meantFor === 'assignees' ? 'был назначен исполнитель ' : 'был назначен ревьюер ';
-    const deletedSingle = meantFor === 'assignees' ? 'перестал быть исполнителем ' : 'перестал быть ревьюером ';
-    const addedPlural = meantFor === 'assignees' ? 'были назначены исполнители ' : 'были назначены ревьюеры ';
-    const deletedPlural = meantFor === 'assignees' ? 'перестали быть исполнителями ' : 'перестали быть ревьюерами ';
-    const sentenceParts: string[] = [];
-    const hasAdded = addedAssignees && addedAssignees.length > 0;
-    const hasDeleted = deletedAssignees && deletedAssignees.length > 0;
+  ): string {
+    const roleMap = {
+      assignees: {
+        singleAdd: 'был назначен исполнитель ',
+        pluralAdd: 'были назначены исполнители ',
+        singleDel: 'перестал быть исполнителем ',
+        pluralDel: 'перестали быть исполнителями ',
+      },
+      reviewers: {
+        singleAdd: 'был назначен ревьюер ',
+        pluralAdd: 'были назначены ревьюеры ',
+        singleDel: 'перестал быть ревьюером ',
+        pluralDel: 'перестали быть ревьюерами ',
+      },
+    };
+
+    const role = roleMap[meantFor];
+    const parts: string[] = [];
+
+    const formatChange = (users: UserInfo[], singleText: string, pluralText: string) => {
+      const prefix = users.length === 1 ? singleText : pluralText;
+      return `${prefix}${this.joinUserNames(users)}`;
+    };
+
+    const hasAdded = addedAssignees?.length;
+    const hasDeleted = deletedAssignees?.length;
 
     if (hasAdded) {
-      sentenceParts.push(
-        addedAssignees!.length === 1 ? addedSingle : addedPlural,
-        this.joinUserNames(addedAssignees!),
-        hasDeleted ? '' : '.',
-      );
+      parts.push(formatChange(addedAssignees!, role.singleAdd, role.pluralAdd));
     }
 
     if (hasDeleted) {
-      if (hasAdded) {
-        sentenceParts.push('и ');
-      }
-      sentenceParts.push(
-        deletedAssignees!.length === 1 ? deletedSingle : deletedPlural,
-        this.joinUserNames(deletedAssignees!),
-        '.',
-      );
+      if (hasAdded) parts.push(' и ');
+      parts.push(formatChange(deletedAssignees!, role.singleDel, role.pluralDel));
     }
 
-    return sentenceParts.join('');
+    return parts.length > 0 ? parts.join('') + '.' : '';
+  }
+
+  private composeCommonMessageForPipelineEvent(changes: ChangesForRequest): string {
+    if (changes.changes.pipelineChanges?.isPipelinePending) {
+      return ` начался Pipeline ▶️`;
+    }
+    if (changes.changes.pipelineChanges?.isPipelineFailed) {
+      return `<b>провалился Pipeline</b> ❌`;
+    }
+    return `успешно прошёл Pipeline ✅`;
   }
 }

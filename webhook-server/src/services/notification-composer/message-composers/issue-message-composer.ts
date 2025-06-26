@@ -161,31 +161,26 @@ export class IssueMessageComposer implements MessageComposer {
   private composeStringForEmojiChanges(emojiChanges: ChangesForIssue): string {
     const isAdded = emojiChanges?.changes.isEmojiChanged?.isAdded;
     const isDeleted = emojiChanges?.changes.isEmojiChanged?.isDeleted;
-    if (isAdded) {
-      if (isAdded.isEmojiThumbUp) {
-        return `поставили лайк.`;
+
+    const emojiActionsMap: Record<string, string> = {
+      isEmojiThumbUp: 'лайк',
+      isEmojiThumbDown: 'дизлайк',
+      isEmojiClown: 'клоуна 🤡',
+    };
+
+    const actionPrefix = isAdded ? 'поставили' : 'убрали';
+    const emojiChange = isAdded ?? isDeleted;
+
+    if (emojiChange) {
+      for (const [key, label] of Object.entries(emojiActionsMap)) {
+        if (emojiChange[key as keyof typeof emojiChange]) {
+          return `${actionPrefix} ${label}.`;
+        }
       }
-      if (isAdded.isEmojiThumbDown) {
-        return `поставили дизлайк.`;
-      }
-      if (isAdded.isEmojiClown) {
-        return `поставили клоуна 🤡`;
-      } else {
-        return `поставили смайлик.`;
-      }
-    } else {
-      if (isDeleted?.isEmojiThumbUp) {
-        return `убрали лайк.`;
-      }
-      if (isDeleted?.isEmojiThumbDown) {
-        return `убрали дизлайк.`;
-      }
-      if (isDeleted?.isEmojiClown) {
-        return `убрали клоуна 🤡`;
-      } else {
-        return `убрали смайлик.`;
-      }
+      return `${actionPrefix} смайлик.`;
     }
+
+    return '';
   }
 
   private composeStringForDueDateChanges(type: 'updated' | 'added' | 'deleted', date?: string) {

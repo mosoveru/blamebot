@@ -128,34 +128,29 @@ export class MergeRequestHookDataParser implements DataParser<GitLabMergeRequest
           isNewAssignment: this.checkIsNewAssignee(String(memberId)),
           forAssignee: true,
         });
-        return acc;
       }
       if (this.checkIsUnassigned(String(memberId))) {
         formIndividualChanges({
           isUnassigned: true,
           forAssignee: true,
         });
-        return acc;
       }
       if (this.isReviewer(memberId)) {
         formIndividualChanges({
           isNewReviewer: this.checkIsNewReviewer(String(memberId)),
           forReviewer: true,
         });
-        return acc;
       }
       if (this.checkIsUnassignedReviewer(String(memberId))) {
         formIndividualChanges({
           isUnassignedReviewer: true,
           forReviewer: true,
         });
-        return acc;
       }
       if (this.isAuthor(memberId)) {
         formIndividualChanges({
           forAuthor: true,
         });
-        return acc;
       }
       return acc;
     }, []);
