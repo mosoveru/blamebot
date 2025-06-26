@@ -10,7 +10,7 @@ export class DataParsersRepository {
   registerDataParsers(dataParsers: DataParserConstructor[], searcher: BinarySearcher) {
     for (const DataParser of dataParsers) {
       const instantiatedDataParser = new DataParser(searcher);
-      if (instantiatedDataParser.eventType?.length) {
+      if (instantiatedDataParser.eventType instanceof Array) {
         for (const eventType of instantiatedDataParser.eventType) {
           this.store.set(`${instantiatedDataParser.gitProvider}:${eventType}`, instantiatedDataParser);
         }
