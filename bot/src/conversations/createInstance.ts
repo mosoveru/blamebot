@@ -1,9 +1,7 @@
 import { BlamebotConversation, ConversationInsideContext } from '@types';
-import ReplyMessages from '@constants';
+import ReplyMessages, { repliesForErrors } from '@constants';
 import { chooseGitProvider } from './chooseGitProvider';
-import { InputFile } from 'grammy';
 import { isValidHttpURL } from '@utils';
-import { repliesForErrors } from '../constants/enums';
 
 export async function createInstance(conversation: BlamebotConversation, ctx: ConversationInsideContext) {
   await ctx.reply(ReplyMessages.NAME_FOR_NEW_INSTANCE);
@@ -11,9 +9,7 @@ export async function createInstance(conversation: BlamebotConversation, ctx: Co
     otherwise: (ctx) => ctx.reply('Пожалуйста, напишите текст с именем инстанса'),
   });
   const chosenProvider = await chooseGitProvider(conversation, ctx);
-  await ctx.replyWithPhoto(new InputFile('./public/cloneURLExample.png'), {
-    caption: 'Пришлите URL инстанса. Лучше использовать для этого любую ссылку для клонирования репозитория по HTTPS',
-  });
+  await ctx.reply('Пришлите URL инстанса.');
   const urlCheckpoint = conversation.checkpoint();
   const url = await conversation.form.text({
     otherwise: (ctx) => ctx.reply('Нужно прислать текстовое сообщение с URL'),

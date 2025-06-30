@@ -3,7 +3,10 @@ import { GitProviders } from '@constants';
 import { InlineKeyboard } from 'grammy';
 
 export async function chooseGitProvider(conversation: BlamebotConversation, ctx: ConversationInsideContext) {
-  const gitProvidersKeyboard = new InlineKeyboard().text('GitLab', GitProviders.GITLAB);
+  const gitProvidersKeyboard = new InlineKeyboard()
+    .text('GitLab', GitProviders.GITLAB)
+    .row()
+    .text('Gitea', GitProviders.GITEA);
   const gitProvidersMessage = await ctx.reply('Выберите провайдера Git', {
     reply_markup: gitProvidersKeyboard,
   });
