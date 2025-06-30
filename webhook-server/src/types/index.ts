@@ -1,4 +1,4 @@
-import { GitLabEventTypes, ObjectTypes, GitProviders } from '../constants/enums';
+import { GitLabEventTypes, ObjectTypes, GitProviders, GiteaEventTypes } from '../constants/enums';
 
 export type NullableEventPayload<T> = {
   service: GitProviders | null;
@@ -42,6 +42,8 @@ export type IssueChanges = {
   isAssigneesChanges?: {
     added?: UserInfo[];
     deleted?: UserInfo[];
+    addedWithoutInfo?: boolean;
+    deletedWithoutInfo?: boolean;
   };
   newComment?: boolean;
   isNewObject?: {
@@ -83,6 +85,8 @@ export type RequestChanges = {
   isAssigneesChanges?: {
     added?: UserInfo[];
     deleted?: UserInfo[];
+    addedWithoutInfo?: boolean;
+    deletedWithoutInfo?: boolean;
   };
   isReviewerChanges?: {
     added?: UserInfo[];
@@ -142,7 +146,8 @@ export type NotificationMessage = {
 
 export type DataForParsingChanges<T> = {
   eventMembersIds: number[];
-} & Pick<EventPayload<T>, 'eventPayload'>;
+  eventPayload: EventPayload<T>['eventPayload'];
+};
 
 export type ProjectEntity = {
   projectId: string;
@@ -169,7 +174,7 @@ export type SubscriptionInfo = Omit<ObservableObjectEntity, 'objectUrl'> & {
 };
 
 export interface DataParser<T> {
-  readonly eventType: GitLabEventTypes | GitLabEventTypes[];
+  readonly eventType: GitLabEventTypes | GitLabEventTypes[] | GiteaEventTypes | GiteaEventTypes[];
   readonly gitProvider: GitProviders;
 
   parseObservableObjectInfo(eventPayload: EventPayload<T>): ObservableObjectEntity;

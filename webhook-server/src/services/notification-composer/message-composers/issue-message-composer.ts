@@ -134,6 +134,9 @@ export class IssueMessageComposer implements MessageComposer {
       const deletedAssignees = eventChanges.changes.isAssigneesChanges.deleted;
       const sentence = this.composeStringForAssigneesChanges(newAssignees, deletedAssignees);
       preparedCommonMessage.push(sentence);
+      if (eventChanges.changes.isAssigneesChanges.deletedWithoutInfo) {
+        preparedCommonMessage.push(' и были удалены некоторые исполнители');
+      }
     }
     if (eventChanges.changes.isLabelsChanged) {
       const addedLabels = eventChanges.changes.isLabelsChanged.added;
@@ -230,7 +233,6 @@ export class IssueMessageComposer implements MessageComposer {
       sentenceParts.push(
         addedAssignees!.length === 1 ? 'был назначен исполнитель ' : 'были назначены исполнители ',
         this.joinUserNames(addedAssignees!),
-        hasDeleted ? '' : '.',
       );
     }
 
@@ -241,7 +243,6 @@ export class IssueMessageComposer implements MessageComposer {
       sentenceParts.push(
         deletedAssignees!.length === 1 ? 'перестал быть исполнителем ' : 'перестали быть исполнителями ',
         this.joinUserNames(deletedAssignees!),
-        '.',
       );
     }
 

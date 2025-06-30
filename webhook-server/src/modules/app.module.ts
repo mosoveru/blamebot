@@ -2,14 +2,16 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import configuration from '../config/configuration';
-import { TelegramUser } from '../models/telegram-user.entity';
+import {
+  Instance,
+  InstanceUser,
+  ObjectType,
+  ObservableObject,
+  Project,
+  TelegramUser,
+  UserSubscription,
+} from '../models';
 import { NotificationModule } from './notification.module';
-import { UserSubscription } from '../models/userSubscription.entity';
-import { InstanceUser } from '../models/instanceUser.entity';
-import { ObservableObject } from '../models/observable-object.entity';
-import { Instance } from '../models/instance.entity';
-import { Project } from '../models/project.entity';
-import { ObjectType } from '../models/object-type.entity';
 
 type DataBaseType = 'postgres';
 

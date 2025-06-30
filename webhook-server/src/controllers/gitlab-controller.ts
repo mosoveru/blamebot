@@ -4,13 +4,14 @@ import { NotificationService } from '../services/notification.service';
 import { EventPayload } from '../types';
 
 @Controller()
-export class WebhookController {
-  constructor(private readonly mediator: NotificationService) {}
+export class GitlabController {
+  constructor(private readonly notificationService: NotificationService) {}
 
-  @Post()
+  @Post('/gitlab')
   async handleWebhookEvent(@Payload() eventPayload: EventPayload<any> | null) {
+    console.log(JSON.stringify(eventPayload, null, 2));
     if (eventPayload) {
-      await this.mediator.notify(eventPayload);
+      await this.notificationService.notify(eventPayload);
     }
   }
 }

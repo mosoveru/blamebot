@@ -5,7 +5,7 @@ export enum GitProviders {
 
 export enum SecretTokenHeaders {
   GITLAB = 'x-gitlab-token',
-  GITEA = 'x-gitea-secret',
+  GITEA = 'authorization',
 }
 
 export enum EventHeaders {
@@ -19,6 +19,10 @@ export enum GitLabEventTypes {
   PIPELINE = 'Pipeline Hook',
   NOTE = 'Note Hook',
   EMOJI = 'Emoji Hook',
+}
+
+export enum GiteaEventTypes {
+  ISSUE = 'issues',
 }
 
 export enum ObjectTypes {
