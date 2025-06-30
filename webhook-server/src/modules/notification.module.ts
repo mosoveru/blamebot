@@ -8,7 +8,10 @@ import { NotificationComposerService } from '../services/notification-composer/n
 import { MessageComposerConstructors } from '../services/notification-composer/message-composers';
 import { ChangesAnalyserService } from '../services/changes-analyser.service';
 import { MessageAssignmentService } from '../services/message-assignment.service';
-import { WebhookController } from '../controllers/webhook.controller';
+import { GitlabController } from '../controllers/gitlab-controller';
+import { GiteaController } from '../controllers/gitea-contorller';
+import { PayloadTimerService } from '../services/payload-timer.service';
+import { PayloadCombiningService } from '../services/payload-combining.service';
 
 @Module({
   imports: [EntityModule, RepositoryModule, TelegramModule],
@@ -28,8 +31,10 @@ import { WebhookController } from '../controllers/webhook.controller';
     },
     ChangesAnalyserService,
     MessageAssignmentService,
+    PayloadTimerService,
+    PayloadCombiningService,
   ],
-  controllers: [WebhookController],
+  controllers: [GitlabController, GiteaController],
   exports: [NotificationService],
 })
 export class NotificationModule {}
