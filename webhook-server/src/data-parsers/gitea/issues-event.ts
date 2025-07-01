@@ -1,20 +1,30 @@
-import { DataForParsingChanges, DataParser, EventChanges, EventPayload, IssueChanges } from '../../types';
+import { Changes, DataForParsingChanges, DataParser, EventChanges, EventPayload, IssueChanges } from '../../types';
 import { GiteaIssuesEvent } from '../../types/gitea/issues';
 import { GiteaEventTypes, GitProviders, ObjectTypes } from '../../constants/enums';
-import { GiteaFlavor } from '../../types/gitea';
+import { GiteaEvents, GiteaFlavor } from '../../types/gitea';
+import { GiteaIssueCommentEvent } from '../../types/gitea/issue_comment';
 
 type ChangesForIssue = EventChanges<ObjectTypes.ISSUE>;
 
 export class IssuesDataParser implements DataParser<GiteaFlavor<GiteaIssuesEvent>> {
-  readonly eventType = GiteaEventTypes.ISSUE;
+  readonly eventType = [GiteaEventTypes.ISSUE, GiteaEventTypes.ISSUE_NOTE];
   readonly gitProvider = GitProviders.GITEA;
   readonly objectType = ObjectTypes.ISSUE as const;
 
-  private _issueChanges: IssueChanges | null;
-  private _eventPayload: GiteaIssuesEvent | null;
+  private _changes: Changes | null;
+  private _eventPayload: EventPayload<GiteaFlavor<GiteaEvents>> | null;
   private changesParsers = {
+    issues: this.parseChangesForIssues.bind(this),
+    issue_comment: this.parseChangesForIssues.bind(this),
+  };
+  private issuesChangesParsers = {
     assigned: this.parseChangesForAssignedOrUnassigned.bind(this),
     unassigned: this.parseChangesForAssignedOrUnassigned.bind(this),
+    reopened: this.parseIssueStatus.bind(this),
+    closed: this.parseIssueStatus.bind(this),
+    edited: this.parseIssueHeaderChanges.bind(this),
+    label_updated: this.parseChangesForLabels.bind(this),
+    created: this.parseChangesForNotes.bind(this),
   };
 
   parseProjectInfo(eventPayload: EventPayload<GiteaFlavor<GiteaIssuesEvent>>) {
@@ -40,13 +50,13 @@ export class IssuesDataParser implements DataParser<GiteaFlavor<GiteaIssuesEvent
     const objectMembersIdsSet = new Set<number>();
     const objectMembersIds: number[] = [];
     objectMembersIdsSet.add(serviceType.eventPayload.sender.id);
-    if (serviceType.eventPayload.combinedProperties && serviceType.eventPayload.combinedProperties.assigned) {
-      const assigned = serviceType.eventPayload.combinedProperties.assigned;
-      assigned.added.forEach((assigned) => {
-        objectMembersIdsSet.add(assigned.id);
+    const prop = serviceType.eventPayload.combinedProperties;
+    if (prop && prop.assigned && prop.assigned.length) {
+      prop.assigned.forEach((assigned) => {
+        objectMembersIdsSet.add(assigned!.id);
       });
     }
-    serviceType.eventPayload.issue.assignees.forEach((assignee) => objectMembersIdsSet.add(assignee.id));
+    serviceType.eventPayload.issue.assignees?.forEach((assignee) => objectMembersIdsSet.add(assignee.id));
     for (const id of objectMembersIdsSet) {
       objectMembersIds.push(id);
     }
@@ -62,15 +72,35 @@ export class IssuesDataParser implements DataParser<GiteaFlavor<GiteaIssuesEvent
     eventPayload,
   }: DataForParsingChanges<GiteaFlavor<GiteaIssuesEvent>>): ChangesForIssue[] {
     this.eventPayload = eventPayload;
-    const changes = this.parseChanges();
-    if (!changes) {
+    this.changes = {};
+    if (this.changesParsers[eventPayload.eventType]) {
+      return this.changesParsers[eventPayload.eventType](eventMembersIds);
+    } else {
       return [];
     }
+  }
+
+  private parseChangesForIssues(eventMembersIds: number[]): ChangesForIssue[] {
+    const { eventPayload } = this.eventPayload;
+    const action = eventPayload.action;
+    if (this.isNewIssue()) {
+      this.parseChangesForNewCreatedIssue();
+    } else if (this.issuesChangesParsers[action]) {
+      this.issuesChangesParsers[action]();
+    } else {
+      return [];
+    }
+
+    const changes = this.changes;
+    if (!Object.keys(changes).length) {
+      return [];
+    }
+
     const eventChangesTemplate = {
       objectType: ObjectTypes.ISSUE as const,
-      objectUrl: eventPayload.issue.url,
+      objectUrl: eventPayload.issue.html_url,
       objectId: String(eventPayload.issue.id),
-      projectUrl: eventPayload.repository.url,
+      projectUrl: eventPayload.repository.html_url,
       projectName: eventPayload.repository.name,
     };
     const commonChanges = {
@@ -109,88 +139,113 @@ export class IssuesDataParser implements DataParser<GiteaFlavor<GiteaIssuesEvent
     return [...individualChanges, commonChanges];
   }
 
-  private parseChanges() {
-    const eventPayload = this.eventPayload;
-    this.issueChanges = {};
+  private isNewIssue() {
+    const { eventPayload } = this.eventPayload;
+    return !!eventPayload.combinedProperties?.opened;
+  }
 
-    if (this.changesParsers[eventPayload.action]) {
-      this.changesParsers[eventPayload.action]();
+  private parseChangesForNewCreatedIssue() {
+    const { eventPayload } = this.eventPayload;
+    const changes = this.changes;
+    if (eventPayload.combinedProperties?.assigned?.length && eventPayload.issue.due_date) {
+      changes.isNewObject = {
+        isNewAssignmentWithDeadline: {
+          deadline: eventPayload.issue.due_date,
+        },
+      };
+    } else if (eventPayload.combinedProperties?.assigned?.length) {
+      changes.isNewObject = {
+        isNewAssignment: true,
+      };
     }
+  }
 
-    const changes = this.issueChanges;
-    if (!Object.keys(changes).length) {
-      return null;
-    }
-
-    return changes;
+  private parseChangesForLabels() {
+    const changes = this.changes;
+    changes.isLabelsChanged = {
+      justChanged: true,
+    };
   }
 
   private isAssignee(assigneeId: number) {
-    const eventPayload = this.eventPayload;
-    return eventPayload.issue.assignees.some((a) => a.id === assigneeId);
+    const { eventPayload } = this.eventPayload;
+    return eventPayload.issue.assignees?.some((a) => a.id === assigneeId);
   }
 
   private isAuthor(memberId: number) {
-    const eventPayload = this.eventPayload;
+    const { eventPayload } = this.eventPayload;
     return eventPayload.issue.original_author_id === memberId;
   }
 
   private checkIsNewAssignee(id: string) {
-    const changes = this.issueChanges;
+    const changes = this.changes;
     if (changes.isAssigneesChanges?.added) {
       return changes.isAssigneesChanges.added.some((assignee) => assignee.id === id);
     }
   }
 
   private parseChangesForAssignedOrUnassigned() {
-    const payload = this.eventPayload;
-    const changes = this.issueChanges;
-    if (payload.combinedProperties && payload.combinedProperties.assigned && payload.combinedProperties.unassigned) {
-      changes.isAssigneesChanges = {
-        added: payload.combinedProperties.assigned.added.map((assignee) => ({
-          id: String(assignee.id),
-          name: assignee.username,
-        })),
-        deletedWithoutInfo: true,
-      };
-    } else if (payload.combinedProperties && payload.combinedProperties.assigned) {
-      changes.isAssigneesChanges = {
-        added: payload.combinedProperties.assigned.added.map((assignee) => ({
-          id: String(assignee.id),
-          name: assignee.username,
-        })),
-      };
-    } else {
-      changes.isAssigneesChanges = {
-        deletedWithoutInfo: true,
-      };
+    const changes = this.changes;
+    changes.isAssigneesChanges = {
+      justChanged: true,
+    };
+  }
+
+  private parseIssueStatus() {
+    const { eventPayload } = this.eventPayload;
+    const changes = this.changes;
+    if (eventPayload.action === 'closed') {
+      changes.isClosed = true;
+      return;
+    }
+    if (eventPayload.action === 'reopened') {
+      changes.isReopened = true;
     }
   }
 
-  private get eventPayload(): GiteaFlavor<GiteaFlavor<GiteaIssuesEvent>> {
+  private parseIssueHeaderChanges() {
+    const { eventPayload, eventType } = this.eventPayload as EventPayload<GiteaIssuesEvent>;
+    const changes = this.changes;
+    if (eventPayload.changes.title) {
+      changes.isTitleChanged = true;
+    }
+    if (eventPayload.changes.body && eventType !== 'issue_comment') {
+      changes.isDescriptionChanged = true;
+    }
+  }
+
+  parseChangesForNotes() {
+    const { eventPayload } = this.eventPayload as EventPayload<GiteaIssueCommentEvent>;
+    const changes = this.changes;
+    if (eventPayload.comment) {
+      changes.newComment = true;
+    }
+  }
+
+  private get eventPayload(): EventPayload<GiteaFlavor<GiteaEvents>> {
     if (this._eventPayload === null) {
       throw new TypeError('Error in event payload getter');
     }
     return this._eventPayload;
   }
 
-  private set eventPayload(payload: GiteaFlavor<GiteaIssuesEvent>) {
+  private set eventPayload(payload: EventPayload<GiteaFlavor<GiteaEvents>>) {
     this._eventPayload = payload;
   }
 
-  private get issueChanges(): IssueChanges {
-    if (this._issueChanges === null) {
-      throw new TypeError('Error in issueChanges getter');
+  private get changes(): Changes {
+    if (this._changes === null) {
+      throw new TypeError('Error in changes getter');
     }
-    return this._issueChanges;
+    return this._changes;
   }
 
-  private set issueChanges(issueChanges: IssueChanges) {
-    this._issueChanges = issueChanges;
+  private set changes(changes: Changes) {
+    this._changes = changes;
   }
 
   private resetContext(): void {
-    this._issueChanges = null;
+    this._changes = null;
     this._eventPayload = null;
   }
 }

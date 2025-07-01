@@ -130,19 +130,18 @@ export class IssueMessageComposer implements MessageComposer {
       preparedCommonMessage.push('был изменён заголовок, ');
     }
     if (eventChanges.changes.isAssigneesChanges) {
+      const justChanged = eventChanges.changes.isAssigneesChanges.justChanged;
       const newAssignees = eventChanges.changes.isAssigneesChanges.added;
       const deletedAssignees = eventChanges.changes.isAssigneesChanges.deleted;
       const sentence = this.composeStringForAssigneesChanges(newAssignees, deletedAssignees);
-      preparedCommonMessage.push(sentence);
-      if (eventChanges.changes.isAssigneesChanges.deletedWithoutInfo) {
-        preparedCommonMessage.push(' и были удалены некоторые исполнители');
-      }
+      preparedCommonMessage.push(justChanged ? 'были изменены исполнители' : sentence);
     }
     if (eventChanges.changes.isLabelsChanged) {
+      const justChanged = eventChanges.changes.isLabelsChanged.justChanged;
       const addedLabels = eventChanges.changes.isLabelsChanged.added;
       const deletedLabels = eventChanges.changes.isLabelsChanged.deleted;
       const sentence = this.composeStringForLabelChanges(addedLabels, deletedLabels);
-      preparedCommonMessage.push(sentence);
+      preparedCommonMessage.push(justChanged ? 'были изменены лейблы' : sentence);
     }
     if (eventChanges.changes.isDueDateChanged) {
       const dueDateChanges = eventChanges.changes.isDueDateChanged;

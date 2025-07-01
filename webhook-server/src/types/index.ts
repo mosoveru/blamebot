@@ -43,7 +43,7 @@ export type IssueChanges = {
     added?: UserInfo[];
     deleted?: UserInfo[];
     addedWithoutInfo?: boolean;
-    deletedWithoutInfo?: boolean;
+    justChanged?: boolean;
   };
   newComment?: boolean;
   isNewObject?: {
@@ -59,6 +59,7 @@ export type IssueChanges = {
   isLabelsChanged?: {
     added?: string[];
     deleted?: string[];
+    justChanged?: boolean;
   };
   isDueDateChanged?: {
     isUpdated?: {
@@ -85,8 +86,7 @@ export type RequestChanges = {
   isAssigneesChanges?: {
     added?: UserInfo[];
     deleted?: UserInfo[];
-    addedWithoutInfo?: boolean;
-    deletedWithoutInfo?: boolean;
+    justChanged?: boolean;
   };
   isReviewerChanges?: {
     added?: UserInfo[];
@@ -101,6 +101,7 @@ export type RequestChanges = {
   isLabelsChanged?: {
     added?: string[];
     deleted?: string[];
+    justChanged?: boolean;
   };
   isClosed?: boolean;
   isReopened?: boolean;
@@ -146,7 +147,7 @@ export type NotificationMessage = {
 
 export type DataForParsingChanges<T> = {
   eventMembersIds: number[];
-  eventPayload: EventPayload<T>['eventPayload'];
+  eventPayload: EventPayload<T>;
 };
 
 export type ProjectEntity = {

@@ -1,31 +1,37 @@
 import { Injectable } from '@nestjs/common';
 import { EventPayload } from '../types';
-import { AdditionalProperties, CombinedProperties, GiteaEvents, GiteaFlavor } from '../types/gitea';
+import { AdditionalProperties, GiteaEvents } from '../types/gitea';
 import { GiteaIssuesEvent } from '../types/gitea/issues';
 import { NotificationService } from './notification.service';
 
+type Handler = (properties: AdditionalProperties, payload?: EventPayload<GiteaEvents>) => AdditionalProperties;
+
 @Injectable()
 export class PayloadCombiningService {
-  private updateAdditionalProperties = {
-    assigned: (properties: AdditionalProperties, payload: EventPayload<GiteaIssuesEvent>) => {
-      if (properties.assigned?.added) {
-        properties.assigned.added.push(payload.eventPayload.issue.assignee);
+  private updateAdditionalProperties: Record<Partial<GiteaEvents['action']>, Handler> = {
+    assigned: (properties: AdditionalProperties, payload: EventPayload<GiteaIssuesEvent>): AdditionalProperties => {
+      if (properties.assigned && payload.eventPayload.issue.assignee) {
+        properties.assigned.push(payload.eventPayload.issue.assignee);
         return {
           ...properties,
         };
       } else {
         return {
-          assigned: {
-            added: [payload.eventPayload.issue.assignee],
-          },
+          assigned: payload.eventPayload.issue.assignee ? [payload.eventPayload.issue.assignee] : [],
           ...properties,
         };
       }
     },
-    unassigned: (properties: AdditionalProperties) => {
+    unassigned: (properties: AdditionalProperties): AdditionalProperties => {
       return {
         ...properties,
         unassigned: true,
+      };
+    },
+    opened: (properties: AdditionalProperties): AdditionalProperties => {
+      return {
+        ...properties,
+        opened: true,
       };
     },
   };
@@ -36,10 +42,7 @@ export class PayloadCombiningService {
     if (!payloads.length) {
       return;
     }
-    if (payloads.length === 1) {
-      await this.notificationService.notify(payloads.pop()!);
-    }
-    const additionalProperties = payloads.reduce<CombinedProperties>((acc, payload, index, payloads) => {
+    const additionalProperties = payloads.reduce<AdditionalProperties>((acc, payload) => {
       const action = payload.eventPayload.action;
       if (this.updateAdditionalProperties[action]) {
         return this.updateAdditionalProperties[action](acc, payload);
@@ -58,6 +61,9 @@ export class PayloadCombiningService {
         },
       };
       await this.notificationService.notify(combinedPayload);
+    } else {
+      const payload = payloads.pop()!;
+      await this.notificationService.notify(payload);
     }
   }
 }

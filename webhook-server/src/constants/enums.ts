@@ -23,6 +23,7 @@ export enum GitLabEventTypes {
 
 export enum GiteaEventTypes {
   ISSUE = 'issues',
+  ISSUE_NOTE = 'issue_comment',
 }
 
 export enum ObjectTypes {

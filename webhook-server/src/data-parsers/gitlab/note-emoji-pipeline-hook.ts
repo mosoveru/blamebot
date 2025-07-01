@@ -166,16 +166,15 @@ export class NoteEmojiPipelineHookDataParser implements DataParser<SimilarGitLab
   }
 
   parseEventChanges({ eventMembersIds, eventPayload }: DataForParsingChanges<SimilarGitLabEvents>) {
-    this.eventPayload = {
-      ...eventPayload,
-    };
+    this.eventPayload = JSON.parse(JSON.stringify(eventPayload.eventPayload));
     this.changes = {};
-    if (eventPayload.object_kind === 'pipeline') {
+    const payload = this.eventPayload;
+    if (payload.object_kind === 'pipeline') {
       this.changesParsers.pipeline();
       return this.findChangesForPipelines();
     } else {
-      const parser = this.changesParsers[eventPayload.object_kind];
-      if (eventPayload.merge_request) {
+      const parser = this.changesParsers[payload.object_kind];
+      if (payload.merge_request) {
         parser.merge_request();
         return this.findChangesInMergeRequest(eventMembersIds);
       } else {
