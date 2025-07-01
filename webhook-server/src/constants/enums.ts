@@ -24,6 +24,7 @@ export enum GitLabEventTypes {
 export enum GiteaEventTypes {
   ISSUE = 'issues',
   ISSUE_NOTE = 'issue_comment',
+  PULL_REQUEST = 'pull_request',
 }
 
 export enum ObjectTypes {

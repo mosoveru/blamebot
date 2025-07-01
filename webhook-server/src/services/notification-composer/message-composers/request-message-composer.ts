@@ -203,14 +203,16 @@ export class RequestMessageComposer implements MessageComposer {
       preparedCommonMessage.push('был изменён заголовок, ');
     }
     if (eventChanges.changes.isLabelsChanged) {
+      const justChanged = eventChanges.changes.isLabelsChanged.justChanged;
       const { added, deleted } = eventChanges.changes.isLabelsChanged;
       const sentence = this.composeStringForLabelChanges(added, deleted);
-      preparedCommonMessage.push(sentence);
+      preparedCommonMessage.push(justChanged ? 'были изменены лейблы' : sentence);
     }
     if (eventChanges.changes.isAssigneesChanges) {
+      const justChanged = eventChanges.changes.isAssigneesChanges.justChanged;
       const { added, deleted } = eventChanges.changes.isAssigneesChanges;
       const sentence = this.composeStringForUserChanges('assignees', added, deleted);
-      preparedCommonMessage.push(sentence);
+      preparedCommonMessage.push(justChanged ? 'были изменены исполнители' : sentence);
     }
     if (eventChanges.changes.isReviewerChanges) {
       const { added, deleted } = eventChanges.changes.isReviewerChanges;

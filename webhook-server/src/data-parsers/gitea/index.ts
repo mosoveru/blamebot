@@ -1,4 +1,4 @@
 import { DataParserConstructor } from '../types';
-import { IssuesDataParser } from './issues-event';
+import { GiteaDataParser } from './gitea-events';
 
-export const GiteaDataParsers: DataParserConstructor[] = [IssuesDataParser];
+export const GiteaDataParsers: DataParserConstructor[] = [GiteaDataParser];
