@@ -1,7 +1,6 @@
 import { GitApiHandler } from '@types';
 import { GitbeakerRequestError, Gitlab } from '@gitbeaker/rest';
-import { GitProviders } from '@constants';
-import { PossibleCauses } from '../../constants/enums';
+import { GitProviders, PossibleCauses } from '@constants';
 
 interface ErrorWithCode extends Error {
   code: string;

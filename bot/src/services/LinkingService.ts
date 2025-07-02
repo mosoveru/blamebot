@@ -1,6 +1,6 @@
 import { DatabaseService, LinkClientRequiredData, LinkingService, LinkingServiceResponse } from '@types';
 import { TypeORMError } from 'typeorm';
-import { PossibleCauses } from '../constants/enums';
+import { PossibleCauses } from '@constants';
 
 export class Linker implements LinkingService {
   constructor(private readonly dbService: DatabaseService) {}

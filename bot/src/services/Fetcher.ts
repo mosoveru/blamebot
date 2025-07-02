@@ -1,6 +1,5 @@
-import { ApiResponse, ExternalGitSystemDataFetcher, GitApiHandler } from '@types';
-import { GitProviders } from '@constants';
-import { PossibleCauses } from '../constants/enums';
+import { ExternalGitSystemDataFetcher, GitApiHandler } from '@types';
+import { GitProviders, PossibleCauses } from '@constants';
 
 type RequiredInfo = {
   origin: string;

@@ -1,7 +1,7 @@
 import { Conversation, ConversationFlavor } from '@grammyjs/conversations';
 import type { Context } from 'grammy';
 import { GitProviders } from '@constants';
-import { PossibleCauses } from '../constants/enums';
+import { PossibleCauses } from '@constants';
 import { InstanceManagerFlavor } from '@services';
 
 export interface ExternalGitSystemDataFetcher {
