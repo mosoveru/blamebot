@@ -10,8 +10,8 @@ import { ChangesAnalyserService } from '../services/changes-analyser.service';
 import { MessageAssignmentService } from '../services/message-assignment.service';
 import { GitlabController } from '../controllers/gitlab-controller';
 import { GiteaController } from '../controllers/gitea-contorller';
-import { GiteaPayloadTimerService } from '../services/payload-timer.service';
-import { PayloadCombiningService } from '../services/payload-combining.service';
+import { GiteaPayloadTimerService } from '../services/gitea-payload-timer.service';
+import { GiteaPayloadCombiningService } from '../services/gitea-payload-combining.service';
 
 @Module({
   imports: [EntityModule, RepositoryModule, TelegramModule],
@@ -32,7 +32,7 @@ import { PayloadCombiningService } from '../services/payload-combining.service';
     ChangesAnalyserService,
     MessageAssignmentService,
     GiteaPayloadTimerService,
-    PayloadCombiningService,
+    GiteaPayloadCombiningService,
   ],
   controllers: [GitlabController, GiteaController],
   exports: [NotificationService],

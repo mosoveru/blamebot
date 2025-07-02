@@ -1,5 +1,5 @@
 import { Controller, Post } from '@nestjs/common';
-import { GiteaPayloadTimerService } from '../services/payload-timer.service';
+import { GiteaPayloadTimerService } from '../services/gitea-payload-timer.service';
 import { Payload } from '../decorators/event-payload';
 import { EventPayload } from '../types';
 

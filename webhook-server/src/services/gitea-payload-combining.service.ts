@@ -7,7 +7,7 @@ import { GiteaPullRequestEvent } from '../types/gitea/pull_request';
 type Handler = (properties: AdditionalProperties, payload?: EventPayload<GiteaEvents>) => AdditionalProperties;
 
 @Injectable()
-export class PayloadCombiningService {
+export class GiteaPayloadCombiningService {
   private commonHandlers: Record<Partial<GiteaEvents['action']>, Handler> = {
     unassigned: (properties: AdditionalProperties): AdditionalProperties => {
       return {

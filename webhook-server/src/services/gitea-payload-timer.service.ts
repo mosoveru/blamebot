@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { EventPayload } from '../types';
 import { GiteaEvents, GiteaEventsWithIssue } from '../types/gitea';
-import { PayloadCombiningService } from './payload-combining.service';
+import { GiteaPayloadCombiningService } from './gitea-payload-combining.service';
 import { GiteaPullRequestEvent } from '../types/gitea/pull_request';
 import { GiteaIssueCommentEvent } from '../types/gitea/issue_comment';
 
@@ -17,7 +17,7 @@ export class GiteaPayloadTimerService {
     pull_request_comment: 'request',
   };
 
-  constructor(private readonly combiningService: PayloadCombiningService) {}
+  constructor(private readonly combiningService: GiteaPayloadCombiningService) {}
 
   waitBeforeProcessing(eventPayload: EventPayload<GiteaEvents>) {
     const meantFor = this.checkMeantFor(eventPayload);
