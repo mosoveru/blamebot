@@ -24,6 +24,7 @@ export enum PossibleCauses {
   CONNECTION_ERROR = 'CONNECTION_ERROR',
   CANNOT_AUTHORIZE_CLIENT = 'CANNOT_AUTHORIZE_CLIENT',
   INSTANCE_WITH_SAME_URL = 'INSTANCE_WITH_SAME_URL',
+  INSTANCE_USER_ALREADY_EXISTS = 'INSTANCE_USER_ALREADY_EXISTS',
 }
 
 export const repliesForErrors: RepliesForPossibleErrors<PossibleCauses> = {
@@ -38,6 +39,7 @@ export const repliesForErrors: RepliesForPossibleErrors<PossibleCauses> = {
   [PossibleCauses.CANNOT_AUTHORIZE_CLIENT]:
     'Невозможно авторизоваться с текущим токеном доступа. Проверьте правильность токена доступа.',
   [PossibleCauses.INSTANCE_WITH_SAME_URL]: 'Инстанс с таким же URL уже существует.',
+  [PossibleCauses.INSTANCE_USER_ALREADY_EXISTS]: 'Пользователь уже связан с телеграм клиентом.',
 };
 
 export default ReplyMessages;

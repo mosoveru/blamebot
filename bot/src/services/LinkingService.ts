@@ -1,5 +1,5 @@
-import { DatabaseService, LinkClientRequiredData, LinkingService, LinkingServiceResponse } from '@types';
-import { TypeORMError } from 'typeorm';
+import { DatabaseService, LinkClientRequiredData, LinkingService, LinkingServiceResponse, PgError } from '@types';
+import { QueryFailedError, TypeORMError } from 'typeorm';
 import { PossibleCauses } from '@constants';
 
 export class Linker implements LinkingService {
@@ -29,6 +29,9 @@ export class Linker implements LinkingService {
       });
       return this.generateSuccessResponse();
     } catch (error) {
+      if (error instanceof QueryFailedError && (error as QueryFailedError<PgError>).driverError.code === '23505') {
+        return this.generateFailedResponse(PossibleCauses.INSTANCE_USER_ALREADY_EXISTS);
+      }
       if (error instanceof TypeORMError) {
         return this.generateFailedResponse(PossibleCauses.DATABASE_ERROR);
       }
