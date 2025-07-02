@@ -143,3 +143,29 @@ export interface PgError extends Error {
   line: string;
   routine: string;
 }
+
+export type GiteaUserApiResponse = {
+  id: number;
+  login: string;
+  login_name: string;
+  source_id: number;
+  full_name: string;
+  email: string;
+  avatar_url: string;
+  html_url: string;
+  language: string;
+  is_admin: boolean;
+  last_login: Date;
+  created: Date;
+  restricted: boolean;
+  active: boolean;
+  prohibit_login: boolean;
+  location: string;
+  website: string;
+  description: string;
+  visibility: string;
+  followers_count: number;
+  following_count: number;
+  starred_repos_count: number;
+  username: string;
+};
