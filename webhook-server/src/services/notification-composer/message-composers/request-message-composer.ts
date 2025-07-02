@@ -184,7 +184,7 @@ export class RequestMessageComposer implements MessageComposer {
       return `Связанный с Вами ${basePhrase} был снова открыт`;
     }
     if (eventChanges.changes.isMerged) {
-      return `Связанный с Вами ${basePhrase} был снова открыт был слит в ветку ${eventChanges.changes.isMerged.target_branch}`;
+      return `Связанный с Вами ${basePhrase} был слит в ветку ${eventChanges.changes.isMerged.target_branch}`;
     }
     if (eventChanges.changes.newComment) {
       return `В связанном с вами ${basePhrase} был оставлен комментарий.`;
