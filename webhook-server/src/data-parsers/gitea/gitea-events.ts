@@ -17,7 +17,14 @@ import { Sender } from '../../types/gitea/common';
 type ChangesForRequestOrIssue = EventChanges<ObjectTypes.ISSUE | ObjectTypes.REQUEST>;
 
 export class GiteaDataParser implements DataParser<GiteaFlavor<GiteaIssuesEvent>> {
-  readonly eventType = [GiteaEventTypes.ISSUE, GiteaEventTypes.ISSUE_NOTE, GiteaEventTypes.PULL_REQUEST];
+  readonly eventType = [
+    GiteaEventTypes.ISSUE,
+    GiteaEventTypes.ISSUE_NOTE,
+    GiteaEventTypes.PULL_REQUEST,
+    GiteaEventTypes.PULL_REQUEST_REJECTED,
+    GiteaEventTypes.PULL_REQUEST_APPROVED,
+    GiteaEventTypes.PULL_REQUEST_COMMENT,
+  ];
   readonly gitProvider = GitProviders.GITEA;
 
   private _changes: Changes | null;
@@ -26,13 +33,16 @@ export class GiteaDataParser implements DataParser<GiteaFlavor<GiteaIssuesEvent>
     issues: this.parseChangesForIssues.bind(this),
     issue_comment: this.parseChangesForIssues.bind(this),
     pull_request: this.parseChangesForPullRequest.bind(this),
+    pull_request_rejected: this.parseChangesForPullRequest.bind(this),
+    pull_request_approved: this.parseChangesForPullRequest.bind(this),
+    pull_request_comment: this.parseChangesForPullRequest.bind(this),
   };
   private issuesChangesParsers = {
     assigned: this.parseChangesForAssignedOrUnassigned.bind(this),
     unassigned: this.parseChangesForAssignedOrUnassigned.bind(this),
     reopened: this.parseIssueStatus.bind(this),
     closed: this.parseIssueStatus.bind(this),
-    edited: this.parseIssueHeaderChanges.bind(this),
+    edited: this.parseObjectHeaderChanges.bind(this),
     label_updated: this.parseChangesForLabels.bind(this),
     created: this.parseChangesForNotes.bind(this),
   };
@@ -42,7 +52,19 @@ export class GiteaDataParser implements DataParser<GiteaFlavor<GiteaIssuesEvent>
     label_updated: this.parseChangesForLabels.bind(this),
     review_request_removed: this.parseChangesForReviewers.bind(this),
     review_requested: this.parseChangesForReviewers.bind(this),
+    edited: this.parseObjectHeaderChanges.bind(this),
+    created: this.parseChangesForNotes.bind(this),
+    reviewed: this.parseChangesForReviewedPullRequest.bind(this),
+    closed: this.parsePullRequestStatus.bind(this),
+    reopened: this.parsePullRequestStatus.bind(this),
   };
+
+  private eventsTreatedAsPullRequest = [
+    'pull_request',
+    'pull_request_rejected',
+    'pull_request_approved',
+    'pull_request_comment',
+  ];
 
   parseProjectInfo(eventPayload: EventPayload<GiteaFlavor<GiteaEvents>>) {
     return {
@@ -54,7 +76,7 @@ export class GiteaDataParser implements DataParser<GiteaFlavor<GiteaIssuesEvent>
   }
 
   parseObservableObjectInfo(eventPayload: EventPayload<GiteaFlavor<GiteaEvents>>) {
-    if (eventPayload.eventType === GiteaEventTypes.ISSUE || eventPayload.eventType === GiteaEventTypes.ISSUE_NOTE) {
+    if (this.isIssueEvent(eventPayload) || this.isIssueCommentEventFromIssue(eventPayload)) {
       const payload = eventPayload as EventPayload<GiteaEventsWithIssue>;
       return {
         instanceId: payload.instanceId,
@@ -79,7 +101,7 @@ export class GiteaDataParser implements DataParser<GiteaFlavor<GiteaIssuesEvent>
     const objectMembersIdsSet = new Set<number>();
     const objectMembersIds: number[] = [];
     objectMembersIdsSet.add(payload.eventPayload.sender.id);
-    if (payload.eventType === GiteaEventTypes.ISSUE || payload.eventType === GiteaEventTypes.ISSUE_NOTE) {
+    if (this.isIssueEvent(payload) || this.isIssueCommentEventFromIssue(payload)) {
       const eventPayload = payload.eventPayload as GiteaFlavor<GiteaEventsWithIssue>;
       const prop = eventPayload.combinedProperties;
       if (prop && prop.assigned && prop.assigned.length) {
@@ -89,7 +111,10 @@ export class GiteaDataParser implements DataParser<GiteaFlavor<GiteaIssuesEvent>
       }
       eventPayload.issue.assignees?.forEach((assignee) => objectMembersIdsSet.add(assignee.id));
     }
-    if (payload.eventType === 'pull_request') {
+    if (
+      this.eventsTreatedAsPullRequest.includes(payload.eventType) ||
+      this.isIssueCommentEventFromPullRequest(payload)
+    ) {
       const eventPayload = payload.eventPayload as GiteaFlavor<GiteaPullRequestEvent>;
       const prop = eventPayload.combinedProperties;
       if (prop && prop.assigned && prop.assigned.length) {
@@ -110,16 +135,19 @@ export class GiteaDataParser implements DataParser<GiteaFlavor<GiteaIssuesEvent>
     return objectMembersIds;
   }
 
-  parseEventInitiatorId(serviceType: EventPayload<GiteaIssuesEvent>): string {
+  parseEventInitiatorId(serviceType: EventPayload<GiteaEvents>): string {
     return String(serviceType.eventPayload.sender.id);
   }
 
   parseEventChanges({
     eventMembersIds,
     eventPayload,
-  }: DataForParsingChanges<GiteaFlavor<GiteaIssuesEvent>>): ChangesForRequestOrIssue[] {
+  }: DataForParsingChanges<GiteaFlavor<GiteaEvents>>): ChangesForRequestOrIssue[] {
     this.eventPayload = eventPayload;
     this.changes = {};
+    if (this.isIssueCommentEvent(eventPayload) && eventPayload.eventPayload.is_pull) {
+      return this.parseChangesForPullRequest(eventMembersIds);
+    }
     if (this.changesParsers[eventPayload.eventType]) {
       return this.changesParsers[eventPayload.eventType](eventMembersIds);
     } else {
@@ -174,6 +202,7 @@ export class GiteaDataParser implements DataParser<GiteaFlavor<GiteaIssuesEvent>
           isNewAssignment: this.checkIsNewAssignee(String(memberId)),
           forAssignee: true,
         });
+        return acc;
       }
       if (this.isAuthor(memberId)) {
         formIndividualChanges({
@@ -233,18 +262,21 @@ export class GiteaDataParser implements DataParser<GiteaFlavor<GiteaIssuesEvent>
           isNewAssignment: this.checkIsNewAssignee(String(memberId)),
           forAssignee: true,
         });
-      }
-      if (this.isReviewer(memberId)) {
-        formIndividualChanges({
-          isNewReviewer: this.checkIsNewReviewer(String(memberId)),
-          forReviewer: true,
-        });
+        return acc;
       }
       if (this.checkIsUnassignedReviewer(String(memberId))) {
         formIndividualChanges({
           isUnassignedReviewer: true,
           forReviewer: true,
         });
+        return acc;
+      }
+      if (this.isReviewer(memberId)) {
+        formIndividualChanges({
+          isNewReviewer: this.checkIsNewReviewer(String(memberId)),
+          forReviewer: true,
+        });
+        return acc;
       }
       if (this.isAuthor(memberId)) {
         formIndividualChanges({
@@ -284,14 +316,21 @@ export class GiteaDataParser implements DataParser<GiteaFlavor<GiteaIssuesEvent>
   }
 
   private parseChangesForNewCreatedPullRequest() {
-    const { eventPayload } = this.eventPayload as EventPayload<GiteaPullRequestEvent>;
+    const { eventPayload } = this.eventPayload as EventPayload<GiteaFlavor<GiteaPullRequestEvent>>;
     const requestChanges = this.changes;
-    requestChanges.isNewObject = {};
-    if (eventPayload.pull_request.assignees.length) {
-      requestChanges.isNewObject.withAssignment = true;
-    }
-    if (eventPayload.pull_request.requested_reviewers.length) {
-      requestChanges.isNewObject.withReviewer = true;
+    if (eventPayload.combinedProperties?.assigned?.length && eventPayload.combinedProperties?.addedReviewers?.length) {
+      requestChanges.isNewObject = {
+        withAssignment: true,
+        withReviewer: true,
+      };
+    } else if (eventPayload.combinedProperties?.addedReviewers?.length) {
+      requestChanges.isNewObject = {
+        withReviewer: true,
+      };
+    } else if (eventPayload.combinedProperties?.assigned?.length) {
+      requestChanges.isNewObject = {
+        withAssignment: true,
+      };
     }
   }
 
@@ -303,26 +342,30 @@ export class GiteaDataParser implements DataParser<GiteaFlavor<GiteaIssuesEvent>
   }
 
   private isAssignee(assigneeId: number) {
-    const { eventPayload, eventType } = this.eventPayload as EventPayload<GiteaEvents>;
-    if (eventType === GiteaEventTypes.ISSUE || eventType === GiteaEventTypes.ISSUE_NOTE) {
-      return (eventPayload as GiteaEventsWithIssue).issue.assignees?.some((a) => a.id === assigneeId);
+    const eventPayload = this.eventPayload;
+    if (this.isIssueEvent(eventPayload) || this.isIssueCommentEventFromIssue(eventPayload)) {
+      return eventPayload.eventPayload.issue.assignees?.some((a) => a.id === assigneeId);
     } else {
-      return (eventPayload as GiteaPullRequestEvent).pull_request.assignees?.some((a) => a.id === assigneeId);
+      return (eventPayload as EventPayload<GiteaPullRequestEvent>).eventPayload.pull_request.assignees?.some(
+        (a) => a.id === assigneeId,
+      );
     }
   }
 
   private isAuthor(memberId: number) {
-    const { eventPayload, eventType } = this.eventPayload as EventPayload<GiteaEvents>;
-    if (eventType === GiteaEventTypes.ISSUE || eventType === GiteaEventTypes.ISSUE_NOTE) {
-      return (eventPayload as GiteaEventsWithIssue).issue.original_author_id === memberId;
+    const eventPayload = this.eventPayload as EventPayload<GiteaEvents>;
+    if (this.isIssueEvent(eventPayload) || this.isIssueCommentEventFromIssue(eventPayload)) {
+      return (eventPayload as EventPayload<GiteaEventsWithIssue>).eventPayload.issue.original_author_id === memberId;
     } else {
-      return (eventPayload as GiteaPullRequestEvent).pull_request.user.id === memberId;
+      return (eventPayload as EventPayload<GiteaPullRequestEvent>).eventPayload.pull_request.user.id === memberId;
     }
   }
 
   private isReviewer(memberId: number) {
     const { eventPayload } = this.eventPayload as EventPayload<GiteaPullRequestEvent>;
-    return eventPayload.pull_request.requested_reviewers?.some((a) => a.id === memberId);
+    const inRequestedReviewer = eventPayload.requested_reviewer?.id === memberId;
+    const inRequestedReviewers = eventPayload.pull_request.requested_reviewers?.some((a) => a.id === memberId);
+    return inRequestedReviewer || inRequestedReviewers;
   }
 
   private checkIsNewAssignee(id: string) {
@@ -393,7 +436,24 @@ export class GiteaDataParser implements DataParser<GiteaFlavor<GiteaIssuesEvent>
     }
   }
 
-  private parseIssueHeaderChanges() {
+  private parsePullRequestStatus() {
+    const { eventPayload } = this.eventPayload as EventPayload<GiteaPullRequestEvent>;
+    const changes = this.changes;
+    if (eventPayload.action === 'closed' && eventPayload.pull_request.merged) {
+      changes.isMerged = {
+        source_branch: eventPayload.pull_request.head.label,
+        target_branch: eventPayload.pull_request.base.label,
+      };
+    }
+    if (eventPayload.action === 'closed' && !eventPayload.pull_request.merged) {
+      changes.isClosed = true;
+    }
+    if (eventPayload.action === 'reopened') {
+      changes.isReopened = true;
+    }
+  }
+
+  private parseObjectHeaderChanges() {
     const { eventPayload, eventType } = this.eventPayload as EventPayload<GiteaIssuesEvent>;
     const changes = this.changes;
     if (eventPayload.changes.title) {
@@ -410,6 +470,48 @@ export class GiteaDataParser implements DataParser<GiteaFlavor<GiteaIssuesEvent>
     if (eventPayload.comment) {
       changes.newComment = true;
     }
+  }
+
+  parseChangesForReviewedPullRequest() {
+    const eventPayload = this.eventPayload as EventPayload<GiteaPullRequestEvent>;
+    const changes = this.changes;
+    if (eventPayload.eventType === 'pull_request_rejected') {
+      changes.isRequestRejected = true;
+    }
+    if (eventPayload.eventType === 'pull_request_approved') {
+      changes.isApproved = {
+        by: eventPayload.eventPayload.sender.username,
+      };
+    }
+    if (eventPayload.eventType === 'pull_request_comment') {
+      changes.newComment = true;
+    }
+  }
+
+  private isIssueCommentEvent(
+    eventPayload: EventPayload<GiteaEvents>,
+  ): eventPayload is EventPayload<GiteaIssueCommentEvent> {
+    return eventPayload.eventType === 'issue_comment';
+  }
+
+  private isIssueCommentEventFromPullRequest(eventPayload: EventPayload<GiteaEvents>) {
+    return this.isIssueCommentEvent(eventPayload) && eventPayload.eventPayload.is_pull;
+  }
+
+  private isIssueCommentEventFromIssue(
+    eventPayload: EventPayload<GiteaEvents>,
+  ): eventPayload is EventPayload<GiteaIssueCommentEvent> {
+    return this.isIssueCommentEvent(eventPayload) && !eventPayload.eventPayload.is_pull;
+  }
+
+  private isPullRequestEvent(
+    eventPayload: EventPayload<GiteaEvents>,
+  ): eventPayload is EventPayload<GiteaPullRequestEvent> {
+    return eventPayload.eventType === 'pull_request';
+  }
+
+  private isIssueEvent(eventPayload: EventPayload<GiteaEvents>): eventPayload is EventPayload<GiteaIssuesEvent> {
+    return eventPayload.eventType === 'issues';
   }
 
   private get eventPayload(): EventPayload<GiteaFlavor<GiteaEvents>> {

@@ -83,6 +83,7 @@ export type RequestChanges = {
   isUnassignedReviewer?: boolean;
   newComment?: boolean;
   newCommentOnFiles?: boolean;
+  isRequestRejected?: boolean;
   isAssigneesChanges?: {
     added?: UserInfo[];
     deleted?: UserInfo[];

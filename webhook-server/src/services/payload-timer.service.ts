@@ -3,20 +3,24 @@ import { EventPayload } from '../types';
 import { GiteaEvents, GiteaEventsWithIssue } from '../types/gitea';
 import { PayloadCombiningService } from './payload-combining.service';
 import { GiteaPullRequestEvent } from '../types/gitea/pull_request';
+import { GiteaIssueCommentEvent } from '../types/gitea/issue_comment';
 
 @Injectable()
-export class PayloadTimerService {
+export class GiteaPayloadTimerService {
   private waitingBuffer: Map<string, EventPayload<any>[]> = new Map();
   private eventTypesMap = {
     issues: 'issues',
     issue_comment: 'issues',
     pull_request: 'request',
+    pull_request_rejected: 'request',
+    pull_request_approved: 'request',
+    pull_request_comment: 'request',
   };
 
   constructor(private readonly combiningService: PayloadCombiningService) {}
 
   waitBeforeProcessing(eventPayload: EventPayload<GiteaEvents>) {
-    const meantFor: 'issues' | 'request' | undefined = this.eventTypesMap[eventPayload.eventType];
+    const meantFor = this.checkMeantFor(eventPayload);
     if (!meantFor) {
       console.log('There is unknown event type for incoming request in Gitea Timer Service');
       return;
@@ -49,5 +53,16 @@ export class PayloadTimerService {
       tempString.push(`TYPE=${eventPayload.eventType};`);
     }
     return tempString.join('');
+  }
+
+  private checkMeantFor(eventPayload: EventPayload<GiteaEvents>): 'request' | 'issues' | undefined {
+    if (
+      eventPayload.eventType === 'issue_comment' &&
+      (eventPayload as EventPayload<GiteaIssueCommentEvent>).eventPayload.is_pull
+    ) {
+      return 'request';
+    } else {
+      return this.eventTypesMap[eventPayload.eventType];
+    }
   }
 }

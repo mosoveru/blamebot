@@ -1,14 +1,22 @@
 import { Repository, Sender } from './common';
 
 export interface GiteaPullRequestEvent {
-  action: 'opened' | 'assigned' | 'unassigned' | 'review_request_removed' | 'review_requested' | string;
+  action:
+    | 'opened'
+    | 'assigned'
+    | 'unassigned'
+    | 'review_request_removed'
+    | 'review_requested'
+    | 'reviewed'
+    | 'synchronized'
+    | string;
   number: number;
   pull_request: PullRequest;
-  requested_reviewer: null;
+  requested_reviewer: Sender | null;
   repository: Repository;
   sender: Sender;
   commit_id: string;
-  review: null;
+  review: Review;
 }
 
 export interface PullRequest {
@@ -36,9 +44,9 @@ export interface PullRequest {
   patch_url: string;
   mergeable: boolean;
   merged: boolean;
-  merged_at: null;
-  merge_commit_sha: null;
-  merged_by: null;
+  merged_at: Date;
+  merge_commit_sha: string;
+  merged_by: Sender | null;
   allow_maintainer_edit: boolean;
   base: Base;
   head: Base;
@@ -56,4 +64,9 @@ export interface Base {
   sha: string;
   repo_id: number;
   repo: Repository;
+}
+
+export interface Review {
+  type: string;
+  content: string;
 }

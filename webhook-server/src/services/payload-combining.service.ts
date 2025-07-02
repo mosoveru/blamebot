@@ -104,7 +104,7 @@ export class PayloadCombiningService {
     const additionalProperties = payloads.reduce<AdditionalProperties>((acc, payload) => {
       const action = payload.eventPayload.action;
       const eventType = payload.eventType;
-      if (this.handlersForAdditionalProperties[eventType][action]) {
+      if (this.handlersForAdditionalProperties?.[eventType]?.[action]) {
         return this.handlersForAdditionalProperties[eventType][action](acc, payload);
       }
       return acc;

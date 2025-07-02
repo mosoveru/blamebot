@@ -80,6 +80,9 @@ export class RequestMessageComposer implements MessageComposer {
     if (eventChanges.changes.pipelineChanges) {
       return `В вашем ${basePhrase} ${this.composeCommonMessageForPipelineEvent(eventChanges)}`;
     }
+    if (eventChanges.changes.isRequestRejected) {
+      return `В вашем ${basePhrase} были запрошены изменения после ревью`;
+    }
     this.listMinorChanges(eventChanges, preparedCommonMessage);
     return preparedCommonMessage.join('').replace(/,\s$/, '.');
   }
@@ -119,6 +122,9 @@ export class RequestMessageComposer implements MessageComposer {
     }
     if (eventChanges.changes.pipelineChanges) {
       return `В вашем ${basePhrase}, которое вы ревьюите, ${this.composeCommonMessageForPipelineEvent(eventChanges)}`;
+    }
+    if (eventChanges.changes.isRequestRejected) {
+      return `В ${basePhrase}, которое вы ревьюите, были запрошены изменения после ревью`;
     }
     this.listMinorChanges(eventChanges, preparedCommonMessage);
     return preparedCommonMessage.join('').replace(/,\s$/, '.');
@@ -160,6 +166,9 @@ export class RequestMessageComposer implements MessageComposer {
     if (eventChanges.changes.pipelineChanges) {
       return `В вашем ${basePhrase} ${this.composeCommonMessageForPipelineEvent(eventChanges)}`;
     }
+    if (eventChanges.changes.isRequestRejected) {
+      return `В вашем ${basePhrase} были запрошены изменения после ревью`;
+    }
     this.listMinorChanges(eventChanges, preparedCommonMessage);
     return preparedCommonMessage.join('').replace(/,\s$/, '.');
   }
@@ -190,6 +199,9 @@ export class RequestMessageComposer implements MessageComposer {
     }
     if (eventChanges.changes.isEmojiChanged) {
       return `В связанном с вами ${basePhrase} ${this.composeStringForEmojiChanges(eventChanges)}`;
+    }
+    if (eventChanges.changes.isNewObject) {
+      return `Был создан ${basePhrase}`;
     }
     this.listMinorChanges(eventChanges, preparedCommonMessage);
     return preparedCommonMessage.join('').replace(/,\s$/, '.');
@@ -222,6 +234,9 @@ export class RequestMessageComposer implements MessageComposer {
     if (eventChanges.changes.pipelineChanges) {
       const sentence = this.composeCommonMessageForPipelineEvent(eventChanges);
       preparedCommonMessage.push(sentence);
+    }
+    if (eventChanges.changes.isRequestRejected) {
+      preparedCommonMessage.push('были запрошены изменения после ревью');
     }
   }
 

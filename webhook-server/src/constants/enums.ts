@@ -25,6 +25,9 @@ export enum GiteaEventTypes {
   ISSUE = 'issues',
   ISSUE_NOTE = 'issue_comment',
   PULL_REQUEST = 'pull_request',
+  PULL_REQUEST_REJECTED = 'pull_request_rejected',
+  PULL_REQUEST_APPROVED = 'pull_request_approved',
+  PULL_REQUEST_COMMENT = 'pull_request_comment',
 }
 
 export enum ObjectTypes {

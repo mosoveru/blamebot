@@ -10,7 +10,7 @@ import { ChangesAnalyserService } from '../services/changes-analyser.service';
 import { MessageAssignmentService } from '../services/message-assignment.service';
 import { GitlabController } from '../controllers/gitlab-controller';
 import { GiteaController } from '../controllers/gitea-contorller';
-import { PayloadTimerService } from '../services/payload-timer.service';
+import { GiteaPayloadTimerService } from '../services/payload-timer.service';
 import { PayloadCombiningService } from '../services/payload-combining.service';
 
 @Module({
@@ -31,7 +31,7 @@ import { PayloadCombiningService } from '../services/payload-combining.service';
     },
     ChangesAnalyserService,
     MessageAssignmentService,
-    PayloadTimerService,
+    GiteaPayloadTimerService,
     PayloadCombiningService,
   ],
   controllers: [GitlabController, GiteaController],
