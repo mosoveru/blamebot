@@ -1,6 +1,5 @@
 import { GitApiHandler, GiteaUserApiResponse } from '@types';
 import { GitProviders, PossibleCauses } from '@constants';
-import fetch, { FetchError } from 'node-fetch';
 
 export class GiteaApiHandler implements GitApiHandler {
   readonly meantFor = GitProviders.GITEA;
@@ -21,10 +20,10 @@ export class GiteaApiHandler implements GitApiHandler {
         pathname: new URL(response.html_url).pathname,
       } as const;
     } catch (err) {
-      if (err instanceof TypeError) {
-        return this.generateFailedResponse(err.cause as PossibleCauses);
+      if (err instanceof TypeError && this.checkIsPossibleCause(err.cause)) {
+        return this.generateFailedResponse(err.cause);
       }
-      if (err instanceof FetchError) {
+      if (err instanceof TypeError && this.isFetchFailed(err.message)) {
         return this.generateFailedResponse(PossibleCauses.CONNECTION_ERROR);
       }
       return this.generateFailedResponse(PossibleCauses.UNKNOWN_ERROR);
@@ -54,7 +53,7 @@ export class GiteaApiHandler implements GitApiHandler {
         cause: PossibleCauses.CANNOT_AUTHORIZE_CLIENT,
       });
     } else {
-      throw new TypeError('Unkown Error', {
+      throw new TypeError('Unknown Error', {
         cause: PossibleCauses.UNKNOWN_ERROR,
       });
     }
@@ -73,5 +72,13 @@ export class GiteaApiHandler implements GitApiHandler {
       ok: false,
       cause,
     } as const;
+  }
+
+  private checkIsPossibleCause(cause: unknown): cause is PossibleCauses {
+    return typeof cause === 'string' && !!PossibleCauses[cause as keyof typeof PossibleCauses];
+  }
+
+  private isFetchFailed(message: string): boolean {
+    return message.includes('fetch failed');
   }
 }
