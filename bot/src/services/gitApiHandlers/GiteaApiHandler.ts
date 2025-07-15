@@ -20,6 +20,7 @@ export class GiteaApiHandler implements GitApiHandler {
         pathname: new URL(response.html_url).pathname,
       } as const;
     } catch (err) {
+      console.log(err);
       if (err instanceof TypeError && this.checkIsPossibleCause(err.cause)) {
         return this.generateFailedResponse(err.cause);
       }

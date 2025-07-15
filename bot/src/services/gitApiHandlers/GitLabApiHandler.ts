@@ -24,6 +24,7 @@ export class GitLabApiHandler implements GitApiHandler {
         pathname: new URL(response.web_url).pathname,
       } as const;
     } catch (error) {
+      console.log(error);
       if (this.isUnsufficientScope(error)) {
         return this.generateFailedResponse(PossibleCauses.NOT_VALID_TOKEN_SCOPE);
       }
