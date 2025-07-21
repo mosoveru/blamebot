@@ -47,11 +47,22 @@ export class NoteEmojiPipelineHookDataParser implements DataParser<SimilarGitLab
       particularChanges?: Partial<K>;
       meantFor: 'request' | 'issue' | 'pipeline';
     }) => {
+      const objectUrlParser = {
+        note: () => (eventPayload as GitLabNoteHookEvent).object_attributes.url,
+        emoji: () => {
+          if (meantFor === 'request') {
+            return (eventPayload as GitLabEmojiEvent).merge_request!.url;
+          } else {
+            return (eventPayload as GitLabEmojiEvent).issue!.url;
+          }
+        },
+        pipeline: () => (eventPayload as GitLabPipelineEvent).object_attributes.url,
+      };
       if (meantFor === 'request') {
         return {
           objectType: ObjectTypes.REQUEST as const,
-          objectUrl: eventPayload.merge_request!.url,
-          objectId: String(eventPayload.merge_request!.id),
+          objectUrl: objectUrlParser[eventPayload.object_kind](),
+          objectId: String(eventPayload.merge_request!.iid),
           projectUrl: eventPayload.project.web_url,
           projectName: eventPayload.project.name,
           isCommon,
@@ -63,8 +74,8 @@ export class NoteEmojiPipelineHookDataParser implements DataParser<SimilarGitLab
       } else if (meantFor === 'issue') {
         return {
           objectType: ObjectTypes.ISSUE as const,
-          objectUrl: (eventPayload as WithMRsAndIssues).issue!.url,
-          objectId: String((eventPayload as WithMRsAndIssues).issue!.id),
+          objectUrl: objectUrlParser[eventPayload.object_kind](),
+          objectId: String((eventPayload as WithMRsAndIssues).issue!.iid),
           projectUrl: eventPayload.project.web_url,
           projectName: eventPayload.project.name,
           isCommon,
@@ -76,8 +87,8 @@ export class NoteEmojiPipelineHookDataParser implements DataParser<SimilarGitLab
       } else {
         return {
           objectType: ObjectTypes.PIPELINE as const,
-          objectUrl: (eventPayload as GitLabPipelineEvent).object_attributes.url,
-          objectId: String((eventPayload as GitLabPipelineEvent).object_attributes.id),
+          objectUrl: objectUrlParser[eventPayload.object_kind](),
+          objectId: String((eventPayload as GitLabPipelineEvent).object_attributes.iid),
           projectUrl: eventPayload.project.web_url,
           projectName: eventPayload.project.name,
           isCommon,

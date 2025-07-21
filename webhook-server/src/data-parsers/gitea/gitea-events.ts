@@ -29,35 +29,6 @@ export class GiteaDataParser implements DataParser<GiteaFlavor<GiteaIssuesEvent>
 
   private _changes: Changes | null;
   private _eventPayload: EventPayload<GiteaFlavor<GiteaEvents>> | null;
-  private changesParsers = {
-    issues: this.parseChangesForIssues.bind(this),
-    issue_comment: this.parseChangesForIssues.bind(this),
-    pull_request: this.parseChangesForPullRequest.bind(this),
-    pull_request_rejected: this.parseChangesForPullRequest.bind(this),
-    pull_request_approved: this.parseChangesForPullRequest.bind(this),
-    pull_request_comment: this.parseChangesForPullRequest.bind(this),
-  };
-  private issuesChangesParsers = {
-    assigned: this.parseChangesForAssignedOrUnassigned.bind(this),
-    unassigned: this.parseChangesForAssignedOrUnassigned.bind(this),
-    reopened: this.parseIssueStatus.bind(this),
-    closed: this.parseIssueStatus.bind(this),
-    edited: this.parseObjectHeaderChanges.bind(this),
-    label_updated: this.parseChangesForLabels.bind(this),
-    created: this.parseChangesForNotes.bind(this),
-  };
-  private pullRequestChangesParsers = {
-    assigned: this.parseChangesForAssignedOrUnassigned.bind(this),
-    unassigned: this.parseChangesForAssignedOrUnassigned.bind(this),
-    label_updated: this.parseChangesForLabels.bind(this),
-    review_request_removed: this.parseChangesForReviewers.bind(this),
-    review_requested: this.parseChangesForReviewers.bind(this),
-    edited: this.parseObjectHeaderChanges.bind(this),
-    created: this.parseChangesForNotes.bind(this),
-    reviewed: this.parseChangesForReviewedPullRequest.bind(this),
-    closed: this.parsePullRequestStatus.bind(this),
-    reopened: this.parsePullRequestStatus.bind(this),
-  };
 
   private eventsTreatedAsPullRequest = [
     'pull_request',
@@ -155,7 +126,7 @@ export class GiteaDataParser implements DataParser<GiteaFlavor<GiteaIssuesEvent>
     }
   }
 
-  private parseChangesForIssues(eventMembersIds: number[]): ChangesForRequestOrIssue[] {
+  private parseChangesForIssues = (eventMembersIds: number[]): ChangesForRequestOrIssue[] => {
     const { eventPayload } = this.eventPayload as EventPayload<GiteaEventsWithIssue>;
     const action = eventPayload.action;
     if (this.isNewIssue()) {
@@ -174,7 +145,7 @@ export class GiteaDataParser implements DataParser<GiteaFlavor<GiteaIssuesEvent>
     const eventChangesTemplate = {
       objectType: ObjectTypes.ISSUE as const,
       objectUrl: eventPayload.issue.html_url,
-      objectId: String(eventPayload.issue.id),
+      objectId: String(eventPayload.issue.number),
       projectUrl: eventPayload.repository.html_url,
       projectName: eventPayload.repository.name,
     };
@@ -213,9 +184,9 @@ export class GiteaDataParser implements DataParser<GiteaFlavor<GiteaIssuesEvent>
     }, []);
     this.resetContext();
     return [...individualChanges, commonChanges];
-  }
+  };
 
-  private parseChangesForPullRequest(eventMembersIds: number[]): ChangesForRequestOrIssue[] {
+  private parseChangesForPullRequest = (eventMembersIds: number[]): ChangesForRequestOrIssue[] => {
     const { eventPayload } = this.eventPayload as EventPayload<GiteaPullRequestEvent>;
     const action = eventPayload.action;
     if (this.isNewPullRequest()) {
@@ -234,7 +205,7 @@ export class GiteaDataParser implements DataParser<GiteaFlavor<GiteaIssuesEvent>
     const eventChangesTemplate = {
       objectType: ObjectTypes.REQUEST as const,
       objectUrl: eventPayload.pull_request.html_url,
-      objectId: String(eventPayload.pull_request.id),
+      objectId: String(eventPayload.pull_request.number),
       projectUrl: eventPayload.repository.html_url,
       projectName: eventPayload.repository.name,
     };
@@ -287,59 +258,7 @@ export class GiteaDataParser implements DataParser<GiteaFlavor<GiteaIssuesEvent>
     }, []);
     this.resetContext();
     return [...individualChanges, commonChanges];
-  }
-
-  private isNewIssue() {
-    const { eventPayload } = this.eventPayload;
-    return !!eventPayload.combinedProperties?.opened;
-  }
-
-  private isNewPullRequest() {
-    const { eventPayload } = this.eventPayload as EventPayload<GiteaFlavor<GiteaPullRequestEvent>>;
-    return !!eventPayload.combinedProperties?.opened;
-  }
-
-  private parseChangesForNewCreatedIssue() {
-    const { eventPayload } = this.eventPayload as EventPayload<GiteaFlavor<GiteaEventsWithIssue>>;
-    const changes = this.changes;
-    if (eventPayload.combinedProperties?.assigned?.length && eventPayload.issue.due_date) {
-      changes.isNewObject = {
-        isNewAssignmentWithDeadline: {
-          deadline: eventPayload.issue.due_date,
-        },
-      };
-    } else if (eventPayload.combinedProperties?.assigned?.length) {
-      changes.isNewObject = {
-        isNewAssignment: true,
-      };
-    }
-  }
-
-  private parseChangesForNewCreatedPullRequest() {
-    const { eventPayload } = this.eventPayload as EventPayload<GiteaFlavor<GiteaPullRequestEvent>>;
-    const requestChanges = this.changes;
-    if (eventPayload.combinedProperties?.assigned?.length && eventPayload.combinedProperties?.addedReviewers?.length) {
-      requestChanges.isNewObject = {
-        withAssignment: true,
-        withReviewer: true,
-      };
-    } else if (eventPayload.combinedProperties?.addedReviewers?.length) {
-      requestChanges.isNewObject = {
-        withReviewer: true,
-      };
-    } else if (eventPayload.combinedProperties?.assigned?.length) {
-      requestChanges.isNewObject = {
-        withAssignment: true,
-      };
-    }
-  }
-
-  private parseChangesForLabels() {
-    const changes = this.changes;
-    changes.isLabelsChanged = {
-      justChanged: true,
-    };
-  }
+  };
 
   private isAssignee(assigneeId: number) {
     const eventPayload = this.eventPayload;
@@ -391,14 +310,59 @@ export class GiteaDataParser implements DataParser<GiteaFlavor<GiteaIssuesEvent>
     return false;
   }
 
-  private parseChangesForAssignedOrUnassigned() {
-    const changes = this.changes;
-    changes.isAssigneesChanges = {
-      justChanged: true,
-    };
+  private isNewIssue() {
+    const { eventPayload } = this.eventPayload;
+    return !!eventPayload.combinedProperties?.opened;
   }
 
-  private parseChangesForReviewers() {
+  private isNewPullRequest() {
+    const { eventPayload } = this.eventPayload as EventPayload<GiteaFlavor<GiteaPullRequestEvent>>;
+    return !!eventPayload.combinedProperties?.opened;
+  }
+
+  private parseChangesForNewCreatedIssue() {
+    const { eventPayload } = this.eventPayload as EventPayload<GiteaFlavor<GiteaEventsWithIssue>>;
+    const changes = this.changes;
+    if (eventPayload.combinedProperties?.assigned?.length && eventPayload.issue.due_date) {
+      changes.isNewObject = {
+        isNewAssignmentWithDeadline: {
+          deadline: eventPayload.issue.due_date,
+        },
+      };
+    } else if (eventPayload.combinedProperties?.assigned?.length) {
+      changes.isNewObject = {
+        isNewAssignment: true,
+      };
+    }
+  }
+
+  private parseChangesForNewCreatedPullRequest() {
+    const { eventPayload } = this.eventPayload as EventPayload<GiteaFlavor<GiteaPullRequestEvent>>;
+    const requestChanges = this.changes;
+    if (eventPayload.combinedProperties?.assigned?.length && eventPayload.combinedProperties?.addedReviewers?.length) {
+      requestChanges.isNewObject = {
+        withAssignment: true,
+        withReviewer: true,
+      };
+    } else if (eventPayload.combinedProperties?.addedReviewers?.length) {
+      requestChanges.isNewObject = {
+        withReviewer: true,
+      };
+    } else if (eventPayload.combinedProperties?.assigned?.length) {
+      requestChanges.isNewObject = {
+        withAssignment: true,
+      };
+    }
+  }
+
+  private parseChangesForLabels = () => {
+    const changes = this.changes;
+    changes.isLabelsChanged = {
+      justChanged: true,
+    };
+  };
+
+  private parseChangesForReviewers = () => {
     const { eventPayload } = this.eventPayload as EventPayload<GiteaFlavor<GiteaPullRequestEvent>>;
     const changes = this.changes;
     const addedAndDeleted =
@@ -422,9 +386,16 @@ export class GiteaDataParser implements DataParser<GiteaFlavor<GiteaIssuesEvent>
         deleted: eventPayload.combinedProperties?.deletedReviewers?.map(reduceReviewers),
       };
     }
-  }
+  };
 
-  private parseIssueStatus() {
+  private parseChangesForAssignedOrUnassigned = () => {
+    const changes = this.changes;
+    changes.isAssigneesChanges = {
+      justChanged: true,
+    };
+  };
+
+  private parseIssueStatus = () => {
     const { eventPayload } = this.eventPayload;
     const changes = this.changes;
     if (eventPayload.action === 'closed') {
@@ -434,9 +405,9 @@ export class GiteaDataParser implements DataParser<GiteaFlavor<GiteaIssuesEvent>
     if (eventPayload.action === 'reopened') {
       changes.isReopened = true;
     }
-  }
+  };
 
-  private parsePullRequestStatus() {
+  private parsePullRequestStatus = () => {
     const { eventPayload } = this.eventPayload as EventPayload<GiteaPullRequestEvent>;
     const changes = this.changes;
     if (eventPayload.action === 'closed' && eventPayload.pull_request.merged) {
@@ -451,9 +422,9 @@ export class GiteaDataParser implements DataParser<GiteaFlavor<GiteaIssuesEvent>
     if (eventPayload.action === 'reopened') {
       changes.isReopened = true;
     }
-  }
+  };
 
-  private parseObjectHeaderChanges() {
+  private parseObjectHeaderChanges = () => {
     const { eventPayload, eventType } = this.eventPayload as EventPayload<GiteaIssuesEvent>;
     const changes = this.changes;
     if (eventPayload.changes.title) {
@@ -462,17 +433,17 @@ export class GiteaDataParser implements DataParser<GiteaFlavor<GiteaIssuesEvent>
     if (eventPayload.changes.body && eventType !== 'issue_comment') {
       changes.isDescriptionChanged = true;
     }
-  }
+  };
 
-  parseChangesForNotes() {
+  parseChangesForNotes = () => {
     const { eventPayload } = this.eventPayload as EventPayload<GiteaIssueCommentEvent>;
     const changes = this.changes;
     if (eventPayload.comment) {
       changes.newComment = true;
     }
-  }
+  };
 
-  parseChangesForReviewedPullRequest() {
+  parseChangesForReviewedPullRequest = () => {
     const eventPayload = this.eventPayload as EventPayload<GiteaPullRequestEvent>;
     const changes = this.changes;
     if (eventPayload.eventType === 'pull_request_rejected') {
@@ -486,7 +457,7 @@ export class GiteaDataParser implements DataParser<GiteaFlavor<GiteaIssuesEvent>
     if (eventPayload.eventType === 'pull_request_comment') {
       changes.newComment = true;
     }
-  }
+  };
 
   private isIssueCommentEvent(
     eventPayload: EventPayload<GiteaEvents>,
@@ -513,6 +484,36 @@ export class GiteaDataParser implements DataParser<GiteaFlavor<GiteaIssuesEvent>
   private isIssueEvent(eventPayload: EventPayload<GiteaEvents>): eventPayload is EventPayload<GiteaIssuesEvent> {
     return eventPayload.eventType === 'issues';
   }
+
+  private changesParsers = {
+    issues: this.parseChangesForIssues,
+    issue_comment: this.parseChangesForIssues,
+    pull_request: this.parseChangesForPullRequest,
+    pull_request_rejected: this.parseChangesForPullRequest,
+    pull_request_approved: this.parseChangesForPullRequest,
+    pull_request_comment: this.parseChangesForPullRequest,
+  };
+  private issuesChangesParsers = {
+    assigned: this.parseChangesForAssignedOrUnassigned,
+    unassigned: this.parseChangesForAssignedOrUnassigned,
+    reopened: this.parseIssueStatus,
+    closed: this.parseIssueStatus,
+    edited: this.parseObjectHeaderChanges,
+    label_updated: this.parseChangesForLabels,
+    created: this.parseChangesForNotes,
+  };
+  private pullRequestChangesParsers = {
+    assigned: this.parseChangesForAssignedOrUnassigned,
+    unassigned: this.parseChangesForAssignedOrUnassigned,
+    label_updated: this.parseChangesForLabels,
+    review_request_removed: this.parseChangesForReviewers,
+    review_requested: this.parseChangesForReviewers,
+    edited: this.parseObjectHeaderChanges,
+    created: this.parseChangesForNotes,
+    reviewed: this.parseChangesForReviewedPullRequest,
+    closed: this.parsePullRequestStatus,
+    reopened: this.parsePullRequestStatus,
+  };
 
   private get eventPayload(): EventPayload<GiteaFlavor<GiteaEvents>> {
     if (this._eventPayload === null) {

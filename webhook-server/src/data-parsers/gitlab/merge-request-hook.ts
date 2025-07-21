@@ -101,7 +101,7 @@ export class MergeRequestHookDataParser implements DataParser<GitLabMergeRequest
     const eventChangesTemplate = {
       objectType: this.objectType,
       objectUrl: payload.object_attributes.url,
-      objectId: String(payload.object_attributes.id),
+      objectId: String(payload.object_attributes.iid),
       projectUrl: payload.project.web_url,
       projectName: payload.project.name,
     };
