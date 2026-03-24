@@ -16,9 +16,12 @@ export class TelegramService {
     const keyboard = new InlineKeyboard();
     const callbackQueryString = `UNSUB=${subscriptionInfo.uuid}`;
     keyboard.text('Отписаться', callbackQueryString);
-    await this.telegramApi.sendMessage(chatId, message, {
-      reply_markup: keyboard,
-      parse_mode: 'HTML',
-    });
+    console.log('Trying to send notification');
+    console.log(
+      await this.telegramApi.sendMessage(chatId, message, {
+        reply_markup: keyboard,
+        parse_mode: 'HTML',
+      }),
+    );
   }
 }

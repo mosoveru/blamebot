@@ -11,7 +11,20 @@ import { Router } from '@grammyjs/router';
 import provideDatabaseService, { helloReply } from '@middlewares';
 
 (async () => {
-  const bot = new Bot<BlamebotContext>(Config.get('BOT_SECRET_TOKEN'));
+  let bot;
+  if (Config.get('USE_PROXY')) {
+    console.log('[TelegramBot]: Using proxy');
+    const { SocksProxyAgent } = require('socks-proxy-agent');
+    const socksAgent = new SocksProxyAgent(Config.get('PROXY_URL'));
+    bot = new Bot<BlamebotContext>(Config.get('BOT_SECRET_TOKEN'), {
+      client: {
+        baseFetchConfig: socksAgent,
+      },
+    });
+  } else {
+    console.log('[TelegramBot]: Bot is starting without proxy');
+    bot = new Bot<BlamebotContext>(Config.get('BOT_SECRET_TOKEN'));
+  }
 
   const dataSource = await AppDataSource.initialize();
   const remoteServiceRepository = dataSource.getRepository(Instance);
@@ -58,7 +71,7 @@ import provideDatabaseService, { helloReply } from '@middlewares';
 
   bot.start({
     onStart: () => {
-      console.log('Telegram bot has been started!');
+      console.log('[TelegramBot]: Telegram bot has been started!');
     },
   });
 })();

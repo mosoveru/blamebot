@@ -1,0 +1,2 @@
+patchedDependencies:
+  socks-proxy-agent: patches/socks-proxy-agent.patch

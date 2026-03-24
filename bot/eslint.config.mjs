@@ -18,4 +18,9 @@ export default defineConfig([
   tseslint.configs.recommended,
   sonarjs.configs.recommended,
   eslintPluginPrettier,
+  {
+    rules: {
+      '@typescript-eslint/no-require-imports': 'off',
+    },
+  },
 ]);
