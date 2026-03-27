@@ -18,7 +18,9 @@ import provideDatabaseService, { helloReply } from '@middlewares';
     const socksAgent = new SocksProxyAgent(Config.get('PROXY_URL'));
     bot = new Bot<BlamebotContext>(Config.get('BOT_SECRET_TOKEN'), {
       client: {
-        baseFetchConfig: socksAgent,
+        baseFetchConfig: {
+          agent: socksAgent,
+        },
       },
     });
   } else {

@@ -21,7 +21,9 @@ import { Api } from 'grammy';
           const { SocksProxyAgent } = require('socks-proxy-agent');
           const socksAgent = new SocksProxyAgent(connectionURL);
           const telegramApi = new Api(token, {
-            baseFetchConfig: socksAgent,
+            baseFetchConfig: {
+              agent: socksAgent,
+            },
           });
           return new TelegramService(telegramApi);
         }
